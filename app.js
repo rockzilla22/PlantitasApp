@@ -34,10 +34,16 @@ const store = {
     },
 
     update(newData, shouldSave = true) {
-        console.log("Normalizing data...");
-        this.data = {
-            inventory: newData.inventory || { substrates: [], powders: [], liquids: [], others: [] },
-            plants: (newData.plants || []).map(p => ({
+        console.log("Normalizing and updating data...");
+        this.data = this.normalize(newData);
+        if (shouldSave) this.save();
+        ui.renderAll();
+    },
+
+    normalize(d) {
+        return {
+            inventory: d.inventory || { substrates: [], powders: [], liquids: [], others: [] },
+            plants: (d.plants || []).map(p => ({
                 ...p,
                 icon: p.icon || '🌿',
                 type: p.type || 'Planta',
@@ -47,17 +53,56 @@ const store = {
                 dormancy: p.dormancy || 'Ninguna',
                 logs: (p.logs || [])
             })),
-            globalNotes: newData.globalNotes || [],
-            propagations: (newData.propagations || []).map(pr => ({
+            globalNotes: d.globalNotes || [],
+            propagations: (d.propagations || []).map(pr => ({
                 ...pr,
                 status: pr.status || 'Activo',
                 notes: pr.notes || ''
             })),
-            wishlist: newData.wishlist || [],
-            seasonalTasks: newData.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] }
+            wishlist: d.wishlist || [],
+            seasonalTasks: d.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] }
+        };
+    },
+
+    merge(incomingData) {
+        console.log("Merging data structures...");
+        const incoming = this.normalize(incomingData);
+        
+        // Helper para unificar por ID (Map asegura unicidad)
+        const mergeById = (local, imported) => {
+            const map = new Map();
+            local.forEach(item => map.set(item.id, item));
+            imported.forEach(item => map.set(item.id, item)); // El importado pisa si hay mismo ID (más reciente)
+            return Array.from(map.values());
         };
 
-        if (shouldSave) this.save();
+        // Unificar Inventario por nombre y sumar cantidades
+        const mergeInventory = (local, imported) => {
+            const result = JSON.parse(JSON.stringify(local)); // Clon profundo
+            for (const cat in imported) {
+                if (!result[cat]) result[cat] = [];
+                imported[cat].forEach(impItem => {
+                    const localItem = result[cat].find(l => l.name === impItem.name);
+                    if (localItem) {
+                        localItem.qty = Math.max(localItem.qty, impItem.qty); // Nos quedamos con el stock más alto para seguridad
+                    } else {
+                        result[cat].push(impItem);
+                    }
+                });
+            }
+            return result;
+        };
+
+        this.data = {
+            plants: mergeById(this.data.plants, incoming.plants),
+            propagations: mergeById(this.data.propagations, incoming.propagations),
+            globalNotes: mergeById(this.data.globalNotes, incoming.globalNotes),
+            wishlist: mergeById(this.data.wishlist, incoming.wishlist),
+            inventory: mergeInventory(this.data.inventory, incoming.inventory),
+            seasonalTasks: incoming.seasonalTasks // Para tareas estacionales preferimos las del backup o las mezclamos? Append por ahora.
+        };
+
+        this.save();
         ui.renderAll();
     }
 };
@@ -121,6 +166,18 @@ const ui = {
             btn.parentNode.replaceChild(newBtn, btn);
             newBtn.onclick = () => { onConfirm(); this.closeModal('modal-confirm'); };
             this.showModal('modal-confirm');
+        }
+    },
+
+    askImportChoice(message, onMerge, onOverwrite) {
+        const msgEl = document.getElementById('import-choice-msg');
+        const btnMerge = document.getElementById('import-btn-merge');
+        const btnOverwrite = document.getElementById('import-btn-overwrite');
+        if (msgEl && btnMerge && btnOverwrite) {
+            msgEl.innerText = message;
+            btnMerge.onclick = () => { onMerge(); this.closeModal('modal-import-choice'); };
+            btnOverwrite.onclick = () => { onOverwrite(); this.closeModal('modal-import-choice'); };
+            this.showModal('modal-import-choice');
         }
     },
 
@@ -720,30 +777,44 @@ const app = {
         ui.askConfirm("¿Borrar nota?", "Esta acción es definitiva.", () => { store.data.globalNotes = store.data.globalNotes.filter(n => n.id !== id); store.save(); ui.renderNotes(); });
     },
 
-    // --- Otros ---
-    getMethodIcon(method) { const icons = { Agua: '💧', Sustrato: '🟤', Acodo: '🌳', Semilla: '🌱' }; return icons[method] || '🧪'; },
-
-    handleSearch(query) {
-        const panel = document.getElementById('search-results');
-        if (!query || query.length < 2) { panel.classList.remove('active'); return; }
-        const q = query.toLowerCase();
-        const res = [];
-        store.data.plants.filter(p => p.name.toLowerCase().includes(q)).forEach(p => res.push({ type: 'Planta', title: p.name, action: () => { ui.switchTab('tab-plants'); app.viewPlantDetail(p.id); }}));
-        panel.innerHTML = res.map((r, i) => `<div class="search-result-item" onclick="app.execSearchAction(${i})"><small>${r.type}</small><strong>${r.title}</strong></div>`).join('');
-        app._currentResults = res; panel.classList.add('active');
-    },
-
-    execSearchAction(index) { this._currentResults[index].action(); document.getElementById('search-results').classList.remove('active'); },
-
+    // --- Sincronización e Importación ---
     exportBackup() {
-        const blob = new Blob([JSON.stringify(store.data, null, 2)], { type: 'application/json' });
+        const exportData = {
+            ...store.data,
+            exportedAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `plantitas_${new Date().toISOString().split('T')[0]}.json`; a.click();
     },
 
     importBackup(e) {
         const reader = new FileReader();
         reader.onload = (ev) => {
-            try { store.update(JSON.parse(ev.target.result)); ui.showInfo("¡Logrado!", "Datos importados."); } catch (err) { console.error(err); alert("Error."); }
+            try {
+                const importedData = JSON.parse(ev.target.result);
+                const exportedDate = importedData.exportedAt ? new Date(importedData.exportedAt).toLocaleString() : "fecha desconocida";
+                
+                // Cálculo de volumen de datos para comparar
+                const currentTotal = store.data.plants.length + store.data.propagations.length + store.data.wishlist.length + store.data.globalNotes.length;
+                const importedTotal = (importedData.plants?.length || 0) + (importedData.propagations?.length || 0) + (importedData.wishlist?.length || 0) + (importedData.globalNotes?.length || 0);
+
+                const msg = `Resumen del archivo:\n- Exportado el: ${exportedDate}\n- Ítems en archivo: ${importedTotal}\n- Ítems en navegador: ${currentTotal}\n\n¿Cómo querés proceder?`;
+
+                if (importedTotal < currentTotal) {
+                    ui.askImportChoice(
+                        `⚠️ ATENCIÓN: El archivo tiene MENOS datos que tu navegador. ${msg}`,
+                        () => store.merge(importedData),
+                        () => store.update(importedData)
+                    );
+                } else {
+                    // Si el archivo tiene igual o más datos, también damos la opción por si quiere unificar
+                    ui.askImportChoice(
+                        `Información del backup: ${msg}`,
+                        () => store.merge(importedData),
+                        () => store.update(importedData)
+                    );
+                }
+            } catch (err) { console.error(err); alert("Error al procesar el archivo JSON."); }
         };
         reader.readAsText(e.target.files[0]);
     }

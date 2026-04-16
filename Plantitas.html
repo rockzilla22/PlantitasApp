@@ -243,21 +243,6 @@
         </form>
     </dialog>
 
-    <dialog id="modal-edit-note">
-        <form method="dialog" onsubmit="app.handleEditNote(event)">
-            <h3>✏️ Editar Nota Global</h3>
-            <input type="hidden" id="edit-n-id">
-            <div class="form-group">
-                <label>Contenido de la nota (obligatorio)</label>
-                <textarea id="edit-n-content" rows="4" required></textarea>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-note')">Cancelar</button>
-                <button type="submit" class="btn-primary">Actualizar</button>
-            </div>
-        </form>
-    </dialog>
-
     <dialog id="modal-add-item">
         <form method="dialog" onsubmit="app.handleAddItem(event)">
             <h3>📦 Nuevo Insumo</h3>
@@ -437,10 +422,38 @@
         </form>
     </dialog>
 
+    <dialog id="modal-edit-note">
+        <form method="dialog" onsubmit="app.handleEditNote(event)">
+            <h3>✏️ Editar Nota Global</h3>
+            <input type="hidden" id="edit-n-id">
+            <div class="form-group">
+                <label>Contenido de la nota (obligatorio)</label>
+                <textarea id="edit-n-content" rows="4" required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-note')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </dialog>
+
     <!-- OTROS MODALES -->
     <dialog id="modal-calendar"><form method="dialog" onsubmit="app.handleCalendarSubmit(event)"><h3>📅 Recordatorio Google</h3><div class="form-group"><label>Título (obligatorio)</label><input type="text" id="cal-title" required></div><div class="form-group"><label>Descripción</label><textarea id="cal-desc"></textarea></div><div class="form-group"><label>Fecha (obligatorio)</label><input type="date" id="cal-date" required></div><div class="modal-actions"><button type="button" class="btn-text" onclick="ui.closeModal('modal-calendar')">Cancelar</button><button type="submit" class="btn-primary">Añadir</button></div></form></dialog>
     <dialog id="modal-info" style="text-align:center"><h3 id="info-title">¡Logrado!</h3><p id="info-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-primary" onclick="ui.closeModal('modal-info')">Entendido</button></div></dialog>
     <dialog id="modal-confirm" style="text-align:center"><h3 id="confirm-title">¿Estás seguro?</h3><p id="confirm-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-text" onclick="ui.closeModal('modal-confirm')">Cancelar</button><button type="button" id="confirm-yes-btn" class="btn-primary" style="background:var(--danger)">Confirmar</button></div></dialog>
+    
+    <!-- Modal: Opciones de Importación (TRIPLE BOTÓN) -->
+    <dialog id="modal-import-choice" style="max-width: 500px;">
+        <div style="text-align:center">
+            <h3>⚠️ Resolución de Conflicto</h3>
+            <p id="import-choice-msg" style="margin:1rem 0; color:var(--text-light); text-align: left; font-size: 0.9rem; line-height: 1.4;"></p>
+            <div class="modal-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button type="button" id="import-btn-merge" class="btn-primary" style="background: var(--secondary); width: 100%;">🤝 Unificar Datos (Mezclar ambos)</button>
+                <button type="button" id="import-btn-overwrite" class="btn-primary" style="background: var(--danger); width: 100%;">🔄 Sobreescribir (Usar solo archivo)</button>
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-import-choice')" style="width: 100%;">Cancelar</button>
+            </div>
+        </div>
+    </dialog>
 
     <script src="app.js"></script>
 </body>
