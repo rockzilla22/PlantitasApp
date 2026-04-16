@@ -33,4 +33,4 @@ Al ser una aplicación basada en el protocolo `file://`, su ejecución es inmedi
 
 ---
 
-Desarrollado para Erzu, con vibecode mientras jugaba Dota, porque YOLO.
+Desarrollado para Erzu, con ideas de Alex y yo con vibecode mientras jugaba Dota, porque YOLO.
