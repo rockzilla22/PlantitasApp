@@ -162,15 +162,33 @@ const ui = {
         if (titleEl && msgEl) { titleEl.innerText = title; msgEl.innerText = message; this.showModal('modal-info'); }
     },
 
-    askConfirm(title, message, onConfirm) {
+    askConfirm(title, message, onConfirm, confirmText = "Confirmar", confirmClass = "") {
         const titleEl = document.getElementById('confirm-title');
         const msgEl = document.getElementById('confirm-msg');
         const btn = document.getElementById('confirm-yes-btn');
         if (titleEl && msgEl && btn) {
             titleEl.innerText = title;
             msgEl.innerText = message;
+            
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
+            
+            // Personalización de estilo y texto
+            newBtn.innerText = confirmText;
+            if (confirmClass) {
+                newBtn.className = `btn-primary ${confirmClass}`;
+                if (confirmClass.includes('secondary')) {
+                    newBtn.style.background = 'var(--secondary)';
+                } else if (confirmClass.includes('danger')) {
+                    newBtn.style.background = 'var(--danger)';
+                } else {
+                    newBtn.style.background = 'var(--primary)';
+                }
+            } else {
+                // Default style for deletions (maintaining current behavior)
+                newBtn.style.background = 'var(--danger)';
+            }
+
             newBtn.onclick = () => { onConfirm(); this.closeModal('modal-confirm'); };
             this.showModal('modal-confirm');
         }
@@ -591,10 +609,25 @@ const app = {
         const map = { 'Sustrato': 'substrates', 'Fertilizante': 'fertilizers', 'Polvos': 'powders', 'Líquidos': 'liquids' };
         const category = map[action];
         
-        if (category && store.data.inventory[category].length > 0) {
-            wrap.style.display = 'block';
-            select.innerHTML = `<option value="">-- Elegir de Inventario --</option>` + 
-                store.data.inventory[category].map(item => `<option value="${item.name}">${item.name} (${item.qty} ${item.unit})</option>`).join('');
+        if (category) {
+            if (store.data.inventory[category].length > 0) {
+                wrap.style.display = 'block';
+                select.innerHTML = `<option value="">-- Elegir de Inventario --</option>` + 
+                    store.data.inventory[category].map(item => `<option value="${item.name}">${item.name} (${item.qty} ${item.unit})</option>`).join('');
+            } else {
+                wrap.style.display = 'none';
+                ui.askConfirm(
+                    `¡Inventario de ${action} vacío!`,
+                    `No tenés ${action.toLowerCase()} cargados en el inventario. ¿Querés ir a añadir uno ahora?`,
+                    () => {
+                        ui.switchTab('tab-inventory');
+                        ui.showModal('modal-add-item');
+                        document.getElementById('i-type').value = category;
+                    },
+                    "Ir al Inventario",
+                    "secondary"
+                );
+            }
         } else {
             wrap.style.display = 'none';
         }
@@ -619,6 +652,22 @@ const app = {
             store.save();
             this.viewPlantDetail(id);
         }
+    },
+
+    removePlantLog(plantId, logId) {
+        ui.askConfirm("¿Eliminar registro?", "Esta acción quitará el evento del historial.", () => {
+            const plant = store.data.plants.find(p => p.id === plantId);
+            if (plant) {
+                plant.logs = plant.logs.filter(l => l.id !== logId);
+                
+                // Si borramos un riego, recalculamos la fecha del último riego
+                const riegos = plant.logs.filter(l => l.actionType === 'Riego').sort((a,b) => b.date.localeCompare(a.date));
+                plant.lastWateredDate = riegos.length > 0 ? riegos[0].date : '';
+                
+                store.save();
+                this.viewPlantDetail(plantId);
+            }
+        });
     },
 
     editPlant(id) {
