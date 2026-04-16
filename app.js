@@ -6,7 +6,7 @@
 // --- 1. STORE MANAGER (STATE) ---
 const store = {
     data: {
-        inventory: { substrates: [], powders: [], liquids: [], others: [] },
+        inventory: { substrates: [], fertilizers: [], powders: [], liquids: [], others: [] },
         plants: [],
         globalNotes: [],
         propagations: [],
@@ -41,8 +41,15 @@ const store = {
     },
 
     normalize(d) {
+        const inv = d.inventory || {};
         return {
-            inventory: d.inventory || { substrates: [], powders: [], liquids: [], others: [] },
+            inventory: {
+                substrates: inv.substrates || [],
+                fertilizers: inv.fertilizers || [],
+                powders: inv.powders || [],
+                liquids: inv.liquids || [],
+                others: inv.others || []
+            },
             plants: (d.plants || []).map(p => ({
                 ...p,
                 icon: p.icon || '🌿',
@@ -318,7 +325,7 @@ const ui = {
     },
 
     renderInventory() {
-        const categories = ['substrates', 'powders', 'liquids', 'others'];
+        const categories = ['substrates', 'fertilizers', 'powders', 'liquids', 'others'];
         categories.forEach(cat => {
             const list = document.getElementById(`list-${cat}`);
             if (list) {
@@ -378,6 +385,7 @@ const ui = {
 const app = {
     selectedPlantId: null,
     graduatingPropId: null,
+    currentLogFilter: 'Todos',
 
     init() {
         store.init();
@@ -388,6 +396,11 @@ const app = {
     formatDate(dateStr) {
         if (!dateStr) return 'Nunca';
         return dateStr.split('-').reverse().join('/');
+    },
+
+    setLogFilter(filter) {
+        this.currentLogFilter = filter;
+        this.viewPlantDetail(this.selectedPlantId);
     },
 
     openCalendarModal(title, desc) {
@@ -450,17 +463,34 @@ const app = {
     },
 
     getTaskIcon(type) {
-        const icons = { Poda: '✂️', Siembra: '🌱', Transplante: '🧺', Abonado: '🧪', Limpieza: '🧹', Otro: '📝' };
+        const icons = { Poda: '✂️', Siembra: '🌱', Transplante: '🪴', Abonado: '🧪', Limpieza: '🧹', Otro: '📝' };
         return icons[type] || '📝';
+    },
+
+    toggleCustomType(selectId, wrapId) {
+        const select = document.getElementById(selectId);
+        const wrap = document.getElementById(wrapId);
+        if (select && wrap) wrap.style.display = select.value === 'CUSTOM' ? 'block' : 'none';
     },
 
     // --- Plants ---
     handleAddPlant(e) {
         e.preventDefault();
+        const typeSelect = document.getElementById('p-type').value;
+        let icon = '🌿', type = 'Planta';
+
+        if (typeSelect === 'CUSTOM') {
+            const custom = document.getElementById('p-custom-type').value || '🌿|Planta';
+            const parts = custom.includes('|') ? custom.split('|') : ['🌿', custom];
+            icon = parts[0]; type = parts[1];
+        } else {
+            const parts = typeSelect.split('|');
+            icon = parts[0]; type = parts[1];
+        }
+
         const newPlant = {
             id: Date.now(),
-            icon: '🌿',
-            type: 'Planta',
+            icon, type,
             name: document.getElementById('p-name').value,
             location: document.getElementById('p-location').value || 'No especificada',
             light: document.getElementById('p-light').value,
@@ -475,7 +505,9 @@ const app = {
             if (prop) prop.status = 'Trasplantada';
             this.graduatingPropId = null;
         }
-        store.save(); ui.closeModal('modal-add-plant'); e.target.reset(); ui.renderAll(); this.viewPlantDetail(newPlant.id); this.initParentSelect();
+        store.save(); ui.closeModal('modal-add-plant'); e.target.reset(); 
+        document.getElementById('p-custom-type-wrap').style.display = 'none';
+        ui.renderAll(); this.viewPlantDetail(newPlant.id); this.initParentSelect();
     },
 
     viewPlantDetail(id) {
@@ -485,6 +517,18 @@ const app = {
         ui.renderPlants();
         const panel = document.getElementById('plant-detail-panel');
         const today = new Date().toISOString().split('T')[0];
+
+        const logIcons = {
+            'Riego': '💧', 'Medición': '📏', 'Sustrato': '🟤', 'Fertilizante': '🧴', 'Polvos': '⚪',
+            'Líquidos': '🧪', 'Trasplante': '🌳', 'Plaga/Enfermedad': '🐛', 'Nota': '📝', 'Initial': '🌱'
+        };
+
+        const filterOptions = ['Todos', ...Object.keys(logIcons).filter(k => k !== 'Initial')];
+
+        const filteredLogs = plant.logs
+            .filter(log => app.currentLogFilter === 'Todos' || log.actionType === app.currentLogFilter)
+            .sort((a, b) => b.id - a.id);
+
         panel.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start">
                 <h2 style="margin:0">${plant.icon} ${plant.name}</h2>
@@ -503,23 +547,26 @@ const app = {
             <div class="log-section" style="background:#f5f5f5; padding:1rem; border-radius:8px; margin-top:1rem">
                 <h3>🧪 Registro</h3>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
-                    <select id="log-action">
-                        <option value="Riego">💧 Riego</option>
-                        <option value="Medición">📏 Medición</option>
-                        <option value="Sustrato">🟤 Sustrato</option>
-                        <option value="Plaga/Enfermedad">🐛 Plaga</option>
-                        <option value="Transplante">🧺 Transplante</option>
-                        <option value="Nota">📝 Nota</option>
+                    <select id="log-action" onchange="app.updateLogInventorySelect()">
+                        ${Object.keys(logIcons).filter(k => k !== 'Initial').map(type => `<option value="${type}">${logIcons[type]} ${type}</option>`).join('')}
                     </select>
                     <input type="date" id="log-date" value="${today}">
+                </div>
+                <div id="log-inventory-item-wrap" style="display:none; margin-top:0.5rem">
+                    <select id="log-inventory-item" style="width:100%"></select>
                 </div>
                 <input type="text" id="log-detail" placeholder="Detalle..." style="margin-top:0.5rem">
                 <button class="btn-primary" style="width:100%; margin-top:0.5rem" onclick="app.addPlantLog(${plant.id})">Guardar</button>
             </div>
             <div class="log-list" style="margin-top:1.5rem">
-                <h3>📜 Historial</h3>
-                ${plant.logs.sort((a,b) => b.id - a.id).map(log => {
-                    const icon = log.actionType.includes('Plaga') ? '🐛' : log.actionType === 'Riego' ? '💧' : log.actionType === 'Medición' ? '📏' : log.actionType === 'Sustrato' ? '🟤' : log.actionType === 'Transplante' ? '🧺' : '📝';
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem">
+                    <h3 style="margin:0">📜 Historial</h3>
+                    <select id="log-filter" style="width:auto; font-size:0.8rem; padding:2px 5px" onchange="app.setLogFilter(this.value)">
+                        ${filterOptions.map(opt => `<option value="${opt}" ${app.currentLogFilter === opt ? 'selected' : ''}>${opt === 'Todos' ? '🔍' : (logIcons[opt] || '')} ${opt}</option>`).join('')}
+                    </select>
+                </div>
+                ${filteredLogs.length === 0 ? '<p style="text-align:center; color:var(--text-light); font-size:0.85rem">Sin registros para este filtro.</p>' : filteredLogs.map(log => {
+                    const icon = logIcons[log.actionType] || '📝';
                     return `
                     <div class="log-item">
                         <div style="display:flex; justify-content:space-between; align-items:center">
@@ -536,21 +583,35 @@ const app = {
         `;
     },
 
-    removePlantLog(plantId, logId) {
-        const plant = store.data.plants.find(p => p.id === plantId);
-        if (plant) {
-            ui.askConfirm("¿Borrar registro?", "Esta acción no se puede deshacer.", () => {
-                plant.logs = plant.logs.filter(l => l.id !== logId);
-                store.save();
-                this.viewPlantDetail(plantId);
-            });
+    updateLogInventorySelect() {
+        const action = document.getElementById('log-action').value;
+        const wrap = document.getElementById('log-inventory-item-wrap');
+        const select = document.getElementById('log-inventory-item');
+        
+        const map = { 'Sustrato': 'substrates', 'Fertilizante': 'fertilizers', 'Polvos': 'powders', 'Líquidos': 'liquids' };
+        const category = map[action];
+        
+        if (category && store.data.inventory[category].length > 0) {
+            wrap.style.display = 'block';
+            select.innerHTML = `<option value="">-- Elegir de Inventario --</option>` + 
+                store.data.inventory[category].map(item => `<option value="${item.name}">${item.name} (${item.qty} ${item.unit})</option>`).join('');
+        } else {
+            wrap.style.display = 'none';
         }
     },
 
     addPlantLog(id) {
         const actionType = document.getElementById('log-action').value;
         const date = document.getElementById('log-date').value;
-        const detail = document.getElementById('log-detail').value || `Acción: ${actionType}`;
+        const inventoryItem = document.getElementById('log-inventory-item').value;
+        let detail = document.getElementById('log-detail').value;
+        
+        if (inventoryItem) {
+            detail = detail ? `[${inventoryItem}] ${detail}` : `Usado: ${inventoryItem}`;
+        }
+        
+        if (!detail) detail = `Acción: ${actionType}`;
+
         const plant = store.data.plants.find(p => p.id === id);
         if (plant) {
             plant.logs.push({ id: Date.now(), date, actionType, detail });
@@ -565,6 +626,20 @@ const app = {
         if (!plant) return;
         const setter = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
         setter('edit-p-id', id); setter('edit-p-name', plant.name); setter('edit-p-location', plant.location); setter('edit-p-light', plant.light); setter('edit-p-pot', plant.potType); setter('edit-p-dormancy', plant.dormancy);
+        
+        const typeSelect = document.getElementById('edit-p-type');
+        const typeVal = `${plant.icon}|${plant.type}`;
+        const exists = Array.from(typeSelect.options).some(opt => opt.value === typeVal);
+        
+        if (exists) {
+            typeSelect.value = typeVal;
+            document.getElementById('edit-p-custom-type-wrap').style.display = 'none';
+        } else {
+            typeSelect.value = 'CUSTOM';
+            document.getElementById('edit-p-custom-type-wrap').style.display = 'block';
+            document.getElementById('edit-p-custom-type').value = typeVal;
+        }
+        
         ui.showModal('modal-edit-plant');
     },
 
@@ -573,12 +648,66 @@ const app = {
         const id = parseInt(document.getElementById('edit-p-id').value);
         const plant = store.data.plants.find(p => p.id === id);
         if (plant) {
+            const typeSelect = document.getElementById('edit-p-type').value;
+            if (typeSelect === 'CUSTOM') {
+                const custom = document.getElementById('edit-p-custom-type').value || '🌿|Planta';
+                const parts = custom.includes('|') ? custom.split('|') : ['🌿', custom];
+                plant.icon = parts[0]; plant.type = parts[1];
+            } else {
+                const parts = typeSelect.split('|');
+                plant.icon = parts[0]; plant.type = parts[1];
+            }
+
             plant.name = document.getElementById('edit-p-name').value;
             plant.location = document.getElementById('edit-p-location').value;
             plant.light = document.getElementById('edit-p-light').value;
             plant.potType = document.getElementById('edit-p-pot').value;
             plant.dormancy = document.getElementById('edit-p-dormancy').value;
             store.save(); this.viewPlantDetail(id); ui.closeModal('modal-edit-plant');
+        }
+    },
+
+    handleSearch(query) {
+        const resultsPanel = document.getElementById('search-results');
+        if (!query.trim()) { resultsPanel.style.display = 'none'; return; }
+        
+        const q = query.toLowerCase();
+        const matches = [];
+
+        // Buscar en Plantas
+        store.data.plants.forEach(p => {
+            if (p.name.toLowerCase().includes(q) || p.location.toLowerCase().includes(q) || p.type.toLowerCase().includes(q)) {
+                matches.push({ type: 'Planta', name: p.name, icon: p.icon, id: p.id, action: () => { ui.switchTab('tab-plants'); app.viewPlantDetail(p.id); } });
+            }
+        });
+
+        // Buscar en Propagaciones
+        store.data.propagations.forEach(p => {
+            if (p.name.toLowerCase().includes(q) || p.method.toLowerCase().includes(q)) {
+                matches.push({ type: 'Propagación', name: p.name, icon: '🧪', id: p.id, action: () => ui.switchTab('tab-nursery') });
+            }
+        });
+
+        // Buscar en Inventario
+        ['substrates', 'powders', 'liquids', 'others'].forEach(cat => {
+            store.data.inventory[cat].forEach(item => {
+                if (item.name.toLowerCase().includes(q)) {
+                    matches.push({ type: 'Inventario', name: item.name, icon: '📦', action: () => ui.switchTab('tab-inventory') });
+                }
+            });
+        });
+
+        // Renderizar resultados
+        if (matches.length > 0) {
+            resultsPanel.innerHTML = matches.map(m => `
+                <div class="search-result-item" onclick="(${m.action.toString()})(); document.getElementById('search-results').style.display='none'; document.getElementById('global-search').value=''">
+                    <span>${m.icon} <strong>${m.name}</strong> <small>(${m.type})</small></span>
+                </div>
+            `).join('');
+            resultsPanel.style.display = 'block';
+        } else {
+            resultsPanel.innerHTML = '<div class="search-result-item"><span>No se encontraron resultados</span></div>';
+            resultsPanel.style.display = 'block';
         }
     },
 
