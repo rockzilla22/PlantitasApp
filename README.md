@@ -1,35 +1,35 @@
-# ?? PlantitasApp - Gestión Offline-First
+# 馃尶 PlantitasApp - Gesti贸n Offline-First
 
-?Bienvenido a **PlantitasApp**! Una SPA (Single Page Application) dise?ada para los amantes de la botánica que buscan simplicidad, privacidad y control total.
+隆Bienvenido a **PlantitasApp**! Una SPA (Single Page Application) dise帽ada para los amantes de la bot谩nica que buscan simplicidad, privacidad y control total.
 
-Esta aplicación es **Offline-First**, lo que significa que no necesita servidores, bases de datos externas ni conexión a internet para funcionar. Todo vive localmente en tu navegador.
+Esta aplicaci贸n es **Offline-First**, lo que significa que no necesita servidores, bases de datos externas ni conexi贸n a internet para funcionar. Todo vive localmente en tu navegador.
 
-## ?? Características Principales (v3.2)
+## 馃殌 Caracter铆sticas Principales (v3.2)
 
-- ?? **Buscador Global Inteligente:** Encuentra plantas, insumos o notas al instante con autocompletado reactivo.
-- ?? **Gestión de Plantas:** Seguimiento detallado de riegos, trasplantes y salud (plagas/enfermedades) con iconos personalizados.
-- ?? **Inventario de Insumos:** Control de stock de sustratos, fertilizantes y más, con gestión de cantidades decimales.
-- ?? **Integración con Google Calendar:** Programa recordatorios de cuidado con un solo clic.
-- ?? **Privacidad y Respaldos:** Sistema de exportación e importación vía archivos JSON. Tus datos te pertenecen.
-- ?? **Edición Atómica:** Modifica cualquier propiedad de tus plantas sin perder su historial de logs.
-- ?? **Interfaz Moderna:** Layout Maestro-Detalle responsivo y uso de modales nativos (`<dialog>`) para una experiencia fluida.
+- 馃攳 **Buscador Global Inteligente:** Encuentra plantas, insumos o notas al instante con autocompletado reactivo.
+- 馃尡 **Gesti贸n de Plantas:** Seguimiento detallado de riegos, trasplantes y salud (plagas/enfermedades) con iconos personalizados.
+- 馃摝 **Inventario de Insumos:** Control de stock de sustratos, fertilizantes y m谩s, con gesti贸n de cantidades decimales.
+- 馃搮 **Integraci贸n con Google Calendar:** Programa recordatorios de cuidado con un solo clic.
+- 馃攼 **Privacidad y Respaldos:** Sistema de exportaci贸n e importaci贸n v铆a archivos JSON. Tus datos te pertenecen.
+- 鉁忥笍 **Edici贸n At贸mica:** Modifica cualquier propiedad de tus plantas sin perder su historial de logs.
+- 馃帹 **Interfaz Moderna:** Layout Maestro-Detalle responsivo y uso de modales nativos (`<dialog>`) para una experiencia fluida.
 
-## ?? Stack Tecnológico
+## 馃О Stack Tecnol贸gico
 
-- **HTML5 & CSS3:** Layout basado en Grid dinámico y Flexbox.
-- **Vanilla JavaScript:** Lógica de negocio pura, sin frameworks ni dependencias externas.
+- **HTML5 & CSS3:** Layout basado en Grid din谩mico y Flexbox.
+- **Vanilla JavaScript:** L贸gica de negocio pura, sin frameworks ni dependencias externas.
 - **LocalStorage:** Persistencia persistente y local.
-- **SVG Data URIs:** Iconografía dinámica y favicon liviano.
+- **SVG Data URIs:** Iconograf铆a din谩mica y favicon liviano.
 
-## ?? Cómo Usar
+## 馃摉 C贸mo Usar
 
-Al ser una aplicación basada en el protocolo `file://`, su ejecución es inmediata:
+Al ser una aplicaci贸n basada en el protocolo `file://`, su ejecuci贸n es inmediata:
 
 1. Clona el repositorio o descarga los archivos.
 2. Abre el archivo `Plantitas.html` en cualquier navegador moderno.
-3. ?Empezá a cargar tu jardín digital!
+3. 隆Empez谩 a cargar tu jard铆n digital!
 
-> **Pro Tip:** Recordá usar el botón **Exportar** periódicamente para tener una copia física de tus datos en formato JSON.
+> **Pro Tip:** Record谩 usar el bot贸n **Exportar** peri贸dicamente para tener una copia f铆sica de tus datos en formato JSON.
 
 ---
 
