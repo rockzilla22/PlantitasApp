@@ -14,7 +14,7 @@ Esta aplicación es **Offline-First**, lo que significa que no necesita servidor
 - ✏️ **Edición Atómica:** Modifica cualquier propiedad de tus plantas sin perder su historial de logs.
 - 🎨 **Interfaz Moderna:** Layout Maestro-Detalle responsivo y uso de modales nativos (`<dialog>`) para una experiencia fluida.
 
-## 🛠️ Stack Tecnológico
+## 🛠�?Stack Tecnológico
 
 - **HTML5 & CSS3:** Layout basado en Grid dinámico y Flexbox.
 - **Vanilla JavaScript:** Lógica de negocio pura, sin frameworks ni dependencias externas.
@@ -32,4 +32,4 @@ Al ser una aplicación basada en el protocolo `file://`, su ejecución es inmedi
 > **Pro Tip:** Recordá usar el botón **Exportar** periódicamente para tener una copia física de tus datos en formato JSON.
 
 ---
-Desarrollado con ❤️ y mucha cafeína. 🌿☕
+Desarrollado para Erzu, con vibecode mientras jugaba Dota, porqu�� yolo.
