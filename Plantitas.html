@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantitasApp - Gestión Offline</title>
+    <title>PlantitasApp PRO - Gestión Botánica</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,21 +15,24 @@
             
             <div class="search-container" id="global-search-container">
                 <div class="search-input-wrapper">
-                    <input type="text" id="global-search" placeholder="Buscar..." oninput="app.handleSearch(event.target.value)">
+                    <input type="text" id="global-search" placeholder="Buscar en toda la app..." oninput="app.handleSearch(event.target.value)">
                     <span class="search-icon">🔍</span>
                 </div>
                 <div id="search-results" class="search-results-panel"></div>
             </div>
 
             <div class="import-group">
-                <label for="import-file" class="btn-backup">Importar</label>
+                <label for="import-file" class="btn-backup">Importar JSON</label>
                 <input type="file" id="import-file" accept=".json" onchange="app.importBackup(event)" style="display:none">
             </div>
         </div>
         <nav class="tab-menu">
             <button class="tab-link active" data-tab="tab-plants">Mis Plantas</button>
-            <button class="tab-link" data-tab="tab-inventory">Inventario</button>
-            <button class="tab-link" data-tab="tab-notes">Notas Globales</button>
+            <button class="tab-link" data-tab="tab-nursery">🧪 Propagación</button>
+            <button class="tab-link" data-tab="tab-season">📅 Temporada</button>
+            <button class="tab-link" data-tab="tab-wishlist">✨ Wishlist</button>
+            <button class="tab-link" data-tab="tab-inventory">📦 Inventario</button>
+            <button class="tab-link" data-tab="tab-notes">📝 Notas</button>
         </nav>
     </header>
 
@@ -42,135 +45,242 @@
             </div>
             <div class="plants-layout">
                 <div id="plants-list" class="grid-container">
-                    <!-- Se renderiza dinámicamente -->
+                    <!-- Dinámico -->
                 </div>
                 <aside id="plant-detail-panel" class="detail-panel">
                     <div class="empty-state">
-                        <p>Seleccioná una planta para ver su detalle</p>
+                        <p>Seleccioná una planta para ver su detalle profesional</p>
                     </div>
                 </aside>
+            </div>
+        </section>
+
+        <!-- Vista: Propagación -->
+        <section id="tab-nursery" class="tab-content">
+            <div class="view-header">
+                <h2>Laboratorio de Propagación</h2>
+                <button class="btn-primary" onclick="ui.showModal('modal-add-prop')">Nueva Propagación</button>
+            </div>
+            <div class="filter-bar" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-backup" onclick="app.filterNursery('TODOS')">Todos</button>
+                <button class="btn-backup" onclick="app.filterNursery('Activo')">⌛ Activos</button>
+                <button class="btn-backup" onclick="app.filterNursery('Éxito')">✅ Éxito</button>
+                <button class="btn-backup" onclick="app.filterNursery('Trasplantada')">🌳 Trasplantadas</button>
+                <button class="btn-backup" onclick="app.filterNursery('Fracaso')">❌ Fallos</button>
+            </div>
+            <div id="nursery-list" class="prop-grid">
+                <!-- Dinámico -->
+            </div>
+        </section>
+
+        <!-- Vista: Temporada -->
+        <section id="tab-season" class="tab-content">
+            <div class="view-header">
+                <h2>📅 Planeación Anual</h2>
+            </div>
+            <div id="season-grid" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Dinámico: 4 filas por temporada -->
+            </div>
+        </section>
+
+        <!-- Vista: Wishlist -->
+        <section id="tab-wishlist" class="tab-content">
+            <div class="view-header">
+                <h2>✨ Lista de Deseos (General)</h2>
+                <button class="btn-primary" onclick="ui.showModal('modal-add-wish')">Añadir Deseo</button>
+            </div>
+            <div id="wishlist-container" class="grid-container">
+                <!-- Dinámico -->
             </div>
         </section>
 
         <!-- Vista: Inventario -->
         <section id="tab-inventory" class="tab-content">
             <div class="view-header">
-                <h2>Inventario de Insumos</h2>
+                <h2>📦 Inventario de Insumos</h2>
                 <button class="btn-primary" onclick="ui.showModal('modal-add-item')">Añadir Insumo</button>
             </div>
             <div class="inventory-sections">
-                <div class="inventory-card">
-                    <h3>Sustratos 🟤</h3>
-                    <ul id="list-substrates"></ul>
-                </div>
-                <div class="inventory-card">
-                    <h3>Polvos ⚪</h3>
-                    <ul id="list-powders"></ul>
-                </div>
-                <div class="inventory-card">
-                    <h3>Líquidos 🧪</h3>
-                    <ul id="list-liquids"></ul>
-                </div>
-                <div class="inventory-card">
-                    <h3>Otros 📦</h3>
-                    <ul id="list-others"></ul>
-                </div>
+                <div class="inventory-card"><h3>🟤 Sustratos</h3><ul id="list-substrates"></ul></div>
+                <div class="inventory-card"><h3>⚪ Polvos</h3><ul id="list-powders"></ul></div>
+                <div class="inventory-card"><h3>🧪 Líquidos</h3><ul id="list-liquids"></ul></div>
+                <div class="inventory-card"><h3>📦 Otros</h3><ul id="list-others"></ul></div>
             </div>
         </section>
 
-        <!-- Vista: Notas Globales -->
+        <!-- Vista: Notas -->
         <section id="tab-notes" class="tab-content">
-            <div class="view-header">
-                <h2>Notas Globales</h2>
-                <button class="btn-primary" onclick="ui.showModal('modal-add-note')">Nueva Nota</button>
-            </div>
-            <div id="notes-list" class="list-container">
-                <!-- Se renderiza dinámicamente -->
-            </div>
+            <div class="view-header"><h2>📝 Notas Globales</h2><button class="btn-primary" onclick="ui.showModal('modal-add-note')">Nueva Nota</button></div>
+            <div id="notes-list" class="list-container"></div>
         </section>
     </main>
 
-    <!-- Modales (Dialogs) -->
-    
-    <!-- Modal: Agregar Planta -->
+    <!-- MODALES: AÑADIR -->
+
     <dialog id="modal-add-plant">
         <form method="dialog" onsubmit="app.handleAddPlant(event)">
-            <h3>Nueva Planta</h3>
-            <div class="form-group">
-                <label for="p-icon">Icono / Tipo</label>
-                <select id="p-icon" onchange="app.toggleCustomType(this.value)">
-                    <option value="🌿|Planta">Planta 🌿</option>
-                    <option value="🌸|Flor">Flor 🌸</option>
-                    <option value="🌵|Cactus">Cactus / Suculenta 🌵</option>
-                    <option value="🌳|Árbol">Árbol / Arbusto 🌳</option>
-                    <option value="🍀|Trébol">Trébol / Suerte 🍀</option>
-                    <option value="🍃|Hierba">Hierba 🍃</option>
-                    <option value="🌿|Philodendron">Philodendron 🌿</option>
-                    <option value="🍃|Alocasia">Alocasia 🍃</option>
-                    <option value="🌿|Monstera">Monstera 🌿</option>
-                    <option value="🍃|Syngonium">Syngonium 🍃</option>
-                    <option value="🦷|Carnívora">Carnívora 🦷</option>
-                    <option value="CUSTOM">Otra...</option>
-                </select>
+            <h3>🌿 Nueva Planta</h3>
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="p-name" required placeholder="Ej: Monstera Albo"></div>
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group"><label>📍 Ubicación</label><input type="text" id="p-location" placeholder="Ej: Living"></div>
+                <div class="form-group">
+                    <label>☀️ Luz</label>
+                    <select id="p-light">
+                        <option value="Baja">☁️ Baja</option>
+                        <option value="Media" selected>⛅ Media</option>
+                        <option value="Alta/Directa">☀️ Alta/Directa</option>
+                    </select>
+                </div>
             </div>
-            <div id="custom-type-group" class="form-group" style="display:none">
-                <label for="p-custom-type">¿Qué tipo? (Ej: Helecho 🌿)</label>
-                <input type="text" id="p-custom-type" placeholder="Nombre + Emoji">
-            </div>
-            <div class="form-group">
-                <label for="p-name">Nombre de la planta</label>
-                <input type="text" id="p-name" required placeholder="Ej: Monstera Deliciosa" 
-                    oninvalid="this.setCustomValidity('Este campo es obligatorio')" 
-                    oninput="this.setCustomValidity('')">
-            </div>
-            <div class="form-group">
-                <label for="p-watered">Último riego</label>
-                <input type="date" id="p-watered" required 
-                    oninvalid="this.setCustomValidity('Por favor, selecciona una fecha')" 
-                    oninput="this.setCustomValidity('')">
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group">
+                    <label>🪴 Maceta</label>
+                    <select id="p-pot">
+                        <option value="Plástico">📦 Plástico</option>
+                        <option value="Terracota">🧱 Terracota</option>
+                        <option value="Autorriego">💧 Autorriego</option>
+                        <option value="Barro">🏺 Barro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>💤 Dormancia</label>
+                    <select id="p-dormancy">
+                        <option value="Ninguna">🚫 Ninguna</option>
+                        <option value="Invierno">❄️ Invierno</option>
+                        <option value="Verano">☀️ Verano</option>
+                    </select>
+                </div>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-plant')">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar Planta</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-add-prop">
+        <form method="dialog" onsubmit="app.handleAddPropagation(event)">
+            <h3>🧪 Nueva Propagación</h3>
+            <div class="form-group">
+                <label>Planta Madre (Opcional)</label>
+                <select id="prop-parent"><option value="">-- Sin madre (Independiente) --</option></select>
+            </div>
+            <div class="form-group"><label>Nombre Identificador (obligatorio)</label><input type="text" id="prop-name" placeholder="Ej: Esqueje de Pothos" required></div>
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group">
+                    <label>Método</label>
+                    <select id="prop-method">
+                        <option value="Agua">💧 Agua</option>
+                        <option value="Sustrato">🟤 Sustrato</option>
+                        <option value="Acodo">🌳 Acodo</option>
+                        <option value="Semilla">🌱 Semilla</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="prop-start" required></div>
+            </div>
+            <div class="form-group"><label>📝 Notas</label><textarea id="prop-notes" placeholder="Condiciones, hormonas, etc."></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-prop')">Cancelar</button>
+                <button type="submit" class="btn-primary">Iniciar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-add-wish">
+        <form method="dialog" onsubmit="app.handleAddWish(event)">
+            <h3>✨ Nuevo Deseo</h3>
+            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="w-name" required placeholder="Ej: Tijeras, Fertilizante, Monstera..."></div>
+            <div class="form-group">
+                <label>Prioridad</label>
+                <select id="w-priority">
+                    <option value="Baja">Baja</option>
+                    <option value="Media" selected>Media</option>
+                    <option value="Alta">🔥 Alta</option>
+                </select>
+            </div>
+            <div class="form-group"><label>📝 Notas</label><textarea id="w-notes" placeholder="Link, precio, lugar..."></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-wish')">Cancelar</button>
+                <button type="submit" class="btn-primary">Añadir</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-add-season-task">
+        <form method="dialog" onsubmit="app.handleAddSeasonTask(event)">
+            <h3>📅 Planear Acción</h3>
+            <input type="hidden" id="st-season">
+            <div class="form-group">
+                <label>Tipo de Tarea</label>
+                <select id="st-type">
+                    <option value="Poda">✂️ Poda</option>
+                    <option value="Siembra">🌱 Siembra</option>
+                    <option value="Transplante">🪴 Transplante</option>
+                    <option value="Abonado">🧪 Abonado</option>
+                    <option value="Limpieza">🧹 Limpieza</option>
+                    <option value="Otro">📝 Otro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Descripción del Plan (obligatorio)</label>
+                <textarea id="st-desc" required placeholder="Ej: Podar los geranios..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-season-task')">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar Plan</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-add-note">
+        <form method="dialog" onsubmit="app.handleAddNote(event)">
+            <h3>📝 Nueva Nota Global</h3>
+            <div class="form-group"><label>Contenido de la nota (obligatorio)</label><textarea id="n-content" rows="4" required placeholder="Ej: Comprar fertilizante orgánico..."></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-note')">Cancelar</button>
                 <button type="submit" class="btn-primary">Guardar</button>
             </div>
         </form>
     </dialog>
 
-    <!-- Modal: Agregar Insumo -->
+    <dialog id="modal-edit-note">
+        <form method="dialog" onsubmit="app.handleEditNote(event)">
+            <h3>✏️ Editar Nota Global</h3>
+            <input type="hidden" id="edit-n-id">
+            <div class="form-group">
+                <label>Contenido de la nota (obligatorio)</label>
+                <textarea id="edit-n-content" rows="4" required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-note')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </dialog>
+
     <dialog id="modal-add-item">
         <form method="dialog" onsubmit="app.handleAddItem(event)">
-            <h3>Nuevo Insumo</h3>
+            <h3>📦 Nuevo Insumo</h3>
             <div class="form-group">
-                <label for="i-type">Categoría</label>
-                <select id="i-type" required>
-                    <option value="substrates">Sustrato 🟤</option>
-                    <option value="powders">Polvo ⚪</option>
-                    <option value="liquids">Líquido 🧪</option>
-                    <option value="others">Otros 📦</option>
+                <label>Categoría</label>
+                <select id="i-type">
+                    <option value="substrates">🟤 Sustratos</option>
+                    <option value="powders">⚪ Polvos</option>
+                    <option value="liquids">🧪 Líquidos</option>
+                    <option value="others">📦 Otros</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="i-name">Nombre del insumo</label>
-                <input type="text" id="i-name" required placeholder="Ej: Humus de lombriz"
-                    oninvalid="this.setCustomValidity('El nombre es necesario')" 
-                    oninput="this.setCustomValidity('')">
-            </div>
+            <div class="form-group"><label>Nombre del insumo (obligatorio)</label><input type="text" id="i-name" required placeholder="Ej: Humus de lombriz"></div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="i-qty" step="0.1" required value="1"></div>
                 <div class="form-group">
-                    <label for="i-qty">Cantidad</label>
-                    <input type="number" id="i-qty" step="0.1" required value="1"
-                        oninvalid="this.setCustomValidity('Ingresa una cantidad válida')" 
-                        oninput="this.setCustomValidity('')">
-                </div>
-                <div class="form-group">
-                    <label for="i-unit">Unidad</label>
+                    <label>Unidad</label>
                     <select id="i-unit">
-                        <option value="kg">kg</option>
-                        <option value="L">Litros</option>
-                        <option value="Bolsas">Bolsas</option>
-                        <option value="un">unidades</option>
-                        <option value="g">gramos</option>
-                        <option value="ml">ml</option>
+                        <option value="L">L (Litros)</option>
+                        <option value="Kg">Kg (Kilos)</option>
+                        <option value="g">g (Gramos)</option>
+                        <option value="u.">u. (Unidades)</option>
+                        <option value="Paq.">Paq. (Paquetes)</option>
                     </select>
                 </div>
             </div>
@@ -181,105 +291,156 @@
         </form>
     </dialog>
 
-    <!-- Modal: Agregar Nota -->
-    <dialog id="modal-add-note">
-        <form method="dialog" onsubmit="app.handleAddNote(event)">
-            <h3>Nueva Nota</h3>
-            <div class="form-group">
-                <label for="n-content">Contenido</label>
-                <textarea id="n-content" required placeholder="Escribe algo importante..."
-                    oninvalid="this.setCustomValidity('La nota no puede estar vacía')" 
-                    oninput="this.setCustomValidity('')"></textarea>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-note')">Cancelar</button>
-                <button type="submit" class="btn-primary">Guardar</button>
-            </div>
-        </form>
-    </dialog>
+    <!-- MODALES: EDITAR -->
 
-    <!-- Modal: Editar Planta -->
     <dialog id="modal-edit-plant">
         <form method="dialog" onsubmit="app.handleEditPlant(event)">
-            <h3>Editar Planta</h3>
+            <h3>✏️ Editar Perfil Botánico</h3>
             <input type="hidden" id="edit-p-id">
-            
-            <div class="form-group">
-                <label for="edit-p-icon">Icono / Tipo</label>
-                <select id="edit-p-icon" onchange="app.toggleEditCustomType(this.value)">
-                    <option value="🌿|Planta">Planta 🌿</option>
-                    <option value="🌸|Flor">Flor 🌸</option>
-                    <option value="🌵|Cactus">Cactus / Suculenta 🌵</option>
-                    <option value="🌳|Árbol">Árbol / Arbusto 🌳</option>
-                    <option value="🍀|Trébol">Trébol / Suerte 🍀</option>
-                    <option value="🍃|Hierba">Hierba 🍃</option>
-                    <option value="🌿|Philodendron">Philodendron 🌿</option>
-                    <option value="🍃|Alocasia">Alocasia 🍃</option>
-                    <option value="🌿|Monstera">Monstera 🌿</option>
-                    <option value="🍃|Syngonium">Syngonium 🍃</option>
-                    <option value="🦷|Carnívora">Carnívora 🦷</option>
-                    <option value="CUSTOM">Otra...</option>
-                </select>
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-p-name" required></div>
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group"><label>📍 Ubicación</label><input type="text" id="edit-p-location"></div>
+                <div class="form-group">
+                    <label>☀️ Luz</label>
+                    <select id="edit-p-light">
+                        <option value="Baja">☁️ Baja</option>
+                        <option value="Media">⛅ Media</option>
+                        <option value="Alta/Directa">☀️ Alta/Directa</option>
+                    </select>
+                </div>
             </div>
-            <div id="edit-custom-type-group" class="form-group" style="display:none">
-                <label for="edit-p-custom-type">¿Qué tipo? (Ej: Helecho 🌿)</label>
-                <input type="text" id="edit-p-custom-type" placeholder="Nombre + Emoji">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-p-name">Nombre de la planta</label>
-                <input type="text" id="edit-p-name" required placeholder="Ej: Mi Monstera"
-                    oninvalid="this.setCustomValidity('Ingresa un nombre')" 
-                    oninput="this.setCustomValidity('')">
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group">
+                    <label>🪴 Maceta</label>
+                    <select id="edit-p-pot">
+                        <option value="Plástico">📦 Plástico</option>
+                        <option value="Terracota">🧱 Terracota</option>
+                        <option value="Autorriego">💧 Autorriego</option>
+                        <option value="Barro">🏺 Barro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>💤 Dormancia</label>
+                    <select id="edit-p-dormancy">
+                        <option value="Ninguna">🚫 Ninguna</option>
+                        <option value="Invierno">❄️ Invierno</option>
+                        <option value="Verano">☀️ Verano</option>
+                    </select>
+                </div>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-plant')">Cancelar</button>
-                <button type="submit" class="btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
             </div>
         </form>
     </dialog>
 
-    <!-- Modal: Recordatorio Calendario -->
-    <dialog id="modal-calendar">
-        <form method="dialog" onsubmit="app.handleCalendarSubmit(event)">
-            <h3>Recordatorio de Google</h3>
+    <dialog id="modal-edit-prop">
+        <form method="dialog" onsubmit="app.handleEditProp(event)">
+            <h3>✏️ Editar Propagación</h3>
+            <input type="hidden" id="edit-prop-id">
             <div class="form-group">
-                <label for="cal-title">Título</label>
-                <input type="text" id="cal-title" required>
+                <label>Nombre Identificador (obligatorio)</label>
+                <input type="text" id="edit-prop-name" required>
+            </div>
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group">
+                    <label>Método</label>
+                    <select id="edit-prop-method">
+                        <option value="Agua">💧 Agua</option>
+                        <option value="Sustrato">🟤 Sustrato</option>
+                        <option value="Acodo">🌳 Acodo</option>
+                        <option value="Semilla">🌱 Semilla</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="edit-prop-start" required></div>
+            </div>
+            <div class="form-group"><label>📝 Notas</label><textarea id="edit-prop-notes"></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-prop')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-edit-wish">
+        <form method="dialog" onsubmit="app.handleEditWish(event)">
+            <h3>✏️ Editar Deseo</h3>
+            <input type="hidden" id="edit-w-id">
+            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="edit-w-name" required></div>
+            <div class="form-group">
+                <label>Prioridad</label>
+                <select id="edit-w-priority">
+                    <option value="Baja">Baja</option>
+                    <option value="Media">Media</option>
+                    <option value="Alta">🔥 Alta</option>
+                </select>
+            </div>
+            <div class="form-group"><label>📝 Notas</label><textarea id="edit-w-notes"></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-wish')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modal-edit-season-task">
+        <form method="dialog" onsubmit="app.handleEditSeasonTask(event)">
+            <h3>✏️ Editar Plan de Temporada</h3>
+            <input type="hidden" id="edit-st-season">
+            <input type="hidden" id="edit-st-idx">
+            <div class="form-group">
+                <label>Tipo de Tarea</label>
+                <select id="edit-st-type">
+                    <option value="Poda">✂️ Poda</option>
+                    <option value="Siembra">🌱 Siembra</option>
+                    <option value="Transplante">🪴 Transplante</option>
+                    <option value="Abonado">🧪 Abonado</option>
+                    <option value="Limpieza">🧹 Limpieza</option>
+                    <option value="Otro">📝 Otro</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="cal-desc">Descripción</label>
-                <textarea id="cal-desc" placeholder="Detalles adicionales..."></textarea>
-            </div>
-            <div class="form-group">
-                <label for="cal-date">Fecha</label>
-                <input type="date" id="cal-date" required>
+                <label>Descripción del Plan (obligatorio)</label>
+                <textarea id="edit-st-desc" required></textarea>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn-text" onclick="ui.closeModal('modal-calendar')">Cancelar</button>
-                <button type="submit" class="btn-primary">Añadir a Google Calendar 📅</button>
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-season-task')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar Plan</button>
             </div>
         </form>
     </dialog>
 
-    <!-- Modal: Información / Éxito -->
-    <dialog id="modal-info" style="text-align:center">
-        <h3 id="info-title">¡Logrado!</h3>
-        <p id="info-msg" style="margin:1rem 0; color:var(--text-light)"></p>
-        <div class="modal-actions" style="justify-content:center">
-            <button type="button" class="btn-primary" onclick="ui.closeModal('modal-info')">Entendido</button>
-        </div>
+    <dialog id="modal-edit-item">
+        <form method="dialog" onsubmit="app.handleEditItem(event)">
+            <h3>✏️ Editar Insumo</h3>
+            <input type="hidden" id="edit-i-cat">
+            <input type="hidden" id="edit-i-idx">
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-i-name" required></div>
+            <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="edit-i-qty" step="0.1" required></div>
+                <div class="form-group">
+                    <label>Unidad</label>
+                    <select id="edit-i-unit">
+                        <option value="L">L (Litros)</option>
+                        <option value="Kg">Kg (Kilos)</option>
+                        <option value="g">g (Gramos)</option>
+                        <option value="u.">u. (Unidades)</option>
+                        <option value="Paq.">Paq. (Paquetes)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-item')">Cancelar</button>
+                <button type="submit" class="btn-primary">Actualizar</button>
+            </div>
+        </form>
     </dialog>
 
-    <!-- Modal: Confirmación Estética -->
-    <dialog id="modal-confirm" style="text-align:center">
-        <h3 id="confirm-title">¿Estás seguro?</h3>
-        <p id="confirm-msg" style="margin:1rem 0; color:var(--text-light)"></p>
-        <div class="modal-actions" style="justify-content:center">
-            <button type="button" class="btn-text" onclick="ui.closeModal('modal-confirm')">Cancelar</button>
-            <button type="button" id="confirm-yes-btn" class="btn-primary" style="background:var(--danger)">Eliminar</button>
-        </div>
-    </dialog>
+    <!-- OTROS MODALES -->
+    <dialog id="modal-calendar"><form method="dialog" onsubmit="app.handleCalendarSubmit(event)"><h3>📅 Recordatorio Google</h3><div class="form-group"><label>Título (obligatorio)</label><input type="text" id="cal-title" required></div><div class="form-group"><label>Descripción</label><textarea id="cal-desc"></textarea></div><div class="form-group"><label>Fecha (obligatorio)</label><input type="date" id="cal-date" required></div><div class="modal-actions"><button type="button" class="btn-text" onclick="ui.closeModal('modal-calendar')">Cancelar</button><button type="submit" class="btn-primary">Añadir</button></div></form></dialog>
+    <dialog id="modal-info" style="text-align:center"><h3 id="info-title">¡Logrado!</h3><p id="info-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-primary" onclick="ui.closeModal('modal-info')">Entendido</button></div></dialog>
+    <dialog id="modal-confirm" style="text-align:center"><h3 id="confirm-title">¿Estás seguro?</h3><p id="confirm-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-text" onclick="ui.closeModal('modal-confirm')">Cancelar</button><button type="button" id="confirm-yes-btn" class="btn-primary" style="background:var(--danger)">Confirmar</button></div></dialog>
 
     <script src="app.js"></script>
 </body>
