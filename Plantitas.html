@@ -102,6 +102,7 @@
             </div>
             <div class="inventory-sections">
                 <div class="inventory-card"><h3>🟤 Sustratos</h3><ul id="list-substrates"></ul></div>
+                <div class="inventory-card"><h3>🧴 Fertilizantes</h3><ul id="list-fertilizers"></ul></div>
                 <div class="inventory-card"><h3>⚪ Polvos</h3><ul id="list-powders"></ul></div>
                 <div class="inventory-card"><h3>🧪 Líquidos</h3><ul id="list-liquids"></ul></div>
                 <div class="inventory-card"><h3>📦 Otros</h3><ul id="list-others"></ul></div>
@@ -121,6 +122,29 @@
         <form method="dialog" onsubmit="app.handleAddPlant(event)">
             <h3>🌿 Nueva Planta</h3>
             <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="p-name" required placeholder="Ej: Monstera Albo"></div>
+            <div class="form-group">
+                <label>Tipo de Planta</label>
+                <select id="p-type" onchange="app.toggleCustomType('p-type', 'p-custom-type-wrap')">
+                    <option value="🌿|Planta">🌿 Planta (Genérica)</option>
+                    <option value="🌸|Flor">🌸 Flor</option>
+                    <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
+                    <option value="🌳|Arbusto">🌳 Árbol / Arbusto</option>
+                    <option value="☘️|Trébol">☘️ Trébol</option>
+                    <option value="🌿|Hierba">🌿 Hierba</option>
+                    <option value="🍃|Philodendron">🍃 Philodendron</option>
+                    <option value="🐘|Alocasia">🐘 Alocasia</option>
+                    <option value="🍃|Monstera">🍃 Monstera</option>
+                    <option value="🌿|Syngonium">🌿 Syngonium</option>
+                    <option value="🌱|Carnívora">🌱 Carnívora</option>
+                    <option value="🌿|Aromática">🌿 Aromática</option>
+                    <option value="🍓|Frutal">🍓 Frutal</option>
+                    <option value="CUSTOM">✨ Otra (Personalizada)...</option>
+                </select>
+            </div>
+            <div id="p-custom-type-wrap" class="form-group" style="display:none">
+                <label>Escribí el tipo (con emoji si querés)</label>
+                <input type="text" id="p-custom-type" placeholder="Ej: 🌹 Rosal">
+            </div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div class="form-group"><label>📍 Ubicación</label><input type="text" id="p-location" placeholder="Ej: Living"></div>
                 <div class="form-group">
@@ -250,6 +274,7 @@
                 <label>Categoría</label>
                 <select id="i-type">
                     <option value="substrates">🟤 Sustratos</option>
+                    <option value="fertilizers">🧴 Fertilizantes</option>
                     <option value="powders">⚪ Polvos</option>
                     <option value="liquids">🧪 Líquidos</option>
                     <option value="others">📦 Otros</option>
@@ -283,6 +308,29 @@
             <h3>✏️ Editar Perfil Botánico</h3>
             <input type="hidden" id="edit-p-id">
             <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-p-name" required></div>
+            <div class="form-group">
+                <label>Tipo de Planta</label>
+                <select id="edit-p-type" onchange="app.toggleCustomType('edit-p-type', 'edit-p-custom-type-wrap')">
+                    <option value="🌿|Planta">🌿 Planta (Genérica)</option>
+                    <option value="🌸|Flor">🌸 Flor</option>
+                    <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
+                    <option value="🌳|Arbusto">🌳 Árbol / Arbusto</option>
+                    <option value="☘️|Trébol">☘️ Trébol</option>
+                    <option value="🌿|Hierba">🌿 Hierba</option>
+                    <option value="🍃|Philodendron">🍃 Philodendron</option>
+                    <option value="🐘|Alocasia">🐘 Alocasia</option>
+                    <option value="🍃|Monstera">🍃 Monstera</option>
+                    <option value="🌿|Syngonium">🌿 Syngonium</option>
+                    <option value="🌱|Carnívora">🌱 Carnívora</option>
+                    <option value="🌿|Aromática">🌿 Aromática</option>
+                    <option value="🍓|Frutal">🍓 Frutal</option>
+                    <option value="CUSTOM">✨ Otra (Personalizada)...</option>
+                </select>
+            </div>
+            <div id="edit-p-custom-type-wrap" class="form-group" style="display:none">
+                <label>Escribí el tipo (con emoji si querés)</label>
+                <input type="text" id="edit-p-custom-type" placeholder="Ej: 🌹 Rosal">
+            </div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div class="form-group"><label>📍 Ubicación</label><input type="text" id="edit-p-location"></div>
                 <div class="form-group">
