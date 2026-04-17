@@ -92,7 +92,12 @@ export const normalizeData = (d: any): AppData => {
             status: pr.status || 'Activo',
             notes: pr.notes || ''
         })),
-        wishlist: d.wishlist || [],
+        wishlist: (d.wishlist || []).map((w: any) => ({
+            id: w.id,
+            name: w.name || "Sin nombre",
+            priority: w.priority || "Media",
+            notes: w.notes || ""
+        })),
         seasonalTasks: {
             Primavera: dedupeSeasonTasks(rawSeasonal.Primavera),
             Verano:    dedupeSeasonTasks(rawSeasonal.Verano),

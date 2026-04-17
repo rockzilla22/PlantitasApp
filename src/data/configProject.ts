@@ -173,7 +173,7 @@ const configProject: ConfigProject = {
       plants: { label: "Mis Plantas", href: "/plants" },
       nursery: { label: "🧪 Propagación", href: "/nursery" },
       season: { label: "📅 Temporada", href: "/season" },
-      wishlist: { label: "✨ Wishlist", href: "/wishlist" },
+      wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
       inventory: { label: "📦 Inventario", href: "/inventory" },
       notes: { label: "📝 Notas", href: "/notes" },
     },

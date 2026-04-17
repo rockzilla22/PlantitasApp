@@ -69,8 +69,8 @@ Control de stock para lo que usás en tu jardín:
 - Ajuste de cantidad con botones `+` / `−`
 - Al registrar un log de mantenimiento, el inventario valida el stock disponible
 
-### ✨ Wishlist
-Tu lista de deseos de plantas. Prioridad Alta / Media / Baja con notas.
+### ✨ wishlist
+Tu Lista de Deseos de plantas, artículos y más. Prioridad Alta / Media / Baja con notas.
 
 ### 📝 Notas Globales
 Notas libres sin estructura, para apuntes rápidos, observaciones o ideas.

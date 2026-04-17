@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const WishlistItemSchema = z.object({
+export const wishlistItemSchema = z.object({
   id: z.number(),
   user_id: z.string().uuid().optional(),
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -8,4 +8,4 @@ export const WishlistItemSchema = z.object({
   notes: z.string().default(""),
 });
 
-export type WishlistItem = z.infer<typeof WishlistItemSchema>;
+export type wishlistItem = z.infer<typeof wishlistItemSchema>;
