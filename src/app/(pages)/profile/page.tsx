@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { getPlanLevel, hasPremium } from "@/libs/syncService";
+import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
+import { loadData } from "@/store/plantStore";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
@@ -26,6 +27,11 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const submitting = useRef(false);
 
+  const [showTrash, setShowTrash] = useState(false);
+  const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
+  const [trashLoading, setTrashLoading] = useState(false);
+  const [restoringId, setRestoringId] = useState<number | null>(null);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
@@ -39,6 +45,24 @@ export default function ProfilePage() {
     }
   }, [user]);
 
+  const handleToggleTrash = async () => {
+    if (!showTrash && trashItems.length === 0) {
+      setTrashLoading(true);
+      const items = await loadTrashFromSupabase(user!.id);
+      setTrashItems(items);
+      setTrashLoading(false);
+    }
+    setShowTrash((v) => !v);
+  };
+
+  const handleRestore = async (item: TrashItem) => {
+    setRestoringId(item.id);
+    await restoreTrashItem(item.table, item.id, user!.id);
+    setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
+    await loadData();
+    setRestoringId(null);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting.current) return;
@@ -50,7 +74,7 @@ export default function ProfilePage() {
     const supabase = supabaseBrowser();
     const { error } = await supabase.auth.updateUser({
       data: { full_name: fullName.trim() },
-      ...(phone.trim() ? { phone: phone.trim() } : {}),
+      phone: phone.trim() || "", // Ahora sí mandamos el vacío si hace falta
     });
 
     if (error) {
@@ -74,8 +98,8 @@ export default function ProfilePage() {
   const planLevel = getPlanLevel(user);
   const isPremium = hasPremium(user);
 
-  const initialFullName = user?.user_metadata?.full_name ?? "";
-  const initialPhone = user?.phone ?? "";
+  const initialFullName = user?.user_metadata?.full_name || "";
+  const initialPhone = user?.phone || "";
   const hasChanges = fullName.trim() !== initialFullName || phone.trim() !== initialPhone;
 
   return (
@@ -171,6 +195,61 @@ export default function ProfilePage() {
             </>
           )}
         </div>
+
+        {isPremium && (
+          <div className="trash-section">
+            <button className="trash-toggle" onClick={handleToggleTrash}>
+              🗑 {showTrash ? "Ocultar papelera" : "Ver papelera"}
+              {trashItems.length > 0 && !showTrash && (
+                <span style={{ background: "#ef5350", color: "#fff", borderRadius: "10px", padding: "0 6px", fontSize: "0.72rem" }}>
+                  {trashItems.length}
+                </span>
+              )}
+            </button>
+
+            {showTrash && (
+              <div className="trash-list">
+                {trashLoading ? (
+                  <p className="trash-empty">Cargando...</p>
+                ) : trashItems.length === 0 ? (
+                  <p className="trash-empty">La papelera está vacía.</p>
+                ) : (
+                  (() => {
+                    const groups: Record<string, { label: string; items: TrashItem[] }> = {
+                      plants:      { label: "🌿 Plantas", items: [] },
+                      propagations:{ label: "🧪 Propagaciones", items: [] },
+                      global_notes:{ label: "📝 Notas", items: [] },
+                      wishlist:    { label: "✨ Wishlist", items: [] },
+                    };
+                    trashItems.forEach((item) => groups[item.table]?.items.push(item));
+                    return Object.entries(groups).map(([key, group]) =>
+                      group.items.length === 0 ? null : (
+                        <div key={key}>
+                          <p className="trash-group-title">{group.label}</p>
+                          {group.items.map((item) => (
+                            <div key={item.id} className="trash-item">
+                              <div className="trash-item-info">
+                                <span className="trash-item-name">{item.label}</span>
+                                {item.meta && <span className="trash-item-meta">{item.meta}</span>}
+                              </div>
+                              <button
+                                className="btn-restore"
+                                disabled={restoringId === item.id}
+                                onClick={() => handleRestore(item)}
+                              >
+                                {restoringId === item.id ? "..." : "Restaurar"}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    );
+                  })()
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

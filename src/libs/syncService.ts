@@ -151,6 +151,45 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 }
 
+export interface TrashItem {
+  id: number;
+  table: "plants" | "propagations" | "global_notes" | "wishlist";
+  label: string;
+  meta: string;
+  deleted_at: string;
+}
+
+export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]> {
+  const sb = supabaseBrowser();
+  const [
+    { data: plants },
+    { data: propagations },
+    { data: notes },
+    { data: wishlist },
+  ] = await Promise.all([
+    sb.from("plants").select("id,name,icon,type,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("propagations").select("id,name,method,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("global_notes").select("id,content,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("wishlist").select("id,name,priority,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
+  ]);
+
+  const items: TrashItem[] = [];
+  (plants || []).forEach((p: any) => items.push({ id: p.id, table: "plants", label: `${p.icon} ${p.name}`, meta: p.type, deleted_at: p.deleted_at }));
+  (propagations || []).forEach((p: any) => items.push({ id: p.id, table: "propagations", label: p.name, meta: p.method, deleted_at: p.deleted_at }));
+  (notes || []).forEach((n: any) => items.push({ id: n.id, table: "global_notes", label: n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), meta: "", deleted_at: n.deleted_at }));
+  (wishlist || []).forEach((w: any) => items.push({ id: w.id, table: "wishlist", label: w.name, meta: w.priority, deleted_at: w.deleted_at }));
+
+  return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
+}
+
+export async function restoreTrashItem(table: TrashItem["table"], id: number, userId: string): Promise<void> {
+  const sb = supabaseBrowser();
+  await sb.from(table).update({ deleted_at: null }).eq("id", id).eq("user_id", userId);
+  if (table === "plants") {
+    await sb.from("plant_logs").update({ deleted_at: null }).eq("plant_id", id).eq("user_id", userId);
+  }
+}
+
 export async function loadFromSupabase(userId: string): Promise<AppData | null> {
   const sb = supabaseBrowser();
 

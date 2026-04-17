@@ -39,16 +39,39 @@ const initialData: AppData = {
   globalNotes: [],
 };
 
+const dedupeByName = (items: any[]): any[] => {
+    const seen = new Map<string, any>();
+    (items || []).forEach(item => {
+        if (!seen.has(item.name)) {
+            seen.set(item.name, { ...item });
+        } else {
+            seen.get(item.name)!.qty = Math.max(seen.get(item.name)!.qty, item.qty);
+        }
+    });
+    return Array.from(seen.values());
+};
+
+const dedupeSeasonTasks = (tasks: any[]): any[] => {
+    const seen = new Set<string>();
+    return (tasks || []).filter(t => {
+        const key = `${t.type}|${t.desc}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+};
+
 export const normalizeData = (d: any): AppData => {
     const inv = d.inventory || {};
+    const rawSeasonal = d.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] };
     return {
         inventory: {
-            substrates: inv.substrates || [],
-            fertilizers: inv.fertilizers || [],
-            powders: inv.powders || [],
-            liquids: inv.liquids || [],
-            meds: inv.meds || [],
-            others: inv.others || []
+            substrates: dedupeByName(inv.substrates),
+            fertilizers: dedupeByName(inv.fertilizers),
+            powders: dedupeByName(inv.powders),
+            liquids: dedupeByName(inv.liquids),
+            meds: dedupeByName(inv.meds),
+            others: dedupeByName(inv.others),
         },
         plants: (d.plants || []).map((p: any) => ({
             ...p,
@@ -70,7 +93,12 @@ export const normalizeData = (d: any): AppData => {
             notes: pr.notes || ''
         })),
         wishlist: d.wishlist || [],
-        seasonalTasks: d.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] }
+        seasonalTasks: {
+            Primavera: dedupeSeasonTasks(rawSeasonal.Primavera),
+            Verano:    dedupeSeasonTasks(rawSeasonal.Verano),
+            Otoño:     dedupeSeasonTasks(rawSeasonal.Otoño),
+            Invierno:  dedupeSeasonTasks(rawSeasonal.Invierno),
+        },
     };
 };
 
@@ -306,7 +334,7 @@ export const updateSeasonTask = (season: Season, index: number, task: Partial<Se
 
 export const setStoreData = (rawData: any) => {
   $store.set(normalizeData(rawData));
-  setDirty(true);
+  setDirty(false);
 };
 
 export const mergeData = (incomingData: any) => {
@@ -344,5 +372,5 @@ export const mergeData = (incomingData: any) => {
     inventory: mergeInventory(data.inventory, incoming.inventory),
     seasonalTasks: incoming.seasonalTasks,
   });
-  setDirty(true);
+  setDirty(false);
 };

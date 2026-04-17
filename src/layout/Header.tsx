@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, mergeData, $selectedPlantId } from "@/store/plantStore";
+import { $store, loadData, mergeData, setStoreData, $selectedPlantId } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus } from "@/store/authStore";
@@ -151,6 +151,15 @@ export function Header() {
           (importedData.propagations?.length || 0) +
           (importedData.wishlist?.length || 0) +
           (importedData.globalNotes?.length || 0);
+
+        if (currentTotal === 0) {
+          setStoreData(importedData);
+          openModal("info", {
+            title: "Importación Exitosa",
+            message: `Se han importado ${importedTotal} ítems correctamente.`,
+          });
+          return;
+        }
 
         const msg = `Resumen del archivo:\n- Exportado el: ${exportedDate}\n- Ítems en archivo: ${importedTotal}\n- Ítems en navegador: ${currentTotal}\n\n¿Cómo querés proceder?`;
 
