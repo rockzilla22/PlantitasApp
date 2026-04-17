@@ -1,24 +1,25 @@
-# 🌿 PlantitasApp - Gestión Offline-First
+# 🌿 PlantitasApp - Gestión Offline-First (v4.0)
 
 ¡Bienvenido a **PlantitasApp**! Una SPA (Single Page Application) diseñada para los amantes de la botánica que buscan simplicidad, privacidad y control total.
 
 Esta aplicación es **Offline-First**, lo que significa que no necesita servidores, bases de datos externas ni conexión a internet para funcionar. Todo vive localmente en tu navegador.
 
-## 🚀 Características Principales (v3.2)
+## 🚀 Características Principales (v4.0)
 
+- 🎨 **UX Refinada:** Menú de navegación centrado y layout maestro-detalle con **resizer dinámico de altura completa** para una mejor gestión visual.
 - 🔍 **Buscador Global Inteligente:** Encuentra plantas, insumos o notas al instante con autocompletado reactivo.
 - 🌱 **Gestión de Plantas:** Seguimiento detallado de riegos, trasplantes y salud (plagas/enfermedades) con iconos personalizados.
-- 📦 **Inventario de Insumos:** Control de stock de sustratos, fertilizantes y más, con gestión de cantidades decimales.
+- 📦 **Inventario Pro:** Control de stock de sustratos, fertilizantes y más, con **validación de stock automático** al registrar logs de mantenimiento.
 - 📅 **Integración con Google Calendar:** Programa recordatorios de cuidado con un solo clic.
 - 🔐 **Privacidad y Respaldos:** Sistema de exportación e importación vía archivos JSON. Tus datos te pertenecen.
 - ✏️ **Edición Atómica:** Modifica cualquier propiedad de tus plantas sin perder su historial de logs.
-- 🎨 **Interfaz Moderna:** Layout Maestro-Detalle responsivo y uso de modales nativos (`<dialog>`) para una experiencia fluida.
+- 🧪 **Laboratorio de Propagación:** Seguimiento especializado para esquejes y semillas.
 
 ## 🧰 Stack Tecnológico
 
-- **HTML5 & CSS3:** Layout basado en Grid dinámico y Flexbox.
-- **Vanilla JavaScript:** Lógica de negocio pura, sin frameworks ni dependencias externas.
-- **LocalStorage:** Persistencia persistente y local.
+- **HTML5 & CSS3:** Layout basado en Grid dinámico y Flexbox con variables CSS para fácil personalización.
+- **Vanilla JavaScript:** Lógica de negocio pura (ES6+), sin frameworks ni dependencias externas.
+- **LocalStorage:** Persistencia robusta en el navegador.
 - **SVG Data URIs:** Iconografía dinámica y favicon liviano.
 
 ## 📖 Cómo Usar
