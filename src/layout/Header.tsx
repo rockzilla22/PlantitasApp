@@ -26,11 +26,13 @@ export function Header() {
 
   useEffect(() => {
     const supabase = supabaseBrowser();
-    supabase.auth.getUser().then(({ data }) => {
-      $user.set(data.user);
+    supabase.auth.getUser().then((res: any) => {
+      if (res?.data) {
+        $user.set(res.data.user);
+      }
       $authLoading.set(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       $user.set(session?.user ?? null);
       $authLoading.set(false);
     });
@@ -202,16 +204,37 @@ export function Header() {
           {authLoading ? null : user ? (
             <div className="user-menu">
               <span className="user-avatar" title={user.email ?? ""}>
-                {user.email?.[0].toUpperCase() ?? "U"}
+                {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? "U").toUpperCase()}
               </span>
-              <button className="btn-text" style={{ fontSize: '0.8rem', color: 'var(--text-light)' }} onClick={handleLogout} title="Cerrar sesión">
+              {user.user_metadata?.full_name && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>
+                  {user.user_metadata.full_name}
+                </span>
+              )}
+              <button 
+                className="btn-text" 
+                style={{ 
+                  fontSize: '0.8rem', 
+                  color: 'var(--danger)', 
+                  fontWeight: 600,
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  background: 'rgba(255, 0, 0, 0.05)'
+                }} 
+                onClick={handleLogout} 
+                title="Cerrar sesión"
+              >
                 Salir
               </button>
             </div>
           ) : (
-            <a href="/login" onClick={(e) => handleNav(e, "/login")} className="btn-backup" style={{ whiteSpace: 'nowrap' }}>
+            <span 
+              className="btn-backup" 
+              style={{ whiteSpace: 'nowrap', opacity: 0.5, cursor: 'not-allowed' }}
+              title="Login temporalmente desactivado"
+            >
               Iniciar sesión
-            </a>
+            </span>
           )}
         </div>
       </div>

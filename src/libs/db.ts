@@ -1,24 +1,30 @@
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 
 // Las variables de entorno deben estar definidas en el entorno de Vercel/Local
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 /**
  * CLIENTE DE NAVEGADOR (Client Components)
- * Utilízalo exclusivamente en componentes con la directiva "use client".
- * Permite interactuar con Supabase desde el frontend respetando las políticas RLS del usuario.
  */
-export const supabaseBrowser = () => createBrowserClient(supabaseUrl, supabaseAnonKey);
+export const supabaseBrowser = () => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // Retornamos un proxy que no hace nada para evitar errores de undefined
+    return new Proxy({}, {
+      get: () => () => ({ data: { user: null }, error: null })
+    }) as any;
+  }
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+};
 
 /**
  * CLIENTE DE SERVIDOR (RSC, Server Actions, Route Handlers)
- * Este cliente es asíncrono porque accede a las cookies para validar la identidad del usuario.
- * Es la pieza fundamental para cumplir con la regla de "RSC First" del protocolo Omega.
  */
 export const supabaseServer = async () => {
-  // Dynamically import `next/headers` to avoid importing server-only APIs
-  // from modules that may be consumed by client-side code.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return {} as ReturnType<typeof createServerClient>;
+  }
+
   const { cookies } = await import("next/headers");
   const cookieStore: any = (cookies as any)();
 
@@ -31,13 +37,13 @@ export const supabaseServer = async () => {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
         } catch {
-          // The Supabase middleware manages cookie updates when this client
-          // is invoked from bona fide Server Components / Route Handlers.
+          // Ignorado en componentes de servidor
         }
       },
     },
   });
 };
+
 
 /**
  * Minimal Mongo connector stub. Kept intentionally lightweight so build
