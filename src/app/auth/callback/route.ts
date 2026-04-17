@@ -3,9 +3,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/plants";
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") ?? "/plants";
+  const origin = requestUrl.origin;
 
   if (code) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
