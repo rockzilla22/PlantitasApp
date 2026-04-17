@@ -6,7 +6,7 @@
 // --- 1. STORE MANAGER (STATE) ---
 const store = {
     data: {
-        inventory: { substrates: [], fertilizers: [], powders: [], liquids: [], others: [] },
+        inventory: { substrates: [], fertilizers: [], powders: [], liquids: [], meds: [], others: [] },
         plants: [],
         globalNotes: [],
         propagations: [],
@@ -36,7 +36,11 @@ const store = {
     update(newData, shouldSave = true) {
         console.log("Normalizing and updating data...");
         this.data = this.normalize(newData);
-        if (shouldSave) this.save();
+        if (shouldSave) {
+            this.save();
+        } else {
+            ui.flashExportButton(); // Flash even on import to remind to save state
+        }
         ui.renderAll();
     },
 
@@ -48,6 +52,7 @@ const store = {
                 fertilizers: inv.fertilizers || [],
                 powders: inv.powders || [],
                 liquids: inv.liquids || [],
+                meds: inv.meds || [],
                 others: inv.others || []
             },
             plants: (d.plants || []).map(p => ({
@@ -119,8 +124,15 @@ const ui = {
     flashExportButton() {
         const btn = document.getElementById('btn-export');
         if (btn) {
-            btn.classList.add('flash-active');
-            setTimeout(() => btn.classList.remove('flash-active'), 4000);
+            // Quitamos la clase por si ya estaba activa
+            btn.classList.remove('flash-active');
+            // Forzamos un reflujo para que el navegador note el cambio
+            void btn.offsetWidth; 
+            // Agregamos la clase con un delay mínimo
+            setTimeout(() => {
+                btn.classList.add('flash-active');
+                setTimeout(() => btn.classList.remove('flash-active'), 5000);
+            }, 50);
         }
     },
 
@@ -209,7 +221,10 @@ const ui = {
     renderAll() {
         const activeTab = document.querySelector('.tab-link.active')?.getAttribute('data-tab');
         if (!activeTab) return;
-        if (activeTab === 'tab-plants') this.renderPlants();
+        if (activeTab === 'tab-plants') {
+            this.renderPlants();
+            if (app.selectedPlantId) app.viewPlantDetail(app.selectedPlantId);
+        }
         if (activeTab === 'tab-nursery') this.renderNursery();
         if (activeTab === 'tab-season') this.renderSeason();
         if (activeTab === 'tab-wishlist') this.renderWishlist();
@@ -296,7 +311,7 @@ const ui = {
             section.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--background); padding-bottom:0.5rem; margin-bottom:1rem">
                     <h3 style="margin:0">${s.icon} ${s.name}</h3>
-                    <button class="btn-backup" onclick="app.openSeasonTaskModal('${s.name}')">+ Añadir Acción</button>
+                    <button class="btn-primary" style="padding: 5px 12px; font-size: 0.85rem;" onclick="app.openSeasonTaskModal('${s.name}')">+ Añadir Acción</button>
                 </div>
                 <ul class="season-task-list">
                     ${tasks.length === 0 ? '<p style="font-size:0.85rem; color:var(--text-light); text-align:center">Sin planes.</p>' : ''}
@@ -343,7 +358,7 @@ const ui = {
     },
 
     renderInventory() {
-        const categories = ['substrates', 'fertilizers', 'powders', 'liquids', 'others'];
+        const categories = ['substrates', 'fertilizers', 'powders', 'liquids', 'meds', 'others'];
         categories.forEach(cat => {
             const list = document.getElementById(`list-${cat}`);
             if (list) {
@@ -409,6 +424,7 @@ const app = {
         store.init();
         ui.initTabs();
         this.initParentSelect();
+        this.initResizer();
     },
 
     formatDate(dateStr) {
@@ -481,7 +497,7 @@ const app = {
     },
 
     getTaskIcon(type) {
-        const icons = { Poda: '✂️', Siembra: '🌱', Transplante: '🪴', Abonado: '🧪', Limpieza: '🧹', Otro: '📝' };
+        const icons = { Poda: '✂️', Siembra: '🌱', Trasplante: '🛒', Abonado: '🧪', Limpieza: '🧹', Otro: '📝' };
         return icons[type] || '📝';
     },
 
@@ -538,7 +554,7 @@ const app = {
 
         const logIcons = {
             'Riego': '💧', 'Medición': '📏', 'Sustrato': '🟤', 'Fertilizante': '🧴', 'Polvos': '⚪',
-            'Líquidos': '🧪', 'Trasplante': '🌳', 'Plaga/Enfermedad': '🐛', 'Nota': '📝', 'Initial': '🌱'
+            'Líquidos': '🧪', 'Insecticidas/Medicinas': '💊', 'Trasplante': '🌳', 'Plaga/Enfermedad': '🐛', 'Nota': '📝', 'Initial': '🌱'
         };
 
         const filterOptions = ['Todos', ...Object.keys(logIcons).filter(k => k !== 'Initial')];
@@ -599,6 +615,7 @@ const app = {
                 }).join('')}
             </div>
         `;
+        this.updateLogInventorySelect();
     },
 
     updateLogInventorySelect() {
@@ -606,14 +623,23 @@ const app = {
         const wrap = document.getElementById('log-inventory-item-wrap');
         const select = document.getElementById('log-inventory-item');
         
-        const map = { 'Sustrato': 'substrates', 'Fertilizante': 'fertilizers', 'Polvos': 'powders', 'Líquidos': 'liquids' };
+        const map = { 
+            'Sustrato': 'substrates', 
+            'Fertilizante': 'fertilizers', 
+            'Polvos': 'powders', 
+            'Líquidos': 'liquids',
+            'Insecticidas/Medicinas': 'meds',
+            'Plaga/Enfermedad': 'meds'
+        };
         const category = map[action];
         
         if (category) {
-            if (store.data.inventory[category].length > 0) {
+            const items = store.data.inventory[category];
+            if (items.length > 0) {
                 wrap.style.display = 'block';
+                // Siempre regeneramos las opciones para captar cambios recientes
                 select.innerHTML = `<option value="">-- Elegir de Inventario --</option>` + 
-                    store.data.inventory[category].map(item => `<option value="${item.name}">${item.name} (${item.qty} ${item.unit})</option>`).join('');
+                    items.map(item => `<option value="${item.name}">${item.name} (${item.qty} ${item.unit})</option>`).join('');
             } else {
                 wrap.style.display = 'none';
                 ui.askConfirm(
@@ -631,6 +657,38 @@ const app = {
         } else {
             wrap.style.display = 'none';
         }
+    },
+
+    initResizer() {
+        const resizer = document.getElementById('resizer');
+        const panel = document.getElementById('plant-detail-panel');
+        if (!resizer || !panel) return;
+
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            resizer.classList.add('dragging');
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            
+            const containerWidth = document.querySelector('.plants-layout').offsetWidth;
+            const newPanelWidth = containerWidth - e.clientX + document.querySelector('.plants-layout').offsetLeft;
+            
+            // Límites
+            if (newPanelWidth > 300 && newPanelWidth < 800) {
+                panel.style.width = `${newPanelWidth}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            resizer.classList.remove('dragging');
+        });
     },
 
     addPlantLog(id) {

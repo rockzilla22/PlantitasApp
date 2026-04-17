@@ -73,6 +73,8 @@ body {
     border-radius: 20px;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+    color: var(--text);
+    background: white;
 }
 
 #global-search:focus {
@@ -93,6 +95,7 @@ body {
     left: 0;
     right: 0;
     background: white;
+    color: var(--text);
     border-radius: var(--radius);
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     display: none;
@@ -206,16 +209,67 @@ body {
 }
 
 .plants-layout {
-    display: grid;
-    grid-template-columns: 40% 60%;
-    gap: 1.5rem;
-    align-items: start;
+    display: flex;
+    gap: 0;
+    min-height: calc(100vh - 180px); /* Usamos min-height en vez de height */
+    align-items: flex-start; /* Alineamos arriba para que no estire las tarjetas */
+}
+
+#plants-list {
+    flex: 1;
+    min-width: 200px;
+    padding-right: 0.5rem;
+}
+
+.resizer {
+    width: 8px;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 0.2s;
+    z-index: 10;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.resizer::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 30px;
+    background: #ccc;
+    border-radius: 2px;
+}
+
+.resizer:hover, .resizer.dragging {
+    background: var(--background);
+}
+
+.resizer:hover::after, .resizer.dragging::after {
+    background: var(--primary);
+}
+
+.detail-panel {
+    width: 50%; /* Ancho inicial */
+    min-width: 300px;
+    max-width: 800px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
 }
 
 @media (max-width: 900px) {
     .plants-layout {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        height: auto;
     }
+    .resizer { display: none; }
+    #plants-list { height: auto; }
     .detail-panel {
         position: fixed;
         bottom: 0;
@@ -314,8 +368,14 @@ body {
 /* Insumos & Notes */
 .inventory-sections {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
+}
+
+@media (max-width: 700px) {
+    .inventory-sections {
+        grid-template-columns: 1fr;
+    }
 }
 
 .inventory-card {
@@ -443,17 +503,20 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-backup {
-    background: #f5f5f5;
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    background: white;
+    color: var(--primary);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
     cursor: pointer;
-    border: 1px solid var(--border);
+    border: 1px solid var(--primary);
+    font-weight: 600;
     transition: all 0.2s;
 }
 
 .btn-backup:hover {
-    background: var(--border);
+    background: var(--primary);
+    color: white;
 }
 
 /* Logs */
@@ -502,6 +565,18 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* Season Planner */
+.season-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 700px) {
+    .season-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .season-card {
     background: white;
     padding: 1.5rem;
@@ -559,8 +634,13 @@ input:focus, select:focus, textarea:focus {
 }
 
 @keyframes flash {
-    from { background: #f5f5f5; }
-    to { background: #c8e6c9; color: #1b5e20; }
+    from { background: white; color: var(--primary); transform: scale(1); }
+    to { background: var(--secondary); color: white; border-color: var(--secondary); transform: scale(1.05); }
+}
+
+.flash-active {
+    animation: flash 0.8s ease-in-out infinite alternate;
+    box-shadow: 0 0 15px var(--secondary);
 }
 
 /* Utility */

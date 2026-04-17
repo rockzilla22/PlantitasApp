@@ -47,6 +47,7 @@
                 <div id="plants-list" class="grid-container">
                     <!-- Dinámico -->
                 </div>
+                <div id="resizer" class="resizer"></div>
                 <aside id="plant-detail-panel" class="detail-panel">
                     <div class="empty-state">
                         <p>Seleccioná una planta para ver su detalle profesional</p>
@@ -78,7 +79,7 @@
             <div class="view-header">
                 <h2>📅 Planeación Anual</h2>
             </div>
-            <div id="season-grid" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div id="season-grid" class="season-grid">
                 <!-- Dinámico: 4 filas por temporada -->
             </div>
         </section>
@@ -105,6 +106,7 @@
                 <div class="inventory-card"><h3>🧴 Fertilizantes</h3><ul id="list-fertilizers"></ul></div>
                 <div class="inventory-card"><h3>⚪ Polvos</h3><ul id="list-powders"></ul></div>
                 <div class="inventory-card"><h3>🧪 Líquidos</h3><ul id="list-liquids"></ul></div>
+                <div class="inventory-card"><h3>💊 Insecticidas/Medicinas</h3><ul id="list-meds"></ul></div>
                 <div class="inventory-card"><h3>📦 Otros</h3><ul id="list-others"></ul></div>
             </div>
         </section>
@@ -121,7 +123,7 @@
     <dialog id="modal-add-plant">
         <form method="dialog" onsubmit="app.handleAddPlant(event)">
             <h3>🌿 Nueva Planta</h3>
-            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="p-name" required placeholder="Ej: Monstera Albo"></div>
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="p-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" placeholder="Ej: Monstera Albo"></div>
             <div class="form-group">
                 <label>Tipo de Planta</label>
                 <select id="p-type" onchange="app.toggleCustomType('p-type', 'p-custom-type-wrap')">
@@ -189,7 +191,7 @@
                 <label>Planta Madre (Opcional)</label>
                 <select id="prop-parent"><option value="">-- Sin madre (Independiente) --</option></select>
             </div>
-            <div class="form-group"><label>Nombre Identificador (obligatorio)</label><input type="text" id="prop-name" placeholder="Ej: Esqueje de Pothos" required></div>
+            <div class="form-group"><label>Nombre Identificador (obligatorio)</label><input type="text" id="prop-name" placeholder="Ej: Esqueje de Pothos" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div class="form-group">
                     <label>Método</label>
@@ -200,7 +202,7 @@
                         <option value="Semilla">🌱 Semilla</option>
                     </select>
                 </div>
-                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="prop-start" required></div>
+                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="prop-start" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             </div>
             <div class="form-group"><label>📝 Notas</label><textarea id="prop-notes" placeholder="Condiciones, hormonas, etc."></textarea></div>
             <div class="modal-actions">
@@ -213,7 +215,7 @@
     <dialog id="modal-add-wish">
         <form method="dialog" onsubmit="app.handleAddWish(event)">
             <h3>✨ Nuevo Deseo</h3>
-            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="w-name" required placeholder="Ej: Tijeras, Fertilizante, Monstera..."></div>
+            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="w-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" placeholder="Ej: Tijeras, Fertilizante, Monstera..."></div>
             <div class="form-group">
                 <label>Prioridad</label>
                 <select id="w-priority">
@@ -239,7 +241,7 @@
                 <select id="st-type">
                     <option value="Poda">✂️ Poda</option>
                     <option value="Siembra">🌱 Siembra</option>
-                    <option value="Transplante">🪴 Transplante</option>
+                    <option value="Trasplante">🛒 Trasplante</option>
                     <option value="Abonado">🧪 Abonado</option>
                     <option value="Limpieza">🧹 Limpieza</option>
                     <option value="Otro">📝 Otro</option>
@@ -247,7 +249,7 @@
             </div>
             <div class="form-group">
                 <label>Descripción del Plan (obligatorio)</label>
-                <textarea id="st-desc" required placeholder="Ej: Podar los geranios..."></textarea>
+                <textarea id="st-desc" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" placeholder="Ej: Podar los geranios..."></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-season-task')">Cancelar</button>
@@ -259,7 +261,7 @@
     <dialog id="modal-add-note">
         <form method="dialog" onsubmit="app.handleAddNote(event)">
             <h3>📝 Nueva Nota Global</h3>
-            <div class="form-group"><label>Contenido de la nota (obligatorio)</label><textarea id="n-content" rows="4" required placeholder="Ej: Comprar fertilizante orgánico..."></textarea></div>
+            <div class="form-group"><label>Contenido de la nota (obligatorio)</label><textarea id="n-content" rows="4" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" placeholder="Ej: Comprar fertilizante orgánico..."></textarea></div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-add-note')">Cancelar</button>
                 <button type="submit" class="btn-primary">Guardar</button>
@@ -277,12 +279,13 @@
                     <option value="fertilizers">🧴 Fertilizantes</option>
                     <option value="powders">⚪ Polvos</option>
                     <option value="liquids">🧪 Líquidos</option>
+                    <option value="meds">💊 Insecticidas/Medicinas</option>
                     <option value="others">📦 Otros</option>
                 </select>
             </div>
-            <div class="form-group"><label>Nombre del insumo (obligatorio)</label><input type="text" id="i-name" required placeholder="Ej: Humus de lombriz"></div>
+            <div class="form-group"><label>Nombre del insumo (obligatorio)</label><input type="text" id="i-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" placeholder="Ej: Humus de lombriz"></div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="i-qty" step="0.1" required value="1"></div>
+                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="i-qty" step="0.1" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')" value="1"></div>
                 <div class="form-group">
                     <label>Unidad</label>
                     <select id="i-unit">
@@ -307,7 +310,7 @@
         <form method="dialog" onsubmit="app.handleEditPlant(event)">
             <h3>✏️ Editar Perfil Botánico</h3>
             <input type="hidden" id="edit-p-id">
-            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-p-name" required></div>
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-p-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             <div class="form-group">
                 <label>Tipo de Planta</label>
                 <select id="edit-p-type" onchange="app.toggleCustomType('edit-p-type', 'edit-p-custom-type-wrap')">
@@ -374,7 +377,7 @@
             <input type="hidden" id="edit-prop-id">
             <div class="form-group">
                 <label>Nombre Identificador (obligatorio)</label>
-                <input type="text" id="edit-prop-name" required>
+                <input type="text" id="edit-prop-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')">
             </div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div class="form-group">
@@ -386,7 +389,7 @@
                         <option value="Semilla">🌱 Semilla</option>
                     </select>
                 </div>
-                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="edit-prop-start" required></div>
+                <div class="form-group"><label>📅 Fecha Inicio (obligatorio)</label><input type="date" id="edit-prop-start" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             </div>
             <div class="form-group"><label>📝 Notas</label><textarea id="edit-prop-notes"></textarea></div>
             <div class="modal-actions">
@@ -400,7 +403,7 @@
         <form method="dialog" onsubmit="app.handleEditWish(event)">
             <h3>✏️ Editar Deseo</h3>
             <input type="hidden" id="edit-w-id">
-            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="edit-w-name" required></div>
+            <div class="form-group"><label>¿Qué deseamos? (obligatorio)</label><input type="text" id="edit-w-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             <div class="form-group">
                 <label>Prioridad</label>
                 <select id="edit-w-priority">
@@ -427,7 +430,7 @@
                 <select id="edit-st-type">
                     <option value="Poda">✂️ Poda</option>
                     <option value="Siembra">🌱 Siembra</option>
-                    <option value="Transplante">🪴 Transplante</option>
+                    <option value="Trasplante">🛒 Trasplante</option>
                     <option value="Abonado">🧪 Abonado</option>
                     <option value="Limpieza">🧹 Limpieza</option>
                     <option value="Otro">📝 Otro</option>
@@ -435,7 +438,7 @@
             </div>
             <div class="form-group">
                 <label>Descripción del Plan (obligatorio)</label>
-                <textarea id="edit-st-desc" required></textarea>
+                <textarea id="edit-st-desc" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-season-task')">Cancelar</button>
@@ -449,9 +452,9 @@
             <h3>✏️ Editar Insumo</h3>
             <input type="hidden" id="edit-i-cat">
             <input type="hidden" id="edit-i-idx">
-            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-i-name" required></div>
+            <div class="form-group"><label>Nombre (obligatorio)</label><input type="text" id="edit-i-name" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
             <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="edit-i-qty" step="0.1" required></div>
+                <div class="form-group"><label>Cantidad (obligatorio)</label><input type="number" id="edit-i-qty" step="0.1" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div>
                 <div class="form-group">
                     <label>Unidad</label>
                     <select id="edit-i-unit">
@@ -476,7 +479,7 @@
             <input type="hidden" id="edit-n-id">
             <div class="form-group">
                 <label>Contenido de la nota (obligatorio)</label>
-                <textarea id="edit-n-content" rows="4" required></textarea>
+                <textarea id="edit-n-content" rows="4" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-text" onclick="ui.closeModal('modal-edit-note')">Cancelar</button>
@@ -486,7 +489,7 @@
     </dialog>
 
     <!-- OTROS MODALES -->
-    <dialog id="modal-calendar"><form method="dialog" onsubmit="app.handleCalendarSubmit(event)"><h3>📅 Recordatorio Google</h3><div class="form-group"><label>Título (obligatorio)</label><input type="text" id="cal-title" required></div><div class="form-group"><label>Descripción</label><textarea id="cal-desc"></textarea></div><div class="form-group"><label>Fecha (obligatorio)</label><input type="date" id="cal-date" required></div><div class="modal-actions"><button type="button" class="btn-text" onclick="ui.closeModal('modal-calendar')">Cancelar</button><button type="submit" class="btn-primary">Añadir</button></div></form></dialog>
+    <dialog id="modal-calendar"><form method="dialog" onsubmit="app.handleCalendarSubmit(event)"><h3>📅 Recordatorio Google</h3><div class="form-group"><label>Título (obligatorio)</label><input type="text" id="cal-title" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div><div class="form-group"><label>Descripción</label><textarea id="cal-desc"></textarea></div><div class="form-group"><label>Fecha (obligatorio)</label><input type="date" id="cal-date" required oninvalid="this.setCustomValidity('Por favor, completa este campo')" oninput="this.setCustomValidity('')"></div><div class="modal-actions"><button type="button" class="btn-text" onclick="ui.closeModal('modal-calendar')">Cancelar</button><button type="submit" class="btn-primary">Añadir</button></div></form></dialog>
     <dialog id="modal-info" style="text-align:center"><h3 id="info-title">¡Logrado!</h3><p id="info-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-primary" onclick="ui.closeModal('modal-info')">Entendido</button></div></dialog>
     <dialog id="modal-confirm" style="text-align:center"><h3 id="confirm-title">¿Estás seguro?</h3><p id="confirm-msg" style="margin:1rem 0; color:var(--text-light)"></p><div class="modal-actions" style="justify-content:center"><button type="button" class="btn-text" onclick="ui.closeModal('modal-confirm')">Cancelar</button><button type="button" id="confirm-yes-btn" class="btn-primary" style="background:var(--danger)">Confirmar</button></div></dialog>
     
