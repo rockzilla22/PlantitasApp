@@ -31,6 +31,8 @@ export default function ProfilePage() {
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [trashLoading, setTrashLoading] = useState(false);
   const [restoringId, setRestoringId] = useState<number | null>(null);
+  const [linkingProvider, setLinkingProvider] = useState<"google" | "facebook" | null>(null);
+  const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -61,6 +63,35 @@ export default function ProfilePage() {
     setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
     await loadData();
     setRestoringId(null);
+  };
+
+  const handleLink = async (provider: "google" | "facebook") => {
+    setLinkingProvider(provider);
+    setUnlinkError(null);
+    const sb = supabaseBrowser();
+    const { error } = await sb.auth.linkIdentity({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=/profile` },
+    });
+    if (error) {
+      setUnlinkError(error.message);
+      setLinkingProvider(null);
+    }
+    // On success Supabase redirects to provider → no setState needed
+  };
+
+  const handleUnlink = async (provider: "google" | "facebook") => {
+    const identity = user!.identities?.find((i) => i.provider === provider);
+    if (!identity) return;
+    setUnlinkError(null);
+    const sb = supabaseBrowser();
+    const { error } = await sb.auth.unlinkIdentity(identity);
+    if (error) {
+      setUnlinkError(error.message);
+    } else {
+      const { data } = await sb.auth.getUser();
+      if (data.user) $user.set(data.user);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -101,6 +132,14 @@ export default function ProfilePage() {
   const initialFullName = user?.user_metadata?.full_name || "";
   const initialPhone = user?.phone || "";
   const hasChanges = fullName.trim() !== initialFullName || phone.trim() !== initialPhone;
+
+  const linkedProviders = new Set((user.identities ?? []).map((i) => i.provider));
+  const canUnlink = (user.identities ?? []).length > 1;
+
+  const oauthProviders = [
+    { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid #dadce0" },
+    { id: "facebook" as const, label: "Facebook",  iconBg: "#1877F2",  iconColor: "#fff",    iconText: "f",  border: "none" },
+  ];
 
   return (
     <div className="profile-page">
@@ -194,6 +233,49 @@ export default function ProfilePage() {
               </p>
             </>
           )}
+        </div>
+
+        <div className="linked-accounts-section">
+          <h3>Cuentas vinculadas</h3>
+          <p className="profile-hint" style={{ marginBottom: "0.75rem" }}>
+            Vinculá tu cuenta con Google o Facebook para iniciar sesión con cualquiera de ellos.
+          </p>
+          {unlinkError && <p className="signin-error" style={{ marginBottom: "0.75rem" }}>{unlinkError}</p>}
+          {oauthProviders.map((p) => {
+            const isLinked = linkedProviders.has(p.id);
+            return (
+              <div key={p.id} className="identity-row">
+                <div
+                  className="identity-provider-icon"
+                  style={{ background: p.iconBg, color: p.iconColor, border: p.border }}
+                >
+                  {p.iconText}
+                </div>
+                <span className="identity-provider-name">{p.label}</span>
+                {isLinked ? (
+                  <>
+                    <span className="badge-linked">✓ Vinculado</span>
+                    <button
+                      className="btn-unlink-provider"
+                      disabled={!canUnlink}
+                      title={!canUnlink ? "Necesitás al menos 2 métodos de acceso para desvincular" : `Desvincular ${p.label}`}
+                      onClick={() => handleUnlink(p.id)}
+                    >
+                      Desvincular
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="btn-link-provider"
+                    disabled={linkingProvider !== null}
+                    onClick={() => handleLink(p.id)}
+                  >
+                    {linkingProvider === p.id ? "Redirigiendo..." : `Vincular con ${p.label}`}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {isPremium && (

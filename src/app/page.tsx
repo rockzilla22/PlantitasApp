@@ -10,33 +10,33 @@ export default function LandingPage() {
     {
       title: "🌱 Mis Plantas",
       description: "Registra cada ejemplar con su ubicación, luz y sustrato. Lleva el historial completo de riegos y cuidados.",
-      icon: "🌿"
+      icon: "🌿",
     },
     {
       title: "🧪 Propagación",
       description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
-      icon: "🧪"
+      icon: "🧪",
     },
     {
       title: "📅 Temporada",
       description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
-      icon: "📅"
+      icon: "📅",
     },
     {
       title: "📦 Inventario",
       description: "Control de stock de tus insumos: sustratos, fertilizantes y medicamentos siempre al día.",
-      icon: "📦"
+      icon: "📦",
     },
     {
       title: "✨ Wishlist",
       description: "Tu lista de deseos botánicos organizada por prioridad para que no se te escape ninguna.",
-      icon: "✨"
+      icon: "✨",
     },
     {
       title: "📝 Notas",
       description: "Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín.",
-      icon: "📝"
-    }
+      icon: "📝",
+    },
   ];
 
   return (
@@ -45,19 +45,15 @@ export default function LandingPage() {
       <section className="hero-section">
         <div className="hero-content">
           <span className="hero-badge">Versión 1.0 — Beta 🌿</span>
-          <h1>Tu jardín digital, <br /> sin complicaciones.</h1>
+          <h1>
+            La app más completa <br /> que todo Plant Lover necesita.
+          </h1>
           <p>
-            PlantitasApp es la herramienta definitiva para amantes de las plantas. 
-            Gestiona tu colección, historial de cuidados e inventario desde cualquier dispositivo.
+            En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
+            compañera ideal en tu camino como coleccionista, brindándote el control total sobre los cuidados, riegos y necesidades
+            específicas de cada una de tus joyas verdes. Organiza tu colección, registra su progreso y asegúrate de que siempre tengan
+            exactamente lo que necesitan.
           </p>
-          <div className="hero-actions">
-            <button className="btn-primary-large" onClick={() => router.push("/plants")}>
-              Empezar mi jardín — Gratis
-            </button>
-            <button className="btn-secondary-large" disabled title="Próximamente">
-              Ir a Premium ☁ (Próximamente)
-            </button>
-          </div>
         </div>
         <div className="hero-visual">
           <div className="plant-card-mockup">
@@ -75,6 +71,14 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        <div className="hero-actions-row">
+          <button className="btn-primary-large" onClick={() => router.push("/plants")}>
+            Empezar mi jardín — Gratis
+          </button>
+          <button className="btn-secondary-large" disabled title="Próximamente">
+            Ir a Premium ☁ (Próximamente)
+          </button>
+        </div>
       </section>
 
       {/* How it Works / Plans */}
@@ -83,7 +87,7 @@ export default function LandingPage() {
           <h2>Privacidad por diseño</h2>
           <p>Tus datos son tuyos. Elige cómo guardarlos.</p>
         </div>
-        
+
         <div className="plans-grid">
           <div className="plan-card">
             <h3>Plan Gratuito 🌱</h3>
@@ -91,11 +95,11 @@ export default function LandingPage() {
             <ul>
               <li>✅ Todas las funciones incluidas</li>
               <li>✅ Datos en tu navegador (almacenamiento local)</li>
-              <li>✅ Exportación e Importación manual en JSON</li>
+              <li>✅ Respaldo e Importación manual</li>
               <li>✅ Sin necesidad de crear cuenta</li>
             </ul>
           </div>
-          
+
           <div className="plan-card premium">
             <div className="premium-badge">RECOMENDADO</div>
             <h3>Plan Premium ☁</h3>
@@ -126,6 +130,27 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* About Section */}
+      <section className="info-section bg-soft" style={{ textAlign: "center", maxWidth: "900px", margin: "2rem auto", padding: "4rem 4rem" }}>
+        <div className="section-title">
+          <h2>Historia del Proyecto</h2>
+        </div>
+        <p style={{ fontSize: "1.15rem", lineHeight: "1.8", color: "var(--text-gray)", fontStyle: "italic" }}>
+          Esta app germinó como una visión de <strong className="text-[var(--primary)]">Erzu</strong> por simplificar el cuidado botánico. Fue cultivada tecla a tecla por{" "}
+          <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
+            <strong className="text-[var(--primary)]">JFEspanolito</strong>
+          </a>{" "}
+          y{" "}
+          <a href="https://github.com/rockzilla22" target="_blank" rel="noopener noreferrer">
+            <strong className="text-[var(--primary)]">Alex</strong>
+          </a>
+          , en medio de estrategias, ataques coordinados y partidas de Dota. Mientras defendíamos el ancestro, también construíamos el
+          refugio digital perfecto para tus plantas. Porque sabemos que cuidar de una selva personal requiere la misma precisión que ganar
+          una partida difícil, las cuales sirvieron de inspiración para transformar una gran idea en una herramienta real.
+        </p>
+        <div style={{ marginTop: "2rem", fontSize: "2rem" }}>🎮🌿🛡️</div>
       </section>
 
       <style jsx>{`
@@ -172,16 +197,20 @@ export default function LandingPage() {
         .hero-content p {
           font-size: 1.25rem;
           color: var(--text-gray);
-          margin-bottom: 2.5rem;
         }
 
-        .hero-actions {
+        .hero-actions-row {
+          grid-column: 1 / -1;
           display: flex;
           gap: 1rem;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          margin-top: -1rem;
         }
 
         @media (max-width: 900px) {
-          .hero-actions {
+          .hero-actions-row {
             justify-content: center;
             flex-wrap: wrap;
           }
@@ -192,9 +221,11 @@ export default function LandingPage() {
           color: white;
           border: none;
           padding: 1rem 2rem;
+          min-width: 280px;
           border-radius: var(--radius);
           font-size: 1.1rem;
           font-weight: 600;
+          white-space: nowrap;
           cursor: pointer;
           transition: transform 0.2s;
         }
@@ -204,15 +235,18 @@ export default function LandingPage() {
           color: var(--secondary);
           border: 2px solid var(--secondary);
           padding: 1rem 2rem;
+          min-width: 280px;
           border-radius: var(--radius);
           font-size: 1.1rem;
           font-weight: 600;
+          white-space: nowrap;
           cursor: pointer;
           transition: transform 0.2s;
         }
 
-        .btn-primary-large:hover, .btn-secondary-large:hover {
-          transform: translateY(-2px);
+        .btn-primary-large:hover,
+        .btn-secondary-large:hover {
+          transform: translateY(-8px);
         }
 
         .hero-visual {
@@ -224,7 +258,7 @@ export default function LandingPage() {
           background: white;
           padding: 1.5rem;
           border-radius: var(--radius);
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
           width: 280px;
           border: 1px solid var(--border);
         }

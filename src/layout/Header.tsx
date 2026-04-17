@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
 import { $store, loadData, mergeData, setStoreData, $selectedPlantId } from "@/store/plantStore";
@@ -35,6 +35,7 @@ export function Header() {
   const authLoading = useStore($authLoading);
   const syncStatus = useStore($syncStatus);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadData();
@@ -177,6 +178,10 @@ export function Header() {
     e.target.value = "";
   };
 
+  const handleImportClick = () => {
+    importInputRef.current?.click();
+  };
+
   return (
     <header className="main-header">
       <div className="header-top">
@@ -225,65 +230,69 @@ export function Header() {
           )}
         </div>
 
-        <button
-          className={`btn-backup ${shouldFlash ? "flash-active" : ""}`}
-          id="btn-export"
-          onClick={handleExport}
-          title="Guardar copia local"
-          style={isDirty ? { borderColor: "var(--secondary)", color: "var(--secondary)", fontWeight: 700 } : {}}
-        >
-          {isDirty ? "⚠ Cambios pendientes" : "Exportar"}
-        </button>
+        <div className="header-actions">
+          <button
+            type="button"
+            className={`btn-backup ${shouldFlash ? "flash-active" : ""}`}
+            id="btn-export"
+            onClick={handleExport}
+            title="Guardar copia local"
+            style={isDirty ? { borderColor: "var(--secondary)", color: "var(--secondary)", fontWeight: 700 } : {}}
+          >
+            {isDirty ? "⚠ Cambios pendientes" : "Exportar"}
+          </button>
 
-        <div className="import-group">
-          <label htmlFor="import-file" className="btn-backup">
-            Importar JSON
-          </label>
-          <input type="file" id="import-file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
-        </div>
-
-        <div className="auth-zone">
-          {authLoading ? null : user ? (
-            <div className="user-menu">
-              <a href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
-                {getInitials(user.user_metadata?.full_name, user.email)}
-              </a>
-              {user.user_metadata?.full_name && (
-                <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.9)" }}>{user.user_metadata.full_name}</span>
-              )}
-              {hasPremium(user) ? (
-                <span className={`sync-indicator sync-${syncStatus}`} title={
-                  syncStatus === "syncing" ? "Sincronizando..." :
-                  syncStatus === "synced" ? "Sincronizado con la nube" :
-                  syncStatus === "error" ? "Error de sincronización" :
-                  "Cloud sync activo"
-                }>
-                  {syncStatus === "syncing" ? "⟳" : syncStatus === "error" ? "⚠" : "☁"}
-                </span>
-              ) : (
-                <span className="sync-indicator sync-none" title="Sin cloud sync — plan gratuito">
-                  ☁ local
-                </span>
-              )}
-              <button
-                className="btn-text"
-                style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 500 }}
-                onClick={handleLogout}
-                title="Cerrar sesión"
-              >
-                Salir
-              </button>
-            </div>
-          ) : (
-            <button
-              className="btn-backup"
-              disabled
-              style={{ whiteSpace: "nowrap", opacity: 0.6, cursor: "not-allowed" }}
-              title="Próximamente"
-            >
-              Iniciar sesión
+          <div className="import-group">
+            <button type="button" className="btn-backup" onClick={handleImportClick}>
+              Importar JSON
             </button>
-          )}
+            <input ref={importInputRef} type="file" id="import-file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
+          </div>
+
+          <div className="auth-zone">
+            {user ? (
+              <div className="user-menu">
+                <a href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
+                  {getInitials(user.user_metadata?.full_name, user.email)}
+                </a>
+                {user.user_metadata?.full_name && (
+                  <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.9)" }}>{user.user_metadata.full_name}</span>
+                )}
+                {hasPremium(user) ? (
+                  <span className={`sync-indicator sync-${syncStatus}`} title={
+                    syncStatus === "syncing" ? "Sincronizando..." :
+                    syncStatus === "synced" ? "Sincronizado con la nube" :
+                    syncStatus === "error" ? "Error de sincronización" :
+                    "Cloud sync activo"
+                  }>
+                    {syncStatus === "syncing" ? "⟳" : syncStatus === "error" ? "⚠" : "☁"}
+                  </span>
+                ) : (
+                  <span className="sync-indicator sync-none" title="Sin cloud sync — plan gratuito">
+                    ☁ local
+                  </span>
+                )}
+                <button
+                  className="btn-text"
+                  style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 500 }}
+                  onClick={handleLogout}
+                  title="Cerrar sesión"
+                >
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn-backup"
+                onClick={(e) => handleNav(e, "/login")}
+                style={{ whiteSpace: "nowrap", opacity: authLoading ? 0.6 : 1 }}
+                disabled={authLoading}
+              >
+                {authLoading ? "Cargando..." : "Iniciar sesión"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

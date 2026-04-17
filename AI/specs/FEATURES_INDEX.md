@@ -13,8 +13,8 @@
 
 Protocolo de navegación para agentes. Prohibido el desvío de esta estructura:
 
-* **EL REACTOR (Business Logic):** `./src/core/plant/` -> Capas de Domain, Application e Infrastructure (Supabase Repository).
-* **EL HUD (Infrastructure/Routes):** `./src/app/dashboard/` -> Orquestación de la grilla de plantas y panel de detalle.
+* **EL REACTOR (Business Logic):** `./src/core/` -> Capas de Domain, Application e Infrastructure (por módulo: plant, nursery, inventory, etc.).
+* **EL HUD (Infrastructure/Routes):** `./src/app/(pages)/` -> Orquestación de las vistas principales (plants, inventory, nursery, etc.).
 * **COMPONENTES DE SISTEMA:** `./src/components/` -> Islas de interactividad (Resizer, Search, Form Modals).
 * **ESTADO GLOBAL:** `./src/store/` -> Nano Stores para UI state (tab selection, resizer position) y caché efímera.
 * **MIGRACIÓN Y SCRIPTING:** `./scripts/` -> v4_migrator.ts para la ingesta de JSON local.
@@ -22,18 +22,19 @@ Protocolo de navegación para agentes. Prohibido el desvío de esta estructura:
 ---
 
 ## 3. ROADMAP ESTRATÉGICO (Feature Tracking)
+
 Existe una versión preview funcional como localhost y json storage en
     ./PlantitasApp Original
 Estos archivos son la base para todas las Features ya que esto funciona perfectamente.
 
 | ID | Feature | Prioridad | Estado | Ubicación Principal |
 | --- | --- | --- | --- | --- |
-| **F-101** | **Core Botanical Engine (DDD)** | `CRITICAL` | `PENDING` | `src/core/plant/` |
-| **F-102** | **Cloud Sync & RLS (Supabase)** | `CRITICAL` | `PENDING` | `src/lib/supabase/` |
-| **F-103** | **Propagación** | `HIGH` | `PENDING` | `src/app/dashboard/nursery/` |
-| **F-104** | **Inventario Pro (Cross-Check)** | `HIGH` | `PENDING` | `src/app/dashboard/inventory/` |
-| **F-105** | **Importador de Datos v4** | `CRITICAL` | `PENDING` | `scripts/v4_migrator.ts` |
-| **F-106** | **Sistema de Reportes PDF** | `MEDIUM` | `PENDING` | `src/lib/reports/` |
+| **F-101** | **Core Botanical Engine (DDD)** | `CRITICAL` | `IMPLEMENTADO` | `src/core/plant/` |
+| **F-102** | **Cloud Sync & RLS (Supabase)** | `CRITICAL` | `IMPLEMENTADO` | `src/libs/` |
+| **F-103** | **Propagación** | `HIGH` | `IMPLEMENTADO` | `src/app/(pages)/nursery/` |
+| **F-104** | **Inventario Pro (Cross-Check)** | `HIGH` | `IMPLEMENTADO` | `src/app/(pages)/inventory/` |
+| **F-105** | **Importador de Datos v4** | `CRITICAL` | `EN_PROGRESO` | `scripts/v4_migrator.ts` |
+| **F-106** | **Sistema de Reportes PDF** | `MEDIUM` | `PENDIENTE` | `src/lib/reports/` |
 
 ---
 
@@ -48,6 +49,17 @@ Estos archivos son la base para todas las Features ya que esto funciona perfecta
     * Lógica de cálculo automático para `lastWateredDate` basada en el historial de logs.
     * Soporte para microclimas (Luz, Ubicación, Maceta, Dormancia).
 
+### [F-102] - Cloud Sync & RLS (Supabase)
+
+* **Definición del Problema:** Sincronización bidireccional con Supabase cumpliendo Row Level Security (RLS).
+* **Impacto en el Dominio:** Persistencia segura en la nube con aislamiento por usuario.
+* **Detalles de Implementación:**
+    * Cliente Supabase configurado en `src/libs/db.ts`.
+    * Servicio de sincronización en `src/libs/syncService.ts` con upsert, soft-delete y manejo de conflictos.
+    * Integración con Nano Stores para actualización reactiva del estado local.
+    * Manejo de roles y permisos mediante `app_metadata` en Supabase Auth.
+    * Funciones de carga, sincronización y restauración de datos desde la papelera.
+
 ### [F-103] - Propagación (La Guardería)
 
 * **Definición del Problema:** Seguimiento de esquejes y semillas con flujo de graduación a planta adulta.
@@ -55,6 +67,7 @@ Estos archivos son la base para todas las Features ya que esto funciona perfecta
     * Estados: Activo, Éxito, Fracaso, Trasplantada.
     * Lógica de herencia de IDs para vincular hijos con la planta madre.
     * Integración con Nano Stores para filtrado reactivo en la vista de guardería.
+    * Vista ubicada en `src/app/(pages)/nursery/page.tsx`.
 
 ### [F-104] - Inventario Pro con Validación Cruzada
 
@@ -63,6 +76,8 @@ Estos archivos son la base para todas las Features ya que esto funciona perfecta
     * Categorías: substrates, fertilizers, powders, liquids, meds, others.
     * Notificación de stock vacío con redirección inteligente al panel de compra.
     * Gestión de cantidades decimales y unidades estandarizadas (Kg, L, g, u.).
+    * Vista ubicada en `src/app/(pages)/inventory/page.tsx`.
+    * Lógica de validación en el store y componentes UI.
 
 ---
 
