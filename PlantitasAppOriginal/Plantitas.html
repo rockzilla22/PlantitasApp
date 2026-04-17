@@ -62,7 +62,7 @@
       <!-- Vista: Propagación -->
       <section id="tab-nursery" class="tab-content">
         <div class="view-header">
-          <h2>Laboratorio de Propagación</h2>
+          <h2>Propagación</h2>
           <button class="btn-primary" onclick="ui.showModal('modal-add-prop')">Nueva Propagación</button>
         </div>
         <div class="filter-bar" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap">
@@ -160,20 +160,20 @@
         </div>
         <div class="form-group">
           <label>Tipo de Planta</label>
-          <select id="p-type" onchange="app.toggleCustomType('p-type', 'p-custom-type-wrap')">
-            <option value="🌿|Planta">🌿 Planta (Genérica)</option>
-            <option value="🌸|Flor">🌸 Flor</option>
-            <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
+            <select id="p-type" onchange="app.toggleCustomType('p-type', 'p-custom-type-wrap')">
+            <option value="🍃|Alocasia">🐘 Alocasia</option>
             <option value="🌳|Arbusto">🌳 Árbol / Arbusto</option>
-            <option value="☘️|Trébol">☘️ Trébol</option>
-            <option value="🌿|Hierba">🌿 Hierba</option>
-            <option value="🍃|Philodendron">🍃 Philodendron</option>
-            <option value="🐘|Alocasia">🐘 Alocasia</option>
-            <option value="🍃|Monstera">🍃 Monstera</option>
-            <option value="🌿|Syngonium">🌿 Syngonium</option>
-            <option value="🌱|Carnívora">🌱 Carnívora</option>
             <option value="🌿|Aromática">🌿 Aromática</option>
+            <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
+            <option value="🌱|Carnívora">🌱 Carnívora</option>
+            <option value="🌸|Flor">🌸 Flor</option>
             <option value="🍓|Frutal">🍓 Frutal</option>
+            <option value="🌿|Hierba">🌿 Hierba</option>
+            <option value="🍃|Monstera">🍃 Monstera</option>
+            <option value="🍃|Philodendron">🍃 Philodendron</option>
+            <option value="🌿|Planta">🌿 Planta (Genérica)</option>
+            <option value="🌿|Syngonium">🌿 Syngonium</option>
+            <option value="☘️|Trébol">☘️ Trébol</option>
             <option value="CUSTOM">✨ Otra (Personalizada)...</option>
           </select>
         </div>
@@ -186,9 +186,9 @@
           <div class="form-group">
             <label>☀️ Luz</label>
             <select id="p-light">
+              <option value="Alta/Directa">☀️ Alta/Directa</option>
               <option value="Baja">☁️ Baja</option>
               <option value="Media" selected>⛅ Media</option>
-              <option value="Alta/Directa">☀️ Alta/Directa</option>
             </select>
           </div>
         </div>
@@ -196,17 +196,17 @@
           <div class="form-group">
             <label>🪴 Maceta</label>
             <select id="p-pot">
-              <option value="Plástico">📦 Plástico</option>
-              <option value="Terracota">🧱 Terracota</option>
               <option value="Autorriego">💧 Autorriego</option>
               <option value="Barro">🏺 Barro</option>
+              <option value="Plástico">📦 Plástico</option>
+              <option value="Terracota">🧱 Terracota</option>
             </select>
           </div>
           <div class="form-group">
             <label>💤 Dormancia</label>
             <select id="p-dormancy">
-              <option value="Ninguna">🚫 Ninguna</option>
               <option value="Invierno">❄️ Invierno</option>
+              <option value="Ninguna">🚫 Ninguna</option>
               <option value="Verano">☀️ Verano</option>
             </select>
           </div>
@@ -242,10 +242,11 @@
           <div class="form-group">
             <label>Método</label>
             <select id="prop-method">
-              <option value="Agua">💧 Agua</option>
-              <option value="Sustrato">🟤 Sustrato</option>
               <option value="Acodo">🌳 Acodo</option>
+              <option value="Agua">💧 Agua</option>
+              <option value="Esqueje">🌳 Esqueje</option>
               <option value="Semilla">🌱 Semilla</option>
+              <option value="Sustrato">🟤 Sustrato</option>
             </select>
           </div>
           <div class="form-group">
@@ -286,7 +287,7 @@
           <select id="w-priority">
             <option value="Baja">Baja</option>
             <option value="Media" selected>Media</option>
-            <option value="Alta">🔥 Alta</option>
+            <option value="Alta">Alta</option>
           </select>
         </div>
         <div class="form-group"><label>📝 Notas</label><textarea id="w-notes" placeholder="Link, precio, lugar..."></textarea></div>
@@ -304,11 +305,11 @@
         <div class="form-group">
           <label>Tipo de Tarea</label>
           <select id="st-type">
+            <option value="Abonado">🧪 Abonado</option>
+            <option value="Limpieza">🧹 Limpieza</option>
             <option value="Poda">✂️ Poda</option>
             <option value="Siembra">🌱 Siembra</option>
             <option value="Trasplante">🛒 Trasplante</option>
-            <option value="Abonado">🧪 Abonado</option>
-            <option value="Limpieza">🧹 Limpieza</option>
             <option value="Otro">📝 Otro</option>
           </select>
         </div>
@@ -356,11 +357,11 @@
         <div class="form-group">
           <label>Categoría</label>
           <select id="i-type">
-            <option value="substrates">🟤 Sustratos</option>
             <option value="fertilizers">🧴 Fertilizantes</option>
-            <option value="powders">⚪ Polvos</option>
-            <option value="liquids">🧪 Líquidos</option>
             <option value="meds">💊 Insecticidas/Medicinas</option>
+            <option value="liquids">🧪 Líquidos</option>
+            <option value="powders">⚪ Polvos</option>
+            <option value="substrates">🟤 Sustratos</option>
             <option value="others">📦 Otros</option>
           </select>
         </div>
@@ -391,11 +392,11 @@
           <div class="form-group">
             <label>Unidad</label>
             <select id="i-unit">
-              <option value="L">L (Litros)</option>
-              <option value="Kg">Kg (Kilos)</option>
               <option value="g">g (Gramos)</option>
-              <option value="u.">u. (Unidades)</option>
+              <option value="Kg">Kg (Kilos)</option>
+              <option value="L">L (Litros)</option>
               <option value="Paq.">Paq. (Paquetes)</option>
+              <option value="u.">u. (Unidades)</option>
             </select>
           </div>
         </div>
@@ -425,19 +426,19 @@
         <div class="form-group">
           <label>Tipo de Planta</label>
           <select id="edit-p-type" onchange="app.toggleCustomType('edit-p-type', 'edit-p-custom-type-wrap')">
-            <option value="🌿|Planta">🌿 Planta (Genérica)</option>
-            <option value="🌸|Flor">🌸 Flor</option>
-            <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
-            <option value="🌳|Arbusto">🌳 Árbol / Arbusto</option>
-            <option value="☘️|Trébol">☘️ Trébol</option>
-            <option value="🌿|Hierba">🌿 Hierba</option>
-            <option value="🍃|Philodendron">🍃 Philodendron</option>
             <option value="🐘|Alocasia">🐘 Alocasia</option>
-            <option value="🍃|Monstera">🍃 Monstera</option>
-            <option value="🌿|Syngonium">🌿 Syngonium</option>
-            <option value="🌱|Carnívora">🌱 Carnívora</option>
+            <option value="🌳|Arbusto">🌳 Árbol / Arbusto</option>
             <option value="🌿|Aromática">🌿 Aromática</option>
+            <option value="🌵|Cactus">🌵 Cactus / Suculenta</option>
+            <option value="🌱|Carnívora">🌱 Carnívora</option>
+            <option value="🌸|Flor">🌸 Flor</option>
             <option value="🍓|Frutal">🍓 Frutal</option>
+            <option value="🌿|Hierba">🌿 Hierba</option>
+            <option value="🍃|Monstera">🍃 Monstera</option>
+            <option value="🍃|Philodendron">🍃 Philodendron</option>
+            <option value="🌿|Planta">🌿 Planta (Genérica)</option>
+            <option value="🌿|Syngonium">🌿 Syngonium</option>
+            <option value="☘️|Trébol">☘️ Trébol</option>
             <option value="CUSTOM">✨ Otra (Personalizada)...</option>
           </select>
         </div>
@@ -450,9 +451,9 @@
           <div class="form-group">
             <label>☀️ Luz</label>
             <select id="edit-p-light">
+              <option value="Alta/Directa">☀️ Alta/Directa</option>
               <option value="Baja">☁️ Baja</option>
               <option value="Media">⛅ Media</option>
-              <option value="Alta/Directa">☀️ Alta/Directa</option>
             </select>
           </div>
         </div>
@@ -460,10 +461,10 @@
           <div class="form-group">
             <label>🪴 Maceta</label>
             <select id="edit-p-pot">
-              <option value="Plástico">📦 Plástico</option>
-              <option value="Terracota">🧱 Terracota</option>
               <option value="Autorriego">💧 Autorriego</option>
               <option value="Barro">🏺 Barro</option>
+              <option value="Plástico">📦 Plástico</option>
+              <option value="Terracota">🧱 Terracota</option>
             </select>
           </div>
           <div class="form-group">
@@ -500,10 +501,11 @@
           <div class="form-group">
             <label>Método</label>
             <select id="edit-prop-method">
-              <option value="Agua">💧 Agua</option>
-              <option value="Sustrato">🟤 Sustrato</option>
               <option value="Acodo">🌳 Acodo</option>
+              <option value="Agua">💧 Agua</option>
+              <option value="Esqueje">🌳 Esqueje</option>
               <option value="Semilla">🌱 Semilla</option>
+              <option value="Sustrato">🟤 Sustrato</option>
             </select>
           </div>
           <div class="form-group">
@@ -544,7 +546,7 @@
           <select id="edit-w-priority">
             <option value="Baja">Baja</option>
             <option value="Media">Media</option>
-            <option value="Alta">🔥 Alta</option>
+            <option value="Alta">Alta</option>
           </select>
         </div>
         <div class="form-group"><label>📝 Notas</label><textarea id="edit-w-notes"></textarea></div>
