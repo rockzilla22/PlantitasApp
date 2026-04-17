@@ -303,7 +303,7 @@ const ui = {
                             <button class="btn-primary" style="padding:4px 8px; font-size:0.8rem" onclick="app.updatePropStatus(${prop.id}, 'Éxito')">✅ Éxito</button>
                             <button class="btn-text" style="color:var(--danger); padding:4px" onclick="app.updatePropStatus(${prop.id}, 'Fracaso')">❌ Fallo</button>
                         ` : prop.status === 'Éxito' ? `
-                            <button class="btn-primary" style="padding:4px 8px; font-size:0.8rem; background:var(--secondary)" onclick="app.graduatePlant(${prop.id})">🪴 Convertir</button>
+                            <button class="btn-primary" style="padding:4px 8px; font-size:0.8rem; background:var(--secondary)" onclick="app.graduatePlant(${prop.id})">Convertir</button>
                         ` : ''}
                     </div>
                     <div style="display:flex; gap:0.5rem">
@@ -359,7 +359,7 @@ const ui = {
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between">
                     <h3 style="margin:0">✨ ${item.name}</h3>
-                    <span class="badge ${item.priority === 'Alta' ? 'badge-danger' : 'badge-warning'}">${item.priority === 'Alta' ? '🔥 Alta' : item.priority}</span>
+                    <span class="badge ${item.priority === 'Alta' ? 'badge-danger' : 'badge-warning'}">${item.priority === 'Alta' ? 'Alta' : item.priority}</span>
                 </div>
                 <p style="margin:0.5rem 0">📝 ${item.notes || 'Sin notas'}</p>
                 <div style="display:flex; gap:0.5rem; margin-top:1rem; align-items:center; justify-content: space-between">
@@ -601,7 +601,7 @@ const app = {
             <div class="microclima-info">
                 <span class="microclima-tag">📍 ${plant.location}</span>
                 <span class="microclima-tag">☀️ ${plant.light}</span>
-                <span class="microclima-tag">🪴 ${plant.potType}</span>
+                <span class="microclima-tag">${plant.potType}</span>
                 <span class="microclima-tag">💤 ${plant.dormancy}</span>
             </div>
             <div class="log-section" style="background:#f5f5f5; padding:1rem; border-radius:8px; margin-top:1rem">
