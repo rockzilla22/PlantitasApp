@@ -18,7 +18,7 @@ const store = {
         const saved = localStorage.getItem('plantitas_db');
         if (saved) {
             try {
-                this.update(JSON.parse(saved), false);
+                this.data = this.normalize(JSON.parse(saved));
             } catch (e) {
                 console.error("Error loading data:", e);
                 this.save();
@@ -26,21 +26,30 @@ const store = {
         } else {
             this.save();
         }
+
+        app.isDirty = false;
+        ui.updateExportButtonState();
     },
 
     save() {
         localStorage.setItem('plantitas_db', JSON.stringify(this.data));
+        app.isDirty = true;
+        ui.updateExportButtonState();
         ui.flashExportButton();
     },
 
     update(newData, shouldSave = true) {
         console.log("Normalizing and updating data...");
         this.data = this.normalize(newData);
+
         if (shouldSave) {
             this.save();
         } else {
-            ui.flashExportButton(); // Flash even on import to remind to save state
+            app.isDirty = true;
+            ui.updateExportButtonState();
+            ui.flashExportButton();
         }
+
         ui.renderAll();
     },
 
@@ -79,24 +88,22 @@ const store = {
     merge(incomingData) {
         console.log("Merging data structures...");
         const incoming = this.normalize(incomingData);
-        
-        // Helper para unificar por ID (Map asegura unicidad)
+
         const mergeById = (local, imported) => {
             const map = new Map();
             local.forEach(item => map.set(item.id, item));
-            imported.forEach(item => map.set(item.id, item)); // El importado pisa si hay mismo ID (más reciente)
+            imported.forEach(item => map.set(item.id, item));
             return Array.from(map.values());
         };
 
-        // Unificar Inventario por nombre y sumar cantidades
         const mergeInventory = (local, imported) => {
-            const result = JSON.parse(JSON.stringify(local)); // Clon profundo
+            const result = JSON.parse(JSON.stringify(local));
             for (const cat in imported) {
                 if (!result[cat]) result[cat] = [];
                 imported[cat].forEach(impItem => {
                     const localItem = result[cat].find(l => l.name === impItem.name);
                     if (localItem) {
-                        localItem.qty = Math.max(localItem.qty, impItem.qty); // Nos quedamos con el stock más alto para seguridad
+                        localItem.qty = Math.max(localItem.qty, impItem.qty);
                     } else {
                         result[cat].push(impItem);
                     }
@@ -111,7 +118,7 @@ const store = {
             globalNotes: mergeById(this.data.globalNotes, incoming.globalNotes),
             wishlist: mergeById(this.data.wishlist, incoming.wishlist),
             inventory: mergeInventory(this.data.inventory, incoming.inventory),
-            seasonalTasks: incoming.seasonalTasks // Para tareas estacionales preferimos las del backup o las mezclamos? Append por ahora.
+            seasonalTasks: incoming.seasonalTasks
         };
 
         this.save();
@@ -121,14 +128,25 @@ const store = {
 
 // --- 2. UI CONTROLLER (DOM) ---
 const ui = {
+    updateExportButtonState() {
+        const btn = document.getElementById('btn-export');
+        if (!btn) return;
+
+        if (app.isDirty) {
+            btn.textContent = 'Exportar ⚠ Cambios pendientes';
+            btn.title = 'Tienes cambios guardados localmente, pero aún no exportados a JSON';
+        } else {
+            btn.textContent = 'Exportar';
+            btn.title = 'Guardar copia local';
+        }
+    },
+
     flashExportButton() {
         const btn = document.getElementById('btn-export');
         if (btn) {
-            // Quitamos la clase por si ya estaba activa
+            this.updateExportButtonState();
             btn.classList.remove('flash-active');
-            // Forzamos un reflujo para que el navegador note el cambio
-            void btn.offsetWidth; 
-            // Agregamos la clase con un delay mínimo
+            void btn.offsetWidth;
             setTimeout(() => {
                 btn.classList.add('flash-active');
                 setTimeout(() => btn.classList.remove('flash-active'), 5000);
@@ -181,11 +199,10 @@ const ui = {
         if (titleEl && msgEl && btn) {
             titleEl.innerText = title;
             msgEl.innerText = message;
-            
+
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
-            
-            // Personalización de estilo y texto
+
             newBtn.innerText = confirmText;
             if (confirmClass) {
                 newBtn.className = `btn-primary ${confirmClass}`;
@@ -197,7 +214,6 @@ const ui = {
                     newBtn.style.background = 'var(--primary)';
                 }
             } else {
-                // Default style for deletions (maintaining current behavior)
                 newBtn.style.background = 'var(--danger)';
             }
 
@@ -219,6 +235,8 @@ const ui = {
     },
 
     renderAll() {
+        this.updateExportButtonState();
+
         const activeTab = document.querySelector('.tab-link.active')?.getAttribute('data-tab');
         if (!activeTab) return;
         if (activeTab === 'tab-plants') {
@@ -419,14 +437,22 @@ const app = {
     selectedPlantId: null,
     graduatingPropId: null,
     currentLogFilter: 'Todos',
+    isDirty: false,
 
     init() {
         store.init();
         ui.initTabs();
         this.initParentSelect();
         this.initResizer();
-    },
+        ui.updateExportButtonState();
 
+        window.addEventListener('beforeunload', (e) => {
+            if (this.isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    },
     formatDate(dateStr) {
         if (!dateStr) return 'Nunca';
         return dateStr.split('-').reverse().join('/');
@@ -1015,12 +1041,19 @@ const app = {
 
     // --- Sincronización e Importación ---
     exportBackup() {
-        const exportData = {
-            ...store.data,
-            exportedAt: new Date().toISOString()
-        };
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `plantitas_${new Date().toISOString().split('T')[0]}.json`; a.click();
+    const exportData = {
+        ...store.data,
+        exportedAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `plantitas_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+
+    this.isDirty = false;
+    ui.updateExportButtonState();
     },
 
     importBackup(e) {
