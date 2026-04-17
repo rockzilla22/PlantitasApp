@@ -72,30 +72,8 @@ export function SignInForm({ redirectTo = "/" }: Props) {
   };
 
   return (
-    <div className="signin-card" style={{ position: 'relative' }}>
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(255,255,255,0.6)',
-        backdropFilter: 'blur(2px)',
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '12px'
-      }}>
-        <div style={{
-          background: 'var(--primary)',
-          color: 'white',
-          padding: '1rem 2rem',
-          borderRadius: '20px',
-          fontWeight: 'bold',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-        }}>
-          🚧 En Mantenimiento
-        </div>
-      </div>
-      
+    <div className="signin-card">
+
       <div className="signin-header" style={{ opacity: 0.5 }}>
         <span className="signin-logo">🌿</span>
         <h2>PlantitasApp</h2>

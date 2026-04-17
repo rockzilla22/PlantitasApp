@@ -54,23 +54,6 @@ export async function middleware(request: NextRequest) {
   const isLoginPage = pathname === "/login";
   const isAuthCallback = pathname.startsWith("/auth/");
 
-  // Páginas de la app que requieren login
-  const isAppPage =
-    pathname === "/" ||
-    pathname.startsWith("/nursery") ||
-    pathname.startsWith("/season") ||
-    pathname.startsWith("/wishlist") ||
-    pathname.startsWith("/inventory") ||
-    pathname.startsWith("/notes");
-
-  // Sin sesión + intentando acceder a la app → al login
-  if (!user && isAppPage) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
-  }
-
   // Con sesión + intentando ir al login → al inicio
   if (user && isLoginPage) {
     return NextResponse.redirect(new URL("/", request.url));

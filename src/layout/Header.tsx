@@ -230,7 +230,12 @@ export function Header() {
           ) : (
             <span 
               className="btn-backup" 
-              style={{ whiteSpace: 'nowrap', opacity: 0.5, cursor: 'not-allowed' }}
+              style={{ 
+                whiteSpace: 'nowrap', 
+                opacity: 0.5, 
+                cursor: 'not-allowed',
+                pointerEvents: 'none'
+              }}
               title="Login temporalmente desactivado"
             >
               Iniciar sesión

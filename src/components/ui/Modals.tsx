@@ -372,15 +372,8 @@ export function Modals() {
                 className="btn-primary"
                 style={{ background: "var(--danger)", width: "100%" }}
                 onClick={() => {
+                  setStoreData(props.data);
                   handleClose();
-                  setTimeout(() => {
-                    openModal("confirm", {
-                      title: "¿Sobreescribir datos?",
-                      message: "Se perderán TODOS los datos actuales del navegador. Solo quedará lo que hay en el archivo importado.",
-                      confirmText: "Sobreescribir",
-                      onConfirm: () => setStoreData(props.data)
-                    });
-                  }, 50);
                 }}
               >
                 🔄 Sobreescribir (Usar solo archivo)

@@ -9,10 +9,30 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
  */
 export const supabaseBrowser = () => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Retornamos un proxy que no hace nada para evitar errores de undefined
-    return new Proxy({}, {
-      get: () => () => ({ data: { user: null }, error: null })
-    }) as any;
+    const createMock = (): any => {
+      // La función mock que se ejecuta al llamar a algo como .getUser()
+      const mockFunc = () => {
+        const result = { 
+          data: { user: null, session: null, subscription: { unsubscribe: () => {} } }, 
+          error: null 
+        };
+        // Devolvemos un objeto que es a la vez el resultado y una "promesa" (thenable)
+        return {
+          ...result,
+          then: (resolve: any) => Promise.resolve(resolve ? resolve(result) : result),
+          catch: (reject: any) => Promise.resolve(reject ? reject(null) : null),
+          finally: (cb: any) => { if (cb) cb(); return Promise.resolve(); }
+        };
+      };
+
+      return new Proxy(mockFunc, {
+        get: (target, prop) => {
+          if (prop === 'then') return undefined; // No es una promesa hasta que se invoca
+          return createMock();
+        }
+      });
+    };
+    return createMock();
   }
   return createBrowserClient(supabaseUrl, supabaseAnonKey);
 };
