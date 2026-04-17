@@ -119,13 +119,13 @@ const configProject: ConfigProject = {
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
-    favicon: "/PageCover/favicon.ico",
-    icon16: "/PageCover/favicon.ico",
-    icon32: "/PageCover/favicon.ico",
-    icon192: "/PageCover/cover.webp",
-    icon512: "/PageCover/cover.webp",
-    appleTouch: "/PageCover/cover.webp",
-    safariMask: "/PageCover/cover.webp",
+    favicon: "/favicon.svg",
+    icon16: "/favicon.svg",
+    icon32: "/favicon.svg",
+    icon192: "/favicon.svg",
+    icon512: "/favicon.svg",
+    appleTouch: "/favicon.svg",
+    safariMask: "/favicon.svg",
   },
 
   // ======================================================
@@ -170,7 +170,7 @@ const configProject: ConfigProject = {
   // ======================================================
   navigation: {
     ES: {
-      plants: { label: "Mis Plantas", href: "/" },
+      plants: { label: "Mis Plantas", href: "/plants" },
       nursery: { label: "🧪 Propagación", href: "/nursery" },
       season: { label: "📅 Temporada", href: "/season" },
       wishlist: { label: "✨ Wishlist", href: "/wishlist" },
@@ -178,7 +178,7 @@ const configProject: ConfigProject = {
       notes: { label: "📝 Notas", href: "/notes" },
     },
     EN: {
-      plants: { label: "My Plants", href: "/" },
+      plants: { label: "My Plants", href: "/plants" },
       nursery: { label: "🧪 Nursery", href: "/nursery" },
       season: { label: "📅 Season", href: "/season" },
       wishlist: { label: "✨ Wishlist", href: "/wishlist" },
