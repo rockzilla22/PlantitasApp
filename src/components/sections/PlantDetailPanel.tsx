@@ -21,6 +21,7 @@ export function PlantDetailPanel() {
   const [logDetail, setLogDetail] = useState("");
   const [inventoryItem, setInventoryItem] = useState("");
   const [logFilter, setLogFilter] = useState("Todos");
+  const [logSortOrder, setLogSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const plant = plants.find(p => p.id === selectedId);
 
@@ -135,6 +136,25 @@ export function PlantDetailPanel() {
       <div className="log-list" style={{ marginTop: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
           <h3 style={{ margin: 0 }}>📜 Historial</h3>
+          <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+            <small style={{ fontSize: '0.7rem', color: '#666', marginRight: '0.25rem' }}>Ordenar:</small>
+            <button 
+              className="btn-text" 
+              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'desc' ? '#e0e0e0' : 'transparent' }} 
+              onClick={() => setLogSortOrder('desc')}
+              title="Más reciente primero"
+            >
+              📅🔽
+            </button>
+            <button 
+              className="btn-text" 
+              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'asc' ? '#e0e0e0' : 'transparent' }} 
+              onClick={() => setLogSortOrder('asc')}
+              title="Más antiguo primero"
+            >
+              📅🔼
+            </button>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
           {['Todos', 'Riego', 'Fertilizante', 'Sustrato', 'Trasplante', 'Plaga/Enfermedad', 'Nota'].map(f => (
@@ -150,7 +170,13 @@ export function PlantDetailPanel() {
         </div>
         {[...plant.logs]
           .filter(log => logFilter === 'Todos' || log.actionType === logFilter)
-          .sort((a, b) => b.id - a.id)
+          .sort((a, b) => {
+            const dateCompare = logSortOrder === 'desc' 
+              ? b.date.localeCompare(a.date) 
+              : a.date.localeCompare(b.date);
+            if (dateCompare !== 0) return dateCompare;
+            return logSortOrder === 'desc' ? b.id - a.id : a.id - b.id;
+          })
           .map(log => (
             <div key={log.id} className="log-item">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

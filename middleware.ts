@@ -44,34 +44,35 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthPage = request.nextUrl.pathname.startsWith("/login");
-  const isDashboardPage = request.nextUrl.pathname.startsWith("/dashboard");
-  const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
+  const pathname = request.nextUrl.pathname;
+  const isLoginPage = pathname === "/login";
+  const isAuthCallback = pathname.startsWith("/auth/");
 
-  // 1. Redirección por falta de sesión
-  if (!user && (isDashboardPage || isAdminPage)) {
+  // Páginas de la app que requieren login
+  const isAppPage =
+    pathname === "/" ||
+    pathname.startsWith("/nursery") ||
+    pathname.startsWith("/season") ||
+    pathname.startsWith("/wishlist") ||
+    pathname.startsWith("/inventory") ||
+    pathname.startsWith("/notes");
+
+  // Sin sesión + intentando acceder a la app → al login
+  if (!user && isAppPage) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login"; // Ajustar según tu ruta de entrada
-    url.searchParams.set("next", request.nextUrl.pathname);
+    url.pathname = "/login";
+    url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 
-  // 2. Protección de rutas administrativas
-  // Nota: El rol 'admin' debe estar configurado en app_metadata o en tu tabla de perfiles
-  if (isAdminPage) {
-    if (user?.app_metadata?.role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-  }
-
-  // 3. Redirección si ya está autenticado e intenta ir al login
-  if (user && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  // Con sesión + intentando ir al login → al inicio
+  if (user && isLoginPage) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login"],
+  matcher: ["/", "/nursery/:path*", "/season/:path*", "/wishlist/:path*", "/inventory/:path*", "/notes/:path*", "/login", "/auth/:path*"],
 };
