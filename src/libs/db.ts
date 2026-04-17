@@ -9,10 +9,17 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
  */
 export const supabaseBrowser = () => {
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Retornamos un proxy que no hace nada para evitar errores de undefined
-    return new Proxy({}, {
-      get: () => () => ({ data: { user: null }, error: null })
-    }) as any;
+    // Proxy recursivo para manejar supabase.auth.getUser(), supabase.auth.onAuthStateChange(), etc.
+    const createMock = (): any => {
+      const mock: any = () => ({ data: { user: null, subscription: { unsubscribe: () => {} } }, error: null });
+      return new Proxy(mock, {
+        get: (target, prop) => {
+          if (prop === 'then') return undefined;
+          return createMock();
+        }
+      });
+    };
+    return createMock();
   }
   return createBrowserClient(supabaseUrl, supabaseAnonKey);
 };
