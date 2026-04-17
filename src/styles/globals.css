@@ -559,12 +559,15 @@ body {
 }
 
 #wishlist-container {
+    display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.25rem;
+    width: 100% !important;
+    margin-top: 1rem;
 }
 
 @media (min-width: 480px) {
-    #wishlist-container { grid-template-columns: 1fr; } /* Mantener una sola columna hasta los 600px para evitar squashing */
+    #wishlist-container { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 600px) {
@@ -577,11 +580,14 @@ body {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     transition: transform 0.2s, border-color 0.2s;
-    cursor: pointer;
     border: 2px solid transparent;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Evita que el flexbox rompa el ancho del padre con texto largo */
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    min-width: 0;
 }
 
 @media (min-width: 768px) {
@@ -900,15 +906,38 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ── Wishlist card ─────────────────────────────────────── */
-.wish-card { position: relative; overflow: hidden; }
-.wish-card::before {
-    content: '✨';
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 3rem;
-    opacity: 0.1;
-    transform: rotate(15deg);
+.wish-card { 
+    position: relative; 
+    min-height: 180px !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.25rem !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    background: var(--card-bg);
+}
+
+.wish-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.wish-card-body {
+    flex: 1 1 auto;
+    margin-bottom: 1rem;
+}
+
+.wish-card-actions {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--background);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* ── Footer ────────────────────────────────────────────── */

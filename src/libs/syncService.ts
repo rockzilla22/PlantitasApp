@@ -118,7 +118,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
     await sb.from("global_notes").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).is("deleted_at", null);
   }
 
-  // Wishlist — upsert + delete orphans
+  // wishlist — upsert + delete orphans
   const wishRows = data.wishlist.map((w) => ({
     id: w.id,
     user_id: userId,

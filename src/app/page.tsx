@@ -28,8 +28,8 @@ export default function LandingPage() {
       icon: "📦",
     },
     {
-      title: "✨ Wishlist",
-      description: "Tu lista de deseos botánicos organizada por prioridad para que no se te escape ninguna.",
+      title: "✨ Lista de Deseos",
+      description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
       icon: "✨",
     },
     {

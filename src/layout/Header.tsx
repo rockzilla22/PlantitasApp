@@ -56,10 +56,17 @@ export function Header() {
   useEffect(() => {
     const supabase = supabaseBrowser();
     
+    // Timeout de seguridad: Si en 3 segundos no hay respuesta, liberamos la UI.
+    const safetyTimeout = setTimeout(() => {
+      if ($authLoading.get()) {
+        $authLoading.set(false);
+      }
+    }, 3000);
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      // Solo actualizamos el store si el usuario es distinto para evitar ciclos
+      clearTimeout(safetyTimeout);
       const currentUser = $user.get();
       if (session?.user?.id !== currentUser?.id) {
         $user.set(session?.user ?? null);
@@ -67,7 +74,10 @@ export function Header() {
       $authLoading.set(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(safetyTimeout);
+    };
   }, []);
 
   const handleLogout = async () => {

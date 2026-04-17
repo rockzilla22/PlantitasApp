@@ -302,7 +302,7 @@ export default function ProfilePage() {
                       plants:      { label: "🌿 Plantas", items: [] },
                       propagations:{ label: "🧪 Propagaciones", items: [] },
                       global_notes:{ label: "📝 Notas", items: [] },
-                      wishlist:    { label: "✨ Wishlist", items: [] },
+                      wishlist:    { label: "✨ Lista de Deseos", items: [] },
                     };
                     trashItems.forEach((item) => groups[item.table]?.items.push(item));
                     return Object.entries(groups).map(([key, group]) =>
