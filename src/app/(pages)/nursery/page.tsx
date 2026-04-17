@@ -70,14 +70,14 @@ export default function NurseryPage() {
                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.5rem', alignItems: 'start', marginBottom: '0.8rem' }}>
                     <div>
                         <h4 style={{ margin: 0 }}>🧪 {prop.name}</h4>
-                        <small style={{ color: 'var(--text-light)' }}>{getMethodIcon(prop.method)} {prop.method}</small>
+                        <small style={{ color: 'var(--text-gray)' }}>{getMethodIcon(prop.method)} {prop.method}</small>
                     </div>
                     <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem' }}>
                         <span className={`badge ${badgeClass}`}>{icon} {prop.status}</span>
-                        <small style={{ color: 'var(--text-light)', whiteSpace: 'nowrap' }}>📅 {formatDate(prop.startDate)}</small>
+                        <small style={{ color: 'var(--text-gray)', whiteSpace: 'nowrap' }}>📅 {formatDate(prop.startDate)}</small>
                     </div>
                 </div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-light)', marginBottom: '1rem', borderTop: '1px solid #eee', paddingTop: '0.5rem' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', marginBottom: '1rem', borderTop: '1px solid #eee', paddingTop: '0.5rem' }}>
                   📝 {prop.notes || 'Sin notas'}
                 </p>
                 <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'space-between' }}>

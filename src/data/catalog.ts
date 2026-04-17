@@ -5,19 +5,19 @@ export type LogActionOption = Option & {
 };
 
 export const PLANT_TYPES: Option[] = [
-  { value: "🍃|Alocasia", label: "🍃 Alocasia" },
-  { value: "🌳|Arbusto", label: "🌳 Árbol / Arbusto" },
-  { value: "🌿|Aromática", label: "🌿 Aromática" },
-  { value: "🌵|Cactus", label: "🌵 Cactus / Suculenta" },
-  { value: "🌱|Carnívora", label: "🌱 Carnívora" },
-  { value: "🌸|Flor", label: "🌸 Flor" },
-  { value: "🍓|Frutal", label: "🍓 Frutal" },
-  { value: "🌿|Hierba", label: "🌿 Hierba" },
-  { value: "🍃|Monstera", label: "🍃 Monstera" },
-  { value: "🍃|Philodendron", label: "🍃 Philodendron" },
-  { value: "🌿|Planta", label: "🌿 Planta (Genérica)" },
-  { value: "🌿|Syngonium", label: "🌿 Syngonium" },
-  { value: "☘️|Trébol", label: "☘️ Trébol" },
+  { value: "Alocasia", label: "🍃 Alocasia" },
+  { value: "Arbusto", label: "🌳 Árbol / Arbusto" },
+  { value: "Aromática", label: "🌿 Aromática" },
+  { value: "Cactus", label: "🌵 Cactus / Suculenta" },
+  { value: "Carnívora", label: "🌱 Carnívora" },
+  { value: "Flor", label: "🌸 Flor" },
+  { value: "Frutal", label: "🍓 Frutal" },
+  { value: "Hierba", label: "🌿 Hierba" },
+  { value: "Monstera", label: "🍃 Monstera" },
+  { value: "Philodendron", label: "🍃 Philodendron" },
+  { value: "Planta", label: "🌿 Planta (Genérica)" },
+  { value: "Syngonium", label: "🌿 Syngonium" },
+  { value: "Trébol", label: "☘️ Trébol" },
   { value: "CUSTOM", label: "✨ Otra (Personalizada)..." },
 ];
 
@@ -105,7 +105,7 @@ export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
   Riego: "💧",
   Sustrato: "🟤",
   Trasplante: "🌳",
-  Initial: "🌱",
+  "Registro Nuevo": "🌱",
 };
 
 export const LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE: Record<string, string> = {

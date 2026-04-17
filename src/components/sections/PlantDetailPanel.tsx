@@ -157,7 +157,7 @@ export function PlantDetailPanel() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-          {['Todos', 'Riego', 'Fertilizante', 'Sustrato', 'Trasplante', 'Plaga/Enfermedad', 'Nota'].map(f => (
+          {['Todos', 'Registro Nuevo', 'Riego', 'Fertilizante', 'Sustrato', 'Trasplante', 'Plaga/Enfermedad', 'Nota'].map(f => (
             <button
               key={f}
               className="btn-backup"

@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "mcp__489540dc-b36c-4f2b-ad0a-25e34b8318be__list_projects",
+      "mcp__489540dc-b36c-4f2b-ad0a-25e34b8318be__execute_sql",
+      "mcp__489540dc-b36c-4f2b-ad0a-25e34b8318be__apply_migration"
     ]
   }
 }

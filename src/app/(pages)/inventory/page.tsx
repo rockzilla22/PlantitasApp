@@ -48,14 +48,14 @@ export default function InventoryPage() {
           <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
             <button 
               className={`btn-text ${sortBy === 'name' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'name' ? 'white' : 'transparent', color: sortBy === 'name' ? 'var(--primary)' : 'var(--text-light)', boxShadow: sortBy === 'name' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'name' ? 'white' : 'transparent', color: sortBy === 'name' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'name' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('name')}
             >
               🔤 Nombre
             </button>
             <button 
               className={`btn-text ${sortBy === 'qty' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'qty' ? 'white' : 'transparent', color: sortBy === 'qty' ? 'var(--primary)' : 'var(--text-light)', boxShadow: sortBy === 'qty' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'qty' ? 'white' : 'transparent', color: sortBy === 'qty' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'qty' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('qty')}
             >
               🔢 Cantidad
@@ -70,7 +70,7 @@ export default function InventoryPage() {
             <h3>{cat.icon} {cat.label}</h3>
             <ul id={`list-${cat.id}`}>
               {inventory[cat.id]?.length === 0 && (
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-light)', textAlign: 'center' }}>Vacío.</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Vacío.</p>
               )}
               {getSortedItems(cat.id).map((item, index) => (
                 <li key={`${item.name}-${index}`} className="inventory-item">

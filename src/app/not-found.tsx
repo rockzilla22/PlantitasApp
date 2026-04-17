@@ -13,7 +13,7 @@ export default function NotFound() {
           <p className="text-xl font-bold">Esta página no existe.</p>
         </div>
 
-        <p className="mt-6 text-sm text-[var(--text-light)]">Parece que te perdiste en el bosque. Volvé a casa.</p>
+        <p className="mt-6 text-sm text-[var(--text-gray)]">Parece que te perdiste en el bosque. Volvé a casa.</p>
 
         <div className="mt-6">
           <Link href="/" className="btn-primary">

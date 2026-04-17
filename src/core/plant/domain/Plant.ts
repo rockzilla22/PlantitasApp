@@ -11,7 +11,7 @@ export const LogActionTypeSchema = z.enum([
   "Trasplante",
   "Plaga/Enfermedad",
   "Nota",
-  "Initial",
+  "Registro Nuevo",
 ]);
 
 export type LogActionType = z.infer<typeof LogActionTypeSchema>;
