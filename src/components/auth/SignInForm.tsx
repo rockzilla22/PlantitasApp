@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/libs/db";
 
@@ -14,10 +14,12 @@ export function SignInForm({ redirectTo = "/" }: Props) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const submitting = useRef(false);
 
   const handleOAuth = async (provider: "google" | "facebook") => {
     setError(null);
@@ -34,6 +36,8 @@ export function SignInForm({ redirectTo = "/" }: Props) {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setError(null);
     setInfo(null);
     setBusy(true);
@@ -50,21 +54,49 @@ export function SignInForm({ redirectTo = "/" }: Props) {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+          data: { full_name: name.trim() },
+        },
       });
       if (error) {
         setError(error.message);
       } else {
         setInfo("Revisá tu correo para confirmar el registro.");
+        setTimeout(() => router.push("/login"), 3000);
       }
     }
 
     setBusy(false);
+    submitting.current = false;
   };
 
   return (
-    <div className="signin-card">
-      <div className="signin-header">
+    <div className="signin-card" style={{ position: 'relative' }}>
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0,
+        background: 'rgba(255,255,255,0.6)',
+        backdropFilter: 'blur(2px)',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '12px'
+      }}>
+        <div style={{
+          background: 'var(--primary)',
+          color: 'white',
+          padding: '1rem 2rem',
+          borderRadius: '20px',
+          fontWeight: 'bold',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        }}>
+          🚧 En Mantenimiento
+        </div>
+      </div>
+      
+      <div className="signin-header" style={{ opacity: 0.5 }}>
         <span className="signin-logo">🌿</span>
         <h2>PlantitasApp</h2>
         <p>Tu jardín personal, en cualquier dispositivo</p>
@@ -103,6 +135,19 @@ export function SignInForm({ redirectTo = "/" }: Props) {
       </div>
 
       <form onSubmit={handleEmailSubmit} className="signin-form">
+        {mode === "signup" && (
+          <div className="form-group">
+            <label>Nombre</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Tu nombre"
+              required
+              disabled={busy}
+            />
+          </div>
+        )}
         <div className="form-group">
           <label>Email</label>
           <input

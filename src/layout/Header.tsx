@@ -202,16 +202,25 @@ export function Header() {
           {authLoading ? null : user ? (
             <div className="user-menu">
               <span className="user-avatar" title={user.email ?? ""}>
-                {user.email?.[0].toUpperCase() ?? "U"}
+                {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? "U").toUpperCase()}
               </span>
+              {user.user_metadata?.full_name && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>
+                  {user.user_metadata.full_name}
+                </span>
+              )}
               <button className="btn-text" style={{ fontSize: '0.8rem', color: 'var(--text-light)' }} onClick={handleLogout} title="Cerrar sesión">
                 Salir
               </button>
             </div>
           ) : (
-            <a href="/login" onClick={(e) => handleNav(e, "/login")} className="btn-backup" style={{ whiteSpace: 'nowrap' }}>
+            <span 
+              className="btn-backup" 
+              style={{ whiteSpace: 'nowrap', opacity: 0.5, cursor: 'not-allowed' }}
+              title="Login temporalmente desactivado"
+            >
               Iniciar sesión
-            </a>
+            </span>
           )}
         </div>
       </div>
