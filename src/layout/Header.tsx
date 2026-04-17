@@ -36,14 +36,17 @@ export function Header() {
   const syncStatus = useStore($syncStatus);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const importInputRef = useRef<HTMLInputElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Nombre a mostrar priorizando custom_name
+  const displayName = user?.user_metadata?.custom_name ?? user?.user_metadata?.full_name ?? user?.email;
 
   useEffect(() => {
     loadData();
   }, []);
 
-  // Cuando el usuario hace login y es premium → recarga desde Supabase
-  // Depende de user?.id (no del objeto completo) para evitar re-disparos
-  // por cambios de referencia del mismo usuario
+  // Recarga desde Supabase solo cuando el usuario cambia de "nada" a "identificado"
+  // o cuando el ID del usuario cambia realmente.
   useEffect(() => {
     if (user && hasPremium(user)) {
       loadData();
@@ -52,18 +55,18 @@ export function Header() {
 
   useEffect(() => {
     const supabase = supabaseBrowser();
-    supabase.auth.getUser().then((res: any) => {
-      if (res?.data) {
-        $user.set(res.data.user);
-      }
-      $authLoading.set(false);
-    });
+    
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      $user.set(session?.user ?? null);
+      // Solo actualizamos el store si el usuario es distinto para evitar ciclos
+      const currentUser = $user.get();
+      if (session?.user?.id !== currentUser?.id) {
+        $user.set(session?.user ?? null);
+      }
       $authLoading.set(false);
     });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -75,6 +78,7 @@ export function Header() {
 
   const handleNav = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
+    setIsMobileMenuOpen(false);
     router.push(href);
   };
 
@@ -182,6 +186,10 @@ export function Header() {
     importInputRef.current?.click();
   };
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
     <header className="main-header">
       <div className="header-top">
@@ -189,114 +197,142 @@ export function Header() {
           <h1>🌿 PlantitasApp</h1>
         </a>
 
-        <div className="search-container" id="global-search-container">
-          <div className="search-input-wrapper">
-            <input
-              type="text"
-              id="global-search"
-              placeholder="Buscar en toda la app..."
-              value={searchQuery}
-              onChange={(e) => $searchQuery.set(e.target.value)}
-              autoComplete="off"
-            />
-            <span className="search-icon">🔍</span>
-          </div>
-          {searchQuery && (
-            <div id="search-results" className="search-results-panel active">
-              {searchResults.length > 0 ? (
-                searchResults.map((m, idx) => (
-                  <a
-                    key={idx}
-                    href={m.href}
-                    className="search-result-item"
-                    onClick={(e) => {
-                      if (m.action) m.action();
-                      $searchQuery.set("");
-                      handleNav(e, m.href);
-                    }}
-                  >
-                    <span className="res-type">{m.type}</span>
-                    <span className="res-title">
-                      {m.icon} {m.name}
-                    </span>
-                  </a>
-                ))
-              ) : (
-                <div className="search-result-item">
-                  <span>No se encontraron resultados</span>
-                </div>
-              )}
+        <button
+          type="button"
+          className={`mobile-menu-toggle ${isMobileMenuOpen ? "is-open" : ""}`}
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-header-panel"
+          aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <div id="mobile-header-panel" className={`header-panel ${isMobileMenuOpen ? "is-open" : ""}`}>
+          <div className="search-container" id="global-search-container">
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                id="global-search"
+                placeholder="Buscar en toda la app..."
+                value={searchQuery}
+                onChange={(e) => $searchQuery.set(e.target.value)}
+                autoComplete="off"
+              />
+              <span className="search-icon">🔍</span>
             </div>
-          )}
-        </div>
-
-        <div className="header-actions">
-          <button
-            type="button"
-            className={`btn-backup ${shouldFlash ? "flash-active" : ""}`}
-            id="btn-export"
-            onClick={handleExport}
-            title="Guardar copia local"
-            style={isDirty ? { borderColor: "var(--secondary)", color: "var(--secondary)", fontWeight: 700 } : {}}
-          >
-            {isDirty ? "⚠ Cambios pendientes" : "Exportar"}
-          </button>
-
-          <div className="import-group">
-            <button type="button" className="btn-backup" onClick={handleImportClick}>
-              Importar JSON
-            </button>
-            <input ref={importInputRef} type="file" id="import-file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
-          </div>
-
-          <div className="auth-zone">
-            {user ? (
-              <div className="user-menu">
-                <a href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
-                  {getInitials(user.user_metadata?.full_name, user.email)}
-                </a>
-                {user.user_metadata?.full_name && (
-                  <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.9)" }}>{user.user_metadata.full_name}</span>
-                )}
-                {hasPremium(user) ? (
-                  <span className={`sync-indicator sync-${syncStatus}`} title={
-                    syncStatus === "syncing" ? "Sincronizando..." :
-                    syncStatus === "synced" ? "Sincronizado con la nube" :
-                    syncStatus === "error" ? "Error de sincronización" :
-                    "Cloud sync activo"
-                  }>
-                    {syncStatus === "syncing" ? "⟳" : syncStatus === "error" ? "⚠" : "☁"}
-                  </span>
+            {searchQuery && (
+              <div id="search-results" className="search-results-panel active">
+                {searchResults.length > 0 ? (
+                  searchResults.map((m, idx) => (
+                    <a
+                      key={idx}
+                      href={m.href}
+                      className="search-result-item"
+                      onClick={(e) => {
+                        if (m.action) m.action();
+                        $searchQuery.set("");
+                        handleNav(e, m.href);
+                      }}
+                    >
+                      <span className="res-type">{m.type}</span>
+                      <span className="res-title">
+                        {m.icon} {m.name}
+                      </span>
+                    </a>
+                  ))
                 ) : (
-                  <span className="sync-indicator sync-none" title="Sin cloud sync — plan gratuito">
-                    ☁ local
-                  </span>
+                  <div className="search-result-item">
+                    <span>No se encontraron resultados</span>
+                  </div>
                 )}
-                <button
-                  className="btn-text"
-                  style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 500 }}
-                  onClick={handleLogout}
-                  title="Cerrar sesión"
-                >
-                  Salir
-                </button>
               </div>
-            ) : (
-              <button
-                type="button"
-                className="btn-backup"
-                onClick={(e) => handleNav(e, "/login")}
-                style={{ whiteSpace: "nowrap", opacity: authLoading ? 0.6 : 1 }}
-                disabled={authLoading}
-              >
-                {authLoading ? "Cargando..." : "Iniciar sesión"}
-              </button>
             )}
           </div>
+
+          <div className="header-actions">
+            <button
+              type="button"
+              className={`btn-backup ${shouldFlash ? "flash-active" : ""}`}
+              id="btn-export"
+              onClick={handleExport}
+              title="Guardar copia local"
+              style={isDirty ? { borderColor: "var(--secondary)", color: "var(--secondary)", fontWeight: 700 } : {}}
+            >
+              {isDirty ? "⚠ Cambios pendientes" : "Exportar"}
+            </button>
+
+            <div className="import-group">
+              <button type="button" className="btn-backup" onClick={handleImportClick}>
+                Importar JSON
+              </button>
+              <input ref={importInputRef} type="file" id="import-file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
+            </div>
+
+            <div className="auth-zone">
+              {user ? (
+                <div className="user-menu">
+                  <a href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
+                    {getInitials(displayName, user.email)}
+                  </a>
+                  {displayName && (
+                    <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.9)" }}>{displayName}</span>
+                  )}
+                  {hasPremium(user) ? (
+                    <span className={`sync-indicator sync-${syncStatus}`} title={
+                      syncStatus === "syncing" ? "Sincronizando..." :
+                      syncStatus === "synced" ? "Sincronizado con la nube" :
+                      syncStatus === "error" ? "Error de sincronización" :
+                      "Cloud sync activo"
+                    }>
+                      {syncStatus === "syncing" ? "⟳" : syncStatus === "error" ? "⚠" : "☁"}
+                    </span>
+                  ) : (
+                    <span className="sync-indicator sync-none" title="Sin cloud sync — plan gratuito">
+                      ☁ local
+                    </span>
+                  )}
+                  <button
+                    className="btn-text"
+                    style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 500 }}
+                    onClick={handleLogout}
+                    title="Cerrar sesión"
+                  >
+                    Salir
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-backup"
+                  onClick={(e) => handleNav(e, "/login")}
+                  style={{ whiteSpace: "nowrap", opacity: authLoading ? 0.6 : 1 }}
+                  disabled={authLoading}
+                >
+                  {authLoading ? "Cargando..." : "Iniciar sesión"}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <nav className="tab-menu mobile-tab-menu">
+            {tabs.map((tab) => (
+              <a
+                key={tab.id}
+                href={tab.href ?? "#"}
+                onClick={(e) => handleNav(e, tab.href ?? "#")}
+                className={`tab-link ${pathname === tab.href ? "active" : ""}`}
+              >
+                {tab.label}
+              </a>
+            ))}
+          </nav>
         </div>
       </div>
 
-      <nav className="tab-menu">
+      <nav className="tab-menu desktop-tab-menu">
         {tabs.map((tab) => (
           <a
             key={tab.id}

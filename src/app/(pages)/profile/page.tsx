@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
@@ -31,7 +32,7 @@ export default function ProfilePage() {
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [trashLoading, setTrashLoading] = useState(false);
   const [restoringId, setRestoringId] = useState<number | null>(null);
-  const [linkingProvider, setLinkingProvider] = useState<"google" | "facebook" | null>(null);
+  const [linkingProvider, setLinkingProvider] = useState<"google" | "discord" | null>(null);
   const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,7 +43,9 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.user_metadata?.full_name ?? "");
+      // Priorizamos custom_name (el que el usuario eligió en la app)
+      // sobre full_name (el que viene de Discord/Google)
+      setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
       setPhone(user.phone ?? "");
     }
   }, [user]);
@@ -65,7 +68,7 @@ export default function ProfilePage() {
     setRestoringId(null);
   };
 
-  const handleLink = async (provider: "google" | "facebook") => {
+  const handleLink = async (provider: "google" | "discord") => {
     setLinkingProvider(provider);
     setUnlinkError(null);
     const sb = supabaseBrowser();
@@ -80,7 +83,7 @@ export default function ProfilePage() {
     // On success Supabase redirects to provider → no setState needed
   };
 
-  const handleUnlink = async (provider: "google" | "facebook") => {
+  const handleUnlink = async (provider: "google" | "discord") => {
     const identity = user!.identities?.find((i) => i.provider === provider);
     if (!identity) return;
     setUnlinkError(null);
@@ -104,8 +107,11 @@ export default function ProfilePage() {
 
     const supabase = supabaseBrowser();
     const { error } = await supabase.auth.updateUser({
-      data: { full_name: fullName.trim() },
-      phone: phone.trim() || "", // Ahora sí mandamos el vacío si hace falta
+      data: { 
+        custom_name: fullName.trim(),
+        full_name: fullName.trim() // Lo guardamos en ambos para compatibilidad
+      },
+      phone: phone.trim() || "",
     });
 
     if (error) {
@@ -113,8 +119,7 @@ export default function ProfilePage() {
     } else {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
-        const { $user: userStore } = await import("@/store/authStore");
-        userStore.set(data.user);
+        $user.set(data.user);
       }
       setSuccess("Perfil actualizado correctamente.");
     }
@@ -129,27 +134,30 @@ export default function ProfilePage() {
   const planLevel = getPlanLevel(user);
   const isPremium = hasPremium(user);
 
-  const initialFullName = user?.user_metadata?.full_name || "";
+  const currentName = user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "";
   const initialPhone = user?.phone || "";
-  const hasChanges = fullName.trim() !== initialFullName || phone.trim() !== initialPhone;
+  const hasChanges = fullName.trim() !== currentName || phone.trim() !== initialPhone;
 
   const linkedProviders = new Set((user.identities ?? []).map((i) => i.provider));
   const canUnlink = (user.identities ?? []).length > 1;
 
   const oauthProviders = [
     { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid #dadce0" },
-    { id: "facebook" as const, label: "Facebook",  iconBg: "#1877F2",  iconColor: "#fff",    iconText: "f",  border: "none" },
+    { id: "discord"  as const, label: "Discord",  iconBg: "#5865F2",  iconColor: "#fff",    iconText: "D",  border: "none" },
   ];
 
   return (
     <div className="profile-page">
       <div className="profile-card">
+        <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontSize: "0.9rem", fontWeight: 600, display: "inline-block", marginBottom: "1.5rem" }}>
+          ← Volver al inicio
+        </Link>
         <div className="profile-header">
           <div className="profile-avatar-lg">
-            {getInitials(user.user_metadata?.full_name, user.email)}
+            {getInitials(currentName, user.email)}
           </div>
           <div>
-            <h2>{user.user_metadata?.full_name || "Sin nombre"}</h2>
+            <h2>{currentName || "Sin nombre"}</h2>
             <p className="profile-email">{user.email}</p>
             {isMasterAdmin && (
               <span className="badge-admin">⭐ Master Admin</span>
@@ -196,16 +204,9 @@ export default function ProfilePage() {
 
           <div className="profile-actions">
             <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => router.back()}
-              disabled={busy}
-            >
-              Volver
-            </button>
-            <button
               type="submit"
               className="btn-primary"
+              style={{ width: "100%" }}
               disabled={busy || !hasChanges}
             >
               {busy ? "Guardando..." : "Guardar cambios"}
@@ -238,7 +239,7 @@ export default function ProfilePage() {
         <div className="linked-accounts-section">
           <h3>Cuentas vinculadas</h3>
           <p className="profile-hint" style={{ marginBottom: "0.75rem" }}>
-            Vinculá tu cuenta con Google o Facebook para iniciar sesión con cualquiera de ellos.
+            Vinculá tu cuenta con Google o Discord para iniciar sesión con cualquiera de ellos.
           </p>
           {unlinkError && <p className="signin-error" style={{ marginBottom: "0.75rem" }}>{unlinkError}</p>}
           {oauthProviders.map((p) => {

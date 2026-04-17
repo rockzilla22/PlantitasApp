@@ -108,6 +108,7 @@ export const $selectedPlantId = atom<number | null>(null);
 // Flag que evita que $store.listen → saveData → syncToSupabase
 // se dispare durante una carga (loop infinito)
 let _isLoading = false;
+let _syncTimeout: NodeJS.Timeout | null = null;
 
 export const loadData = async () => {
   if (typeof window === "undefined") return;
@@ -131,8 +132,9 @@ export const loadData = async () => {
     try {
       const remoteData = await loadFromSupabase(user.id);
       if (remoteData) {
+        // Marcamos como cargando para que el set no gatille un saveData -> sync
+        _isLoading = true; 
         $store.set(remoteData);
-        // Guardar en localStorage directamente sin pasar por saveData
         localStorage.setItem("plantitas_db", JSON.stringify(remoteData));
         $syncStatus.set("synced");
       } else {
@@ -144,20 +146,28 @@ export const loadData = async () => {
   }
 
   _isLoading = false;
-  setDirty(false); // Carga no es un cambio pendiente
+  setDirty(false);
 };
 
 export const saveData = (data: AppData) => {
   if (typeof window === "undefined" || _isLoading) return;
 
+  // Guardado local es inmediato
   localStorage.setItem("plantitas_db", JSON.stringify(data));
 
+  // Sincronización remota con DEBOUNCE (esperamos 2 segundos de inactividad)
   const user = $user.get();
   if (hasPremium(user) && user) {
+    if (_syncTimeout) clearTimeout(_syncTimeout);
+    
     $syncStatus.set("syncing");
-    syncToSupabase(data, user.id)
-      .then(() => $syncStatus.set("synced"))
-      .catch(() => $syncStatus.set("error"));
+    
+    _syncTimeout = setTimeout(() => {
+      syncToSupabase(data, user.id)
+        .then(() => $syncStatus.set("synced"))
+        .catch(() => $syncStatus.set("error"))
+        .finally(() => { _syncTimeout = null; });
+    }, 2000); 
   }
 };
 
