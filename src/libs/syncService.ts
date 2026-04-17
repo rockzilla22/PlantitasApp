@@ -6,16 +6,32 @@ export type PlanLevel = "Sin cuenta" | "Usuario" | "Premium" | "Master Admin";
 
 export function hasPremium(user: User | null): boolean {
   if (!user) return false;
-  return (
-    user.app_metadata?.role === "master_admin" ||
-    !!user.app_metadata?.has_access
-  );
+  if (user.app_metadata?.role === "master_admin") return true;
+
+  const hasAccess = !!user.app_metadata?.has_access;
+  const expiresAt = user.app_metadata?.premium_expires_at;
+
+  if (hasAccess && expiresAt) {
+    return new Date() < new Date(expiresAt);
+  }
+
+  return hasAccess;
 }
 
 export function getPlanLevel(user: User | null): PlanLevel {
   if (!user) return "Sin cuenta";
   if (user.app_metadata?.role === "master_admin") return "Master Admin";
-  if (user.app_metadata?.has_access) return "Premium";
+
+  const hasAccess = !!user.app_metadata?.has_access;
+  const expiresAt = user.app_metadata?.premium_expires_at;
+
+  if (hasAccess) {
+    if (expiresAt && new Date() > new Date(expiresAt)) {
+      return "Usuario"; // Expirado
+    }
+    return "Premium";
+  }
+
   return "Usuario";
 }
 

@@ -64,7 +64,6 @@ export default function ProfilePage() {
     setRestoringId(item.id);
     await restoreTrashItem(item.table, item.id, user!.id);
     setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
-    await loadData();
     setRestoringId(null);
   };
 
@@ -160,7 +159,10 @@ export default function ProfilePage() {
             <h2>{currentName || "Sin nombre"}</h2>
             <p className="profile-email">{user.email}</p>
             {isMasterAdmin && (
-              <span className="badge-admin">⭐ Master</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span className="badge-admin">⭐ Maestro</span>
+                <Link href="/admin" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>[ Abrir Panel Maestro ]</Link>
+              </div>
             )}
           </div>
         </div>

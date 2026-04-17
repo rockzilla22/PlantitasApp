@@ -29,6 +29,7 @@ export default function HomePage() {
             <h2 className="text-[1.2rem] font-bold min-[820px]:text-[1.5rem]">Mis Plantas</h2>
             <button className="btn-primary" onClick={handleAddPlant}>Añadir Planta</button>
           </div>
+          <br />
           <div className="mt-4">
             <PlantGrid plants={plants} />
           </div>

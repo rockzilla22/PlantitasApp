@@ -72,7 +72,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="hero-actions-row">
-          <button className="btn-primary-large" onClick={() => router.push("/plants")}>
+          <button className="btn-primary-large" onClick={() => router.push("/login")}>
             Empezar mi jardín — Gratis
           </button>
           <button className="btn-secondary-large" disabled title="Próximamente">

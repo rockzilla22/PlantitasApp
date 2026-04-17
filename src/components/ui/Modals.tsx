@@ -26,6 +26,80 @@ const renderOptions = (options: Option[]) =>
     </option>
   ));
 
+function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: () => void }) {
+  const [action, setAction] = useState<"add" | "remove" | "clear">("add");
+
+  return (
+    <form method="dialog" onSubmit={(e) => {
+      e.preventDefault();
+      const fd = new FormData(e.currentTarget);
+      if (action === "clear") {
+        props?.onConfirm({ action: "clear" });
+      } else {
+        const amount = fd.get("p-amount") as string;
+        const unit = fd.get("p-unit") as "days" | "months";
+        props?.onConfirm({ action, amount, unit, hasPremium: action === "add" });
+      }
+      handleClose();
+    }}>
+      <h3>Gestionar Tiempo Premium</h3>
+      <p className="my-4 text-sm text-[var(--text-gray)]">
+        Usuario: <strong>{props?.userName}</strong>
+      </p>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex bg-[var(--background)] p-1 rounded-xl gap-1">
+          {(["add", "remove", "clear"] as const).map((a) => (
+            <button
+              key={a}
+              type="button"
+              className={`flex-1 py-2 text-[0.7rem] font-bold rounded-lg transition-all ${
+                action === a 
+                  ? (a === 'add' ? 'bg-[var(--primary)] text-white' : a === 'clear' ? 'bg-[var(--danger)] text-white' : 'bg-[var(--secondary)] text-white') 
+                  : 'text-[var(--text-gray)] hover:bg-white/50'
+              }`}
+              onClick={() => setAction(a)}
+            >
+              {a === "add" ? "Añadir" : a === "remove" ? "Quitar" : "Resetear"}
+            </button>
+          ))}
+        </div>
+
+        {action !== "clear" ? (
+          <div className="form-grid grid grid-cols-2 gap-4">
+            <div className="form-group mb-0">
+              <label>Cantidad</label>
+              <input type="number" name="p-amount" defaultValue="1" min="1" required />
+            </div>
+            <div className="form-group mb-0">
+              <label>Unidad</label>
+              <select name="p-unit" defaultValue="months">
+                <option value="months">Meses</option>
+                <option value="days">Días</option>
+              </select>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-[var(--danger)] font-medium text-center">
+            Se eliminará todo el tiempo acumulado y volverá al plan gratuito.
+          </p>
+        )}
+
+        <div className="modal-actions mt-4">
+          <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
+          <button 
+            type="submit" 
+            className="btn-primary" 
+            style={{ background: action === 'clear' ? 'var(--danger)' : action === 'remove' ? 'var(--secondary)' : 'var(--primary)' }}
+          >
+            {action === "add" ? "Confirmar y Activar" : action === "remove" ? "Reducir Tiempo" : "Confirmar Reset"}
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 export function Modals() {
   const { type, props } = useStore($activeModal);
   const { plants } = useStore($store);
@@ -389,6 +463,37 @@ export function Modals() {
             <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
               <button type="button" className="btn-primary" onClick={handleClose}>Entendido</button>
+            </div>
+          </div>
+        )}
+
+        {type === "admin-premium" && (
+          <AdminPremiumModal props={props} handleClose={handleClose} />
+        )}
+
+        {type === "admin-master" && (
+          <div style={{ textAlign: "center" }}>
+            <h3>Gestionar Rango Master</h3>
+            <p className="my-4 text-sm text-[var(--text-gray)]">
+              Usuario: <strong>{props?.userName}</strong>
+            </p>
+            <div className="flex flex-col gap-3">
+              {props?.currentRole === 'master_admin' ? (
+                <button 
+                  className="btn-primary bg-[var(--danger)] w-full py-3"
+                  onClick={() => { props?.onConfirm({ role: 'user' }); handleClose(); }}
+                >
+                  Quitar Rango Master
+                </button>
+              ) : (
+                <button 
+                  className="btn-primary bg-[var(--secondary)] w-full py-3"
+                  onClick={() => { props?.onConfirm({ role: 'master_admin' }); handleClose(); }}
+                >
+                  Subir a Master
+                </button>
+              )}
+              <button className="btn-text w-full" onClick={handleClose}>Cancelar</button>
             </div>
           </div>
         )}
