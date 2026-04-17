@@ -26,11 +26,13 @@ export function Header() {
 
   useEffect(() => {
     const supabase = supabaseBrowser();
-    supabase.auth.getUser().then(({ data }) => {
-      $user.set(data.user);
+    supabase.auth.getUser().then((res: any) => {
+      if (res?.data) {
+        $user.set(res.data.user);
+      }
       $authLoading.set(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       $user.set(session?.user ?? null);
       $authLoading.set(false);
     });
@@ -209,7 +211,19 @@ export function Header() {
                   {user.user_metadata.full_name}
                 </span>
               )}
-              <button className="btn-text" style={{ fontSize: '0.8rem', color: 'var(--text-light)' }} onClick={handleLogout} title="Cerrar sesión">
+              <button 
+                className="btn-text" 
+                style={{ 
+                  fontSize: '0.8rem', 
+                  color: 'var(--danger)', 
+                  fontWeight: 600,
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  background: 'rgba(255, 0, 0, 0.05)'
+                }} 
+                onClick={handleLogout} 
+                title="Cerrar sesión"
+              >
                 Salir
               </button>
             </div>
