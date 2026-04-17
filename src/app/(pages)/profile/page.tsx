@@ -160,7 +160,7 @@ export default function ProfilePage() {
             <h2>{currentName || "Sin nombre"}</h2>
             <p className="profile-email">{user.email}</p>
             {isMasterAdmin && (
-              <span className="badge-admin">⭐ Master Admin</span>
+              <span className="badge-admin">⭐ Master</span>
             )}
           </div>
         </div>
