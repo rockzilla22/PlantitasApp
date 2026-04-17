@@ -57,7 +57,8 @@ export function Header() {
     const supabase = supabaseBrowser();
     
     // 1. Recuperamos la sesión inicial de forma activa
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: any } }) => {
+      const session = data?.session;
       if (session) {
         $user.set(session.user);
       }
