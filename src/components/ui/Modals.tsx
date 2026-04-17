@@ -181,32 +181,32 @@ export function Modals() {
                 />
               )}
             </div>
-            <div className="form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              <div className="form-group"><label>📍 Ubicación</label><input type="text" name="p-location" defaultValue={props?.location || ""} /></div>
-              <div className="form-group">
+            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="form-group mb-0"><label>📍 Ubicación</label><input type="text" name="p-location" className="p-2 text-sm sm:text-base" defaultValue={props?.location || ""} /></div>
+              <div className="form-group mb-0">
                 <label>☀️ Luz</label>
-                <select name="p-light" defaultValue={props?.light || "Media"}>
+                <select name="p-light" className="p-2 text-sm sm:text-base" defaultValue={props?.light || "Media"}>
                   {renderOptions(LIGHT_LEVELS)}
                 </select>
               </div>
             </div>
-            <div className="form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              <div className="form-group">
+            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
+              <div className="form-group mb-0">
                 <PotLabel />
-                <select name="p-pot" defaultValue={props?.potType || "Plástico"}>
+                <select name="p-pot" className="p-2 text-sm sm:text-base" defaultValue={props?.potType || "Plástico"}>
                   {renderOptions(POT_TYPES)}
                 </select>
               </div>
-              <div className="form-group">
+              <div className="form-group mb-0">
                 <label>💤 Dormancia</label>
-                <select name="p-dormancy" defaultValue={props?.dormancy || "Ninguna"}>
+                <select name="p-dormancy" className="p-2 text-sm sm:text-base" defaultValue={props?.dormancy || "Ninguna"}>
                   {renderOptions(DORMANCIES)}
                 </select>
               </div>
             </div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-plant" ? "Actualizar" : "Guardar Planta"}</button>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-plant" ? "Actualizar" : "Guardar Planta"}</button>
             </div>
           </form>
         )}
@@ -227,22 +227,22 @@ export function Modals() {
               <label>Nombre Identificador (obligatorio)</label>
               <input type="text" name="prop-name" placeholder="Ej: Esqueje de Pothos" required defaultValue={props?.name || ""} />
             </div>
-            <div className="form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              <div className="form-group">
+            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="form-group mb-0">
                 <label>Método</label>
-                <select name="prop-method" defaultValue={props?.method || "Agua"}>
+                <select name="prop-method" className="p-2 text-sm sm:text-base" defaultValue={props?.method || "Agua"}>
                   {renderOptions(PROP_METHODS)}
                 </select>
               </div>
-              <div className="form-group">
+              <div className="form-group mb-0">
                 <label>📅 Fecha Inicio (obligatorio)</label>
-                <input type="date" name="prop-start" required defaultValue={props?.startDate || new Date().toISOString().split('T')[0]} />
+                <input type="date" name="prop-start" className="p-2 text-sm sm:text-base" required defaultValue={props?.startDate || new Date().toISOString().split('T')[0]} />
               </div>
             </div>
-            <div className="form-group"><label>📝 Notas</label><textarea name="prop-notes" placeholder="Condiciones, hormonas, etc." defaultValue={props?.notes || ""}></textarea></div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-prop" ? "Actualizar" : "Iniciar"}</button>
+            <div className="form-group mt-3 sm:mt-4"><label>📝 Notas</label><textarea name="prop-notes" className="p-2 text-sm sm:text-base" placeholder="Condiciones, hormonas, etc." defaultValue={props?.notes || ""}></textarea></div>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-prop" ? "Actualizar" : "Iniciar"}</button>
             </div>
           </form>
         )}
@@ -252,18 +252,18 @@ export function Modals() {
             <h3>{type === "edit-wish" ? "✏️ Editar Deseo" : "✨ Nuevo Deseo"}</h3>
             <div className="form-group">
               <label>¿Qué deseamos? (obligatorio)</label>
-              <input type="text" name="w-name" required placeholder="Ej: Tijeras, Fertilizante, Monstera..." defaultValue={props?.name || ""} />
+              <input type="text" name="w-name" required placeholder="Ej: Tijeras, Fertilizante, Monstera..." className="p-2 text-sm sm:text-base" defaultValue={props?.name || ""} />
             </div>
             <div className="form-group">
               <label>Prioridad</label>
-              <select name="w-priority" defaultValue={props?.priority || "Media"}>
+              <select name="w-priority" className="p-2 text-sm sm:text-base" defaultValue={props?.priority || "Media"}>
                 {renderOptions(WISH_PRIORITIES)}
               </select>
             </div>
-            <div className="form-group"><label>📝 Notas</label><textarea name="w-notes" placeholder="Link, precio, lugar..." defaultValue={props?.notes || ""}></textarea></div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-wish" ? "Actualizar" : "Añadir"}</button>
+            <div className="form-group"><label>📝 Notas</label><textarea name="w-notes" className="p-2 text-sm sm:text-base" placeholder="Link, precio, lugar..." defaultValue={props?.notes || ""}></textarea></div>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-wish" ? "Actualizar" : "Añadir"}</button>
             </div>
           </form>
         )}
@@ -273,17 +273,17 @@ export function Modals() {
             <h3>{type === "edit-season-task" ? "✏️ Editar Plan de Temporada" : "📅 Planear Acción"}</h3>
             <div className="form-group">
               <label>Tipo de Tarea</label>
-              <select name="st-type" defaultValue={props?.type || "Otro"}>
+              <select name="st-type" className="p-2 text-sm sm:text-base" defaultValue={props?.type || "Otro"}>
                 {renderOptions(SEASON_TASK_TYPES)}
               </select>
             </div>
             <div className="form-group">
               <label>Descripción del Plan (obligatorio)</label>
-              <textarea name="st-desc" required placeholder="Ej: Podar los geranios..." defaultValue={props?.desc || ""}></textarea>
+              <textarea name="st-desc" required className="p-2 text-sm sm:text-base" placeholder="Ej: Podar los geranios..." defaultValue={props?.desc || ""}></textarea>
             </div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}</button>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}</button>
             </div>
           </form>
         )}
@@ -293,11 +293,11 @@ export function Modals() {
             <h3>{type === "edit-note" ? "✏️ Editar Nota Global" : "📝 Nueva Nota Global"}</h3>
             <div className="form-group">
               <label>Contenido de la nota (obligatorio)</label>
-              <textarea name="n-content" rows={4} required placeholder="Ej: Comprar fertilizante orgánico..." defaultValue={props?.content || ""}></textarea>
+              <textarea name="n-content" rows={4} required className="p-2 text-sm sm:text-base" placeholder="Ej: Comprar fertilizante orgánico..." defaultValue={props?.content || ""}></textarea>
             </div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-note" ? "Actualizar" : "Guardar"}</button>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-note" ? "Actualizar" : "Guardar"}</button>
             </div>
           </form>
         )}
@@ -307,29 +307,29 @@ export function Modals() {
             <h3>{type === "edit-item" ? "✏️ Editar Insumo" : "📦 Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>
-              <select name="i-type" defaultValue={props?.cat || "substrates"}>
+              <select name="i-type" className="p-2 text-sm sm:text-base" defaultValue={props?.cat || "substrates"}>
                 {renderOptions(INVENTORY_CATEGORIES)}
               </select>
             </div>
             <div className="form-group">
               <label>Nombre del insumo (obligatorio)</label>
-              <input type="text" name="i-name" required placeholder="Ej: Humus de lombriz" defaultValue={props?.name || ""} />
+              <input type="text" name="i-name" required className="p-2 text-sm sm:text-base" placeholder="Ej: Humus de lombriz" defaultValue={props?.name || ""} />
             </div>
-            <div className="form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              <div className="form-group">
-                <label>Cantidad (obligatorio)</label>
-                <input type="number" name="i-qty" step="0.1" required defaultValue={props?.qty || "1"} />
+            <div className="form-grid grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="form-group mb-0">
+                <label>Cantidad</label>
+                <input type="number" name="i-qty" step="0.1" required className="p-2 text-sm sm:text-base" defaultValue={props?.qty || "1"} />
               </div>
-              <div className="form-group">
+              <div className="form-group mb-0">
                 <label>Unidad</label>
-                <select name="i-unit" defaultValue={props?.unit || "L"}>
+                <select name="i-unit" className="p-2 text-sm sm:text-base" defaultValue={props?.unit || "L"}>
                   {renderOptions(INVENTORY_UNITS)}
                 </select>
               </div>
             </div>
-            <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">{type === "edit-item" ? "Actualizar" : "Añadir"}</button>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-item" ? "Actualizar" : "Añadir"}</button>
             </div>
           </form>
         )}
@@ -337,7 +337,7 @@ export function Modals() {
         {type === "confirm" && (
           <div style={{ textAlign: "center" }}>
             <h3>{props?.title || "¿Estás seguro?"}</h3>
-            <p style={{ margin: "1rem 0", color: "var(--text-light)" }}>{props?.message}</p>
+            <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
               <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
               <button 
@@ -355,7 +355,7 @@ export function Modals() {
         {type === "import-choice" && (
           <div style={{ textAlign: "center" }}>
             <h3>⚠️ Resolución de Conflicto</h3>
-            <p style={{ margin: "1rem 0", color: "var(--text-light)", textAlign: "left", fontSize: "0.9rem", lineHeight: "1.4" }}>
+            <p style={{ margin: "1rem 0", color: "var(--text-gray)", textAlign: "left", fontSize: "0.9rem", lineHeight: "1.4" }}>
               {props?.message}
             </p>
             <div className="modal-actions" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -386,7 +386,7 @@ export function Modals() {
         {type === "info" && (
           <div style={{ textAlign: "center" }}>
             <h3>{props?.title || "¡Logrado!"}</h3>
-            <p style={{ margin: "1rem 0", color: "var(--text-light)" }}>{props?.message}</p>
+            <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
               <button type="button" className="btn-primary" onClick={handleClose}>Entendido</button>
             </div>

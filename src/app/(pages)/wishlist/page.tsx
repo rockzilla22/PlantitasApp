@@ -36,7 +36,7 @@ export default function WishlistPage() {
                     padding: '4px 10px', 
                     borderRadius: '8px', 
                     background: priorityFilter === p ? 'white' : 'transparent', 
-                    color: priorityFilter === p ? 'var(--primary)' : 'var(--text-light)',
+                    color: priorityFilter === p ? 'var(--primary)' : 'var(--text-gray)',
                     boxShadow: priorityFilter === p ? '0 2px 5px rgba(0,0,0,0.1)' : 'none'
                   }}
                   onClick={() => setPriorityFilter(p)}

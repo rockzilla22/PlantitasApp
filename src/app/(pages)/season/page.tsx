@@ -43,14 +43,14 @@ export default function SeasonPage() {
           <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
             <button 
               className={`btn-text ${sortBy === 'type' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'type' ? 'white' : 'transparent', color: sortBy === 'type' ? 'var(--primary)' : 'var(--text-light)', boxShadow: sortBy === 'type' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'type' ? 'white' : 'transparent', color: sortBy === 'type' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'type' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('type')}
             >
               🏷️ Tipo
             </button>
             <button 
               className={`btn-text ${sortBy === 'desc' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'desc' ? 'white' : 'transparent', color: sortBy === 'desc' ? 'var(--primary)' : 'var(--text-light)', boxShadow: sortBy === 'desc' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'desc' ? 'white' : 'transparent', color: sortBy === 'desc' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'desc' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('desc')}
             >
               🔤 Descripción
@@ -67,7 +67,7 @@ export default function SeasonPage() {
             </div>
             <ul className="season-task-list">
                 {seasonalTasks[s.name]?.length === 0 && (
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-light)', textAlign: 'center' }}>Sin planes.</p>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Sin planes.</p>
                 )}
                 {getSortedTasks(s.name).map((t, idx) => (
                   <li key={`${t.type}-${idx}`} className="season-task-item">
