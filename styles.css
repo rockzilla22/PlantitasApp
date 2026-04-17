@@ -147,6 +147,7 @@ body {
 /* Tabs Navigation */
 .tab-menu {
     display: flex;
+    justify-content: center;
     gap: 0.5rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -212,13 +213,14 @@ body {
     display: flex;
     gap: 0;
     min-height: calc(100vh - 180px); /* Usamos min-height en vez de height */
-    align-items: flex-start; /* Alineamos arriba para que no estire las tarjetas */
+    align-items: stretch; /* Alineamos para que el resizer estire */
 }
 
 #plants-list {
     flex: 1;
     min-width: 200px;
     padding-right: 0.5rem;
+    align-self: flex-start; /* Evitamos que el grid se estire innecesariamente si hay pocos items */
 }
 
 .resizer {
@@ -235,10 +237,10 @@ body {
     content: '';
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    transform: translateX(-50%);
     width: 2px;
-    height: 30px;
+    height: 100%;
     background: #ccc;
     border-radius: 2px;
 }

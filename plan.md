@@ -1,54 +1,57 @@
-# Plan de Proyecto: PlantitasApp (Estatus Final v3.2)
+# Plan de Proyecto: PlantitasApp (Estatus Final v4.0)
 
 Arquitecto de Software Senior: Gemini CLI
-Objetivo: SPA Offline-First evolucionada con edición granular, búsqueda global y arquitectura de datos auto-sanable.
+Objetivo: Ecosistema Botánico Profesional Offline-First con inteligencia de inventario, layouts dinámicos y feedback proactivo al usuario.
 
 ## 🛠 ARQUITECTURA TÉCNICA
-- **Ejecución:** Local estricta (`file://`). Sin dependencias externas ni módulos.
-- **Persistencia:** `localStorage` con **Sanitización Proactiva** (se limpia al cargar y al importar).
-- **UI/UX:** Grid dinámico Maestro-Detalle invertido (Lista 300px | Detalle 1fr).
-- **Sistema de Diálogos:** Control total vía `<dialog>`. Implementado modal de **Edición Atómica** para modificar cualquier propiedad de las entidades existentes sin pérdida de historial.
+- **Ejecución:** Local estricta (`file://`). Arquitectura Vanilla JS pura, sin módulos ni dependencias.
+- **Persistencia:** `localStorage` con **Normalización Reactiva** (limpieza y validación estructural en cada carga/importación).
+- **UI/UX Dinámica:** 
+    - **Panel Maestro-Detalle Redimensionable:** Implementado un "Resizer" dinámico (Drag & Drop) para ajustar el ancho de la lista y el detalle.
+    - **Grillas Optimizadas:** Layouts de 2 columnas en Inventario y Planeación para maximizar el espacio vertical.
+    - **Diseño Responsivo Adaptativo:** Ocultamiento automático de herramientas complejas (resizer) en dispositivos móviles.
+- **Sistema de Feedback:** Animaciones de estado (Flash Amarillo + Glow) para forzar la cultura del backup tras cada modificación de datos.
 
-## 📊 MODELO DE DATOS (v3.2)
+## 📊 MODELO DE DATOS (v4.0)
 ```json
 {
   "inventory": {
-    "substrates": [{ "name": "string", "qty": number, "unit": "string" }],
-    "powders": [{ "name": "string", "qty": number, "unit": "string" }],
-    "liquids": [{ "name": "string", "qty": number, "unit": "string" }],
-    "others": [{ "name": "string", "qty": number, "unit": "string" }]
+    "substrates": [], "fertilizers": [], "powders": [], 
+    "liquids": [], "meds": [], "others": [] 
   },
   "plants": [{
-    "id": timestamp,
-    "icon": "string (emoji)",
-    "type": "string",
-    "name": "string",
+    "id": timestamp, "icon": "emoji", "type": "string", "name": "string",
+    "location": "string", "light": "string", "potType": "string", "dormancy": "string",
     "lastWateredDate": "YYYY-MM-DD",
     "logs": [{ "id": timestamp, "date": "YYYY-MM-DD", "actionType": "string", "detail": "string" }]
   }],
-  "globalNotes": [{ "id": timestamp, "content": "string" }]
+  "propagations": [{ "id": timestamp, "parentId": id, "name": "string", "method": "string", "status": "Activo|Éxito|Fracaso" }],
+  "wishlist": [{ "id": timestamp, "name": "string", "priority": "Alta|Media|Baja" }],
+  "globalNotes": [{ "id": timestamp, "content": "string" }],
+  "seasonalTasks": { "Primavera": [], "Verano": [], "Otoño": [], "Invierno": [] }
 }
 ```
 
-## 🚀 FUNCIONALIDADES EVOLUCIONADAS
+## 🚀 FUNCIONALIDADES PROACTIVAS (v4.0)
 
-### 1. Edición Granular (Full Mutability)
-- **Modal de Edición:** Permite corregir Nombre, Icono y Tipo de cualquier planta en cualquier momento.
-- **Categorización Retroactiva:** Facilita la clasificación de registros antiguos que carecen de metadatos de tipo.
+### 1. Inteligencia de Inventario Cruzada
+- **Validación de Stock:** Al registrar una tarea (Sustrato, Fertilizante, Medicina, etc.), la app detecta si hay stock disponible.
+- **Nudge de UX:** Si el inventario está vacío, se dispara una notificación inteligente que ofrece "Saltar al Inventario" con la categoría ya pre-seleccionada.
+- **Actualización en Tiempo Real:** Los selectores de registros se sincronizan instantáneamente tras añadir nuevos insumos, eliminando la necesidad de F5.
 
-### 2. UI Informativa (Badges)
-- **Lista Izquierda:** Cada item muestra un badge con el tipo de planta para reconocimiento rápido.
-- **Detalle Derecho:** Header rediseñado con jerarquía clara: Icono + Nombre y Tipo resaltado en badge.
+### 2. Gestión de Salud (Farmacia Botánica)
+- **Categoría Meds:** Nueva sección para Insecticidas y Medicinas vinculada directamente a la acción de registro "Insecticidas/Medicinas".
+- **Emoji Semántico:** Uso de 💊 para medicinas y 🛒 para trasplantes (unificando visualmente la acción de mudanza).
 
-### 3. Motor de Búsqueda Inteligente
-- **Filtros Cruzados:** Busca por nombre o por categoría (ej: buscar "Cactus" filtra toda la colección de suculentas).
-- **Feedback Visual:** Resultados con iconos reales para navegación intuitiva.
+### 3. Integridad y Fusión de Datos
+- **Importación Inteligente:** Sistema de resolución de conflictos que permite elegir entre "Unificar" (Merge preventivo) o "Sobreescribir" (Reset total).
+- **Protección de Datos:** Recálculo automático de fechas críticas (como `lastWateredDate`) al eliminar registros del historial.
 
-### 4. Integridad de Datos (Self-Healing)
-- **Sanitización en Export/Import:** El sistema garantiza que no existan propiedades `null` o `undefined` en el esquema, inyectando fallbacks dinámicos.
-- **Migración Silenciosa:** Los datos se actualizan al vuelo durante la inicialización del `store`.
+### 4. Localización y Estándares
+- **Español Neutro Forzado:** Validación nativa del navegador reescrita para mostrar siempre "Por favor, completa este campo".
+- **Iconografía Unificada:** Sistema de mapeo centralizado que asegura que cada acción en cualquier pestaña tenga el mismo identificador visual.
 
-## 📖 DICCIONARIO DE REFERENCIA
-- **Tipos Predefinidos:** Philodendron, Alocasia, Monstera, Syngonium, Carnívora, Flor, Cactus, Árbol, Hierba.
-- **Acciones de Log:** Riego 💧, Sustrato 🟤, Polvos ⚪, Líquidos 🧪, Humus 🪱, Transplante 🪴, Plaga 🐛, Nota 📝.
-- **Inventario:** Categorías con gestión de stock decimal y unidades personalizables.
+## 📖 DICCIONARIO DE REFERENCIA ACTUALIZADO
+- **Acciones Clave:** Riego 💧, Medición 📏, Sustrato 🟤, Fertilizante 🧴, Polvos ⚪, Líquidos 🧪, Insecticidas/Medicinas 💊, Trasplante 🛒, Plaga 🐛, Nota 📝.
+- **Métodos de Propagación:** Agua 💧, Sustrato 🟤, Acodo 🌳, Semilla 🌱.
+- **Prioridades:** Alta 🔥, Media, Baja.
