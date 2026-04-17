@@ -56,23 +56,30 @@ export function Header() {
   useEffect(() => {
     const supabase = supabaseBrowser();
     
-    // Timeout de seguridad: Si en 3 segundos no hay respuesta, liberamos la UI.
-    const safetyTimeout = setTimeout(() => {
-      if ($authLoading.get()) {
-        $authLoading.set(false);
+    // 1. Recuperamos la sesión inicial de forma activa
+    supabase.auth.getSession().then(({ data }: { data: { session: any } }) => {
+      const session = data?.session;
+      if (session) {
+        $user.set(session.user);
       }
-    }, 3000);
+      $authLoading.set(false);
+    });
 
+    // 2. Escuchamos cambios futuros (login/logout/token refresh)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      clearTimeout(safetyTimeout);
       const currentUser = $user.get();
       if (session?.user?.id !== currentUser?.id) {
         $user.set(session?.user ?? null);
       }
       $authLoading.set(false);
     });
+
+    // 3. Timeout de seguridad más largo (5s) solo por si Supabase está caído
+    const safetyTimeout = setTimeout(() => {
+      $authLoading.set(false);
+    }, 5000);
 
     return () => {
       subscription.unsubscribe();
