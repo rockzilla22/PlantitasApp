@@ -56,20 +56,22 @@ export default function WishlistPage() {
           </div>
         ) : (
           filteredWishlist.map(item => (
-            <div key={item.id} className="card wish-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <h3 style={{ margin: 0 }}>✨ {item.name}</h3>
-                  <span className={`badge ${item.priority === 'Alta' ? 'badge-danger' : 'badge-warning'}`}>
+            <div key={item.id} className="card wish-card" style={{ cursor: 'default' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', wordBreak: 'break-word', flex: '1' }}>✨ {item.name}</h3>
+                  <span className={`badge ${item.priority === 'Alta' ? 'badge-danger' : 'badge-warning'}`} style={{ whiteSpace: 'nowrap' }}>
                     {item.priority === 'Alta' ? 'Alta' : item.priority}
                   </span>
               </div>
-              <p style={{ margin: '0.5rem 0' }}>📝 {item.notes || 'Sin notas'}</p>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <button className="btn-primary" style={{ padding: '5px 10px', fontSize: '0.8rem' }} onClick={() => removeWish(item.id)}>💸 ¡Listo!</button>
+              <p style={{ margin: '0.75rem 0', fontSize: '0.95rem', color: 'var(--text-gray)', wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                📝 {item.notes || 'Sin notas'}
+              </p>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                  <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => removeWish(item.id)}>💸 ¡Listo!</button>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal('calendar', { title: `Comprar: ${item.name}`, desc: `Prioridad: ${item.priority}. Notas: ${item.notes}` })}>📅</button>
-                    <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal('edit-wish', item)}>✏️</button>
-                    <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={() => {
+                    <button className="btn-text" style={{ fontSize: '1.2rem', padding: '4px' }} onClick={() => openModal('calendar', { title: `Comprar: ${item.name}`, desc: `Prioridad: ${item.priority}. Notas: ${item.notes}` })}>📅</button>
+                    <button className="btn-text" style={{ padding: '4px' }} onClick={() => openModal('edit-wish', item)}>✏️</button>
+                    <button className="btn-text" style={{ color: 'var(--danger)', padding: '4px' }} onClick={() => {
                       openModal("confirm", {
                         title: "¿Eliminar deseo?",
                         message: "Se quitará de la lista.",

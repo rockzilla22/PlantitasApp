@@ -15,6 +15,7 @@ export function PlantDetailPanel() {
   const resizerWidth = useStore($resizerWidth);
   const selectedId = useStore($selectedPlantId);
   const { plants, inventory } = useStore($store);
+  const [isWideLayout, setIsWideLayout] = useState(true);
   
   const [logAction, setLogAction] = useState("Riego");
   const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
@@ -24,6 +25,16 @@ export function PlantDetailPanel() {
   const [logSortOrder, setLogSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const plant = plants.find(p => p.id === selectedId);
+
+  useEffect(() => {
+    const syncLayout = () => {
+      setIsWideLayout(window.innerWidth >= 820);
+    };
+
+    syncLayout();
+    window.addEventListener("resize", syncLayout);
+    return () => window.removeEventListener("resize", syncLayout);
+  }, []);
 
   // Hook 14: useEffect
   useEffect(() => {
@@ -47,7 +58,7 @@ export function PlantDetailPanel() {
 
   if (!plant) {
     return (
-      <aside id="plant-detail-panel" className="detail-panel" style={{ width: `${resizerWidth}px` }}>
+      <aside id="plant-detail-panel" className="detail-panel" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
         <div className="empty-state">
           <p>Seleccioná una planta para ver su detalle profesional</p>
         </div>
@@ -84,10 +95,13 @@ export function PlantDetailPanel() {
   const formatDate = (dateStr: string) => dateStr.split('-').reverse().join('/');
 
   return (
-    <aside id="plant-detail-panel" className="detail-panel" style={{ width: `${resizerWidth}px` }}>
+    <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <h2 style={{ margin: 0 }}>{plant.icon} {plant.name}</h2>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {!isWideLayout && (
+            <button className="btn-text" style={{ padding: 0 }} onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
+          )}
           <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}>📅</button>
           <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal("edit-plant", plant)}>✏️</button>
           <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={handleDeletePlant}>🗑️</button>
