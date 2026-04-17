@@ -9,6 +9,7 @@ import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { hasPremium } from "@/libs/syncService";
+import configProject from "@/data/configProject";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
@@ -88,7 +89,7 @@ export function Header() {
     // Buscar en Plantas
     data.plants.forEach((p) => {
       if (p.name.toLowerCase().includes(q) || p.location.toLowerCase().includes(q) || p.type.toLowerCase().includes(q)) {
-        matches.push({ type: "Planta", name: p.name, icon: p.icon, id: p.id, href: "/", action: () => $selectedPlantId.set(p.id) });
+        matches.push({ type: "Planta", name: p.name, icon: p.icon, id: p.id, href: "/plants", action: () => $selectedPlantId.set(p.id) });
       }
     });
 
@@ -112,14 +113,10 @@ export function Header() {
     setSearchResults(matches);
   }, [searchQuery, data]);
 
-  const tabs = [
-    { label: "Mis Plantas", href: "/", id: "tab-plants" },
-    { label: "🧪 Propagación", href: "/nursery", id: "tab-nursery" },
-    { label: "📅 Temporada", href: "/season", id: "tab-season" },
-    { label: "✨ Wishlist", href: "/wishlist", id: "tab-wishlist" },
-    { label: "📦 Inventario", href: "/inventory", id: "tab-inventory" },
-    { label: "📝 Notas", href: "/notes", id: "tab-notes" },
-  ];
+  const tabs = Object.entries(configProject.navigation.ES).map(([id, item]) => ({
+    ...item,
+    id: `tab-${id}`,
+  }));
 
   const handleExport = () => {
     const exportData = {
@@ -183,7 +180,9 @@ export function Header() {
   return (
     <header className="main-header">
       <div className="header-top">
-        <h1>🌿 PlantitasApp</h1>
+        <a href="/" onClick={(e) => handleNav(e, "/")} className="header-logo-link">
+          <h1>🌿 PlantitasApp</h1>
+        </a>
 
         <div className="search-container" id="global-search-container">
           <div className="search-input-wrapper">
@@ -276,14 +275,14 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <a
-              href="/login"
+            <button
               className="btn-backup"
-              style={{ whiteSpace: "nowrap", textDecoration: "none" }}
-              onClick={(e) => handleNav(e, "/login")}
+              disabled
+              style={{ whiteSpace: "nowrap", opacity: 0.6, cursor: "not-allowed" }}
+              title="Próximamente"
             >
               Iniciar sesión
-            </a>
+            </button>
           )}
         </div>
       </div>
@@ -292,8 +291,8 @@ export function Header() {
         {tabs.map((tab) => (
           <a
             key={tab.id}
-            href={tab.href}
-            onClick={(e) => handleNav(e, tab.href)}
+            href={tab.href ?? "#"}
+            onClick={(e) => handleNav(e, tab.href ?? "#")}
             className={`tab-link ${pathname === tab.href ? "active" : ""}`}
           >
             {tab.label}
