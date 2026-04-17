@@ -7,16 +7,14 @@ import { useState, useMemo } from "react";
 
 export default function WishlistPage() {
   const { wishlist } = useStore($store);
-  const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("Todas");
 
   const filteredWishlist = useMemo(() => {
     return wishlist.filter(item => {
-      const matchesName = item.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesPriority = priorityFilter === "Todas" || item.priority === priorityFilter;
-      return matchesName && matchesPriority;
+      return matchesPriority;
     });
-  }, [wishlist, searchTerm, priorityFilter]);
+  }, [wishlist, priorityFilter]);
 
   const handleAddWish = () => {
     openModal("add-wish");
@@ -28,16 +26,6 @@ export default function WishlistPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <h2>✨ Lista de Deseos</h2>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <div className="search-input-wrapper" style={{ width: '200px' }}>
-              <input 
-                type="text" 
-                placeholder="Filtrar por nombre..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ fontSize: '0.85rem', padding: '6px 10px 6px 30px' }}
-              />
-              <span className="search-icon" style={{ left: '10px' }}>🔍</span>
-            </div>
             <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
               {["Todas", "Alta", "Media", "Baja"].map(p => (
                 <button

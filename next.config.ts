@@ -10,7 +10,7 @@ const cspHeader = `
     style-src 'self' 'unsafe-inline' https://client.crisp.chat;
     img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com https://c.bing.com https://*.clarity.ms https://image.crisp.chat;
     font-src 'self' data: https://client.crisp.chat;
-    connect-src 'self' https://*.google-analytics.com https://*.clarity.ms https://c.bing.com https://wss.crisp.chat https://client.crisp.chat https://vitals.vercel-insights.com;
+    connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.google-analytics.com https://*.clarity.ms https://c.bing.com https://wss.crisp.chat https://client.crisp.chat https://vitals.vercel-insights.com;
     frame-src 'self' https://game.crisp.chat;
 `;
 

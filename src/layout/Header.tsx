@@ -1,19 +1,23 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
 import { $store, loadData, mergeData, $selectedPlantId } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
+import { $user, $authLoading } from "@/store/authStore";
+import { supabaseBrowser } from "@/libs/db";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const searchQuery = useStore($searchQuery);
   const data = useStore($store);
   const shouldFlash = useStore($shouldFlashExport);
   const isDirty = useStore($isDirty);
+  const user = useStore($user);
+  const authLoading = useStore($authLoading);
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
   useEffect(() => {
@@ -21,15 +25,28 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [isDirty]);
+    const supabase = supabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => {
+      $user.set(data.user);
+      $authLoading.set(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      $user.set(session?.user ?? null);
+      $authLoading.set(false);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = supabaseBrowser();
+    await supabase.auth.signOut();
+    $user.set(null);
+  };
+
+  const handleNav = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    router.push(href);
+  };
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -152,18 +169,19 @@ export function Header() {
           {searchQuery && (
             <div id="search-results" className="search-results-panel active">
                {searchResults.length > 0 ? searchResults.map((m, idx) => (
-                 <Link 
+                 <a 
                    key={idx} 
                    href={m.href} 
                    className="search-result-item" 
-                   onClick={() => {
+                   onClick={(e) => {
                      if (m.action) m.action();
                      $searchQuery.set("");
+                     handleNav(e, m.href);
                    }}
                  >
                    <span className="res-type">{m.type}</span>
                    <span className="res-title">{m.icon} {m.name}</span>
-                 </Link>
+                 </a>
                )) : (
                  <div className="search-result-item">
                     <span>No se encontraron resultados</span>
@@ -179,16 +197,34 @@ export function Header() {
           </label>
           <input type="file" id="import-file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
         </div>
+
+        <div className="auth-zone">
+          {authLoading ? null : user ? (
+            <div className="user-menu">
+              <span className="user-avatar" title={user.email ?? ""}>
+                {user.email?.[0].toUpperCase() ?? "U"}
+              </span>
+              <button className="btn-text" style={{ fontSize: '0.8rem', color: 'var(--text-light)' }} onClick={handleLogout} title="Cerrar sesión">
+                Salir
+              </button>
+            </div>
+          ) : (
+            <a href="/login" onClick={(e) => handleNav(e, "/login")} className="btn-backup" style={{ whiteSpace: 'nowrap' }}>
+              Iniciar sesión
+            </a>
+          )}
+        </div>
       </div>
       <nav className="tab-menu">
         {tabs.map((tab) => (
-          <Link
+          <a
             key={tab.id}
             href={tab.href}
+            onClick={(e) => handleNav(e, tab.href)}
             className={`tab-link ${pathname === tab.href ? "active" : ""}`}
           >
             {tab.label}
-          </Link>
+          </a>
         ))}
       </nav>
     </header>
