@@ -118,11 +118,11 @@ const configProject: ConfigProject = {
   // 🌐 METADATOS / SEO
   // ======================================================
   language: "es-AR",
-  themeColor: "#1a2e1a",
+  themeColor: "var(--brand-dark)",
   colors: {
-    main: "#2e7d32",
-    background: "#f1f8e9",
-    foreground: "#263238",
+    main: "var(--primary)",
+    background: "var(--background)",
+    foreground: "var(--brand-foreground)",
   },
   keywords: ["plantas", "botánica", "gestión", "jardinería", "huerta"],
   author: "JFEspanolito",
@@ -207,7 +207,7 @@ const configProject: ConfigProject = {
   // ======================================================
   plans: {
     NONE: {
-      id: "Sin cuenta",
+      id: "NoAccount",
       label: "Sin cuenta",
       icon: "👤",
       color: "var(--text-gray)",
@@ -217,7 +217,7 @@ const configProject: ConfigProject = {
       billingType: 'free',
     },
     FREE: {
-      id: "Usuario",
+      id: "Free",
       label: "Usuario",
       icon: "🌱",
       color: "var(--primary-light)",
@@ -247,7 +247,7 @@ const configProject: ConfigProject = {
       billingType: 'subscription',
     },
     MASTER: {
-      id: "Master Admin",
+      id: "Master",
       label: "Master",
       icon: "🛡️",
       color: "var(--gold)",

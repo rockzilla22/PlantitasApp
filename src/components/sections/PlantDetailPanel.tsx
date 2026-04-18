@@ -98,13 +98,13 @@ export function PlantDetailPanel() {
     <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <h2 style={{ margin: 0 }}>{plant.icon} {plant.name}</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="flex gap-1">
           {!isWideLayout && (
-            <button className="btn-text" style={{ padding: 0 }} onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
+            <button className="icon-btn" onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
           )}
-          <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}>📅</button>
-          <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal("edit-plant", plant)}>✏️</button>
-          <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={handleDeletePlant}>🗑️</button>
+          <button className="icon-btn" onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}>📅</button>
+          <button className="icon-btn" onClick={() => openModal("edit-plant", plant)}>✏️</button>
+          <button className="icon-btn icon-btn--danger" onClick={handleDeletePlant}>🗑️</button>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export function PlantDetailPanel() {
         <span className="microclima-tag">💤 {plant.dormancy}</span>
       </div>
 
-      <div className="log-section" style={{ background: '#f5f5f5', padding: '1rem', borderRadius: '8px', marginTop: '1rem' }}>
+      <div className="log-section" style={{ background: 'var(--bg-faint)', padding: '1rem', borderRadius: 'var(--radius)', marginTop: '1rem' }}>
         <h3 style={{ marginBottom: '0.5rem' }}>🧪 Registro</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
           <select value={logAction} onChange={(e) => { setLogAction(e.target.value); setInventoryItem(""); }}>
@@ -151,10 +151,10 @@ export function PlantDetailPanel() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
           <h3 style={{ margin: 0 }}>📜 Historial</h3>
           <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
-            <small style={{ fontSize: '0.7rem', color: '#666', marginRight: '0.25rem' }}>Ordenar:</small>
+            <small style={{ fontSize: '0.7rem', color: 'var(--text-gray)', marginRight: '0.25rem' }}>Ordenar:</small>
             <button 
               className="btn-text" 
-              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'desc' ? '#e0e0e0' : 'transparent' }} 
+              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'desc' ? 'var(--border)' : 'transparent' }} 
               onClick={() => setLogSortOrder('desc')}
               title="Más reciente primero"
             >
@@ -162,7 +162,7 @@ export function PlantDetailPanel() {
             </button>
             <button 
               className="btn-text" 
-              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'asc' ? '#e0e0e0' : 'transparent' }} 
+              style={{ padding: '2px 4px', borderRadius: '4px', background: logSortOrder === 'asc' ? 'var(--border)' : 'transparent' }} 
               onClick={() => setLogSortOrder('asc')}
               title="Más antiguo primero"
             >
@@ -175,7 +175,7 @@ export function PlantDetailPanel() {
             <button
               key={f}
               className="btn-backup"
-              style={{ padding: '2px 8px', fontSize: '0.75rem', ...(logFilter === f ? { background: 'var(--primary)', color: '#fff' } : {}) }}
+              style={{ padding: '2px 8px', fontSize: '0.75rem', ...(logFilter === f ? { background: 'var(--primary)', color: 'var(--text-white)' } : {}) }}
               onClick={() => setLogFilter(f)}
             >
               {f}

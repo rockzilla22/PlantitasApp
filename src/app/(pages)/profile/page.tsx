@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
-import { loadData } from "@/store/plantStore";
+import { $store } from "@/store/plantStore";
+import { translateError } from "@/libs/utils";
+import configProject from "@/data/configProject";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
-    return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+    return name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   }
   return (fallback?.[0] ?? "U").toUpperCase();
 }
@@ -20,6 +22,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const user = useStore($user);
   const authLoading = useStore($authLoading);
+  const data = useStore($store);
 
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -35,17 +38,11 @@ export default function ProfilePage() {
   const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-    }
+    if (!authLoading && !user) router.push("/login");
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (user) {
-      // Priorizamos custom_name (el que el usuario eligió en la app)
-      // sobre full_name (el que viene de Discord/Google)
-      setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
-    }
+    if (user) setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
   }, [user]);
 
   const handleToggleTrash = async () => {
@@ -60,9 +57,14 @@ export default function ProfilePage() {
 
   const handleRestore = async (item: TrashItem) => {
     setRestoringId(item.id);
-    await restoreTrashItem(item.table, item.id, user!.id);
-    setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
-    setRestoringId(null);
+    try {
+      await restoreTrashItem(item.table, item.id, user!.id);
+      setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setRestoringId(null);
+    }
   };
 
   const handleLink = async (provider: "google" | "discord") => {
@@ -74,10 +76,9 @@ export default function ProfilePage() {
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/profile` },
     });
     if (error) {
-      setUnlinkError(error.message);
+      setUnlinkError(translateError(error.message));
       setLinkingProvider(null);
     }
-    // On success Supabase redirects to provider → no setState needed
   };
 
   const handleUnlink = async (provider: "google" | "discord") => {
@@ -87,7 +88,7 @@ export default function ProfilePage() {
     const sb = supabaseBrowser();
     const { error } = await sb.auth.unlinkIdentity(identity);
     if (error) {
-      setUnlinkError(error.message);
+      setUnlinkError(translateError(error.message));
     } else {
       const { data } = await sb.auth.getUser();
       if (data.user) $user.set(data.user);
@@ -101,225 +102,284 @@ export default function ProfilePage() {
     setBusy(true);
     setError(null);
     setSuccess(null);
-
-    const supabase = supabaseBrowser();
-    const { error } = await supabase.auth.updateUser({
-      data: { 
-        custom_name: fullName.trim(),
-        full_name: fullName.trim() // Lo guardamos en ambos para compatibilidad
-      }
+    const { error } = await supabaseBrowser().auth.updateUser({
+      data: { custom_name: fullName.trim(), full_name: fullName.trim() },
     });
-
     if (error) {
-      setError(error.message);
+      setError(translateError(error.message));
     } else {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        $user.set(data.user);
-      }
-      setSuccess("Perfil actualizado correctamente.");
+      const { data } = await supabaseBrowser().auth.getUser();
+      if (data.user) $user.set(data.user);
+      setSuccess("¡Perfil actualizado!");
     }
-
     setBusy(false);
     submitting.current = false;
   };
 
-  if (authLoading || !user) return null;
+  if (authLoading || !user)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Sincronizando...</p>
+      </div>
+    );
 
   const isMasterAdmin = user.app_metadata?.role === "master_admin";
   const planLevel = getPlanLevel(user);
   const isPremium = hasPremium(user);
+  const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
 
+  const usedSlots = useMemo(() => {
+    const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
+    const seasonCount = Object.values(data.seasonalTasks).reduce((sum, arr) => sum + arr.length, 0);
+    return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+  }, [data]);
+
+  const maxSlots = isMasterAdmin ? Infinity : 50 + (user.app_metadata?.purchased_slots || 0);
+  const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
+  const usagePercent = isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots as number)) * 100);
+
+  const expirationDate = user.app_metadata?.premium_expires_at
+    ? new Date(user.app_metadata.premium_expires_at).toLocaleDateString()
+    : "Ilimitada";
   const currentName = user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "";
   const hasChanges = fullName.trim() !== currentName;
-
   const linkedProviders = new Set((user.identities ?? []).map((i) => i.provider));
   const canUnlink = (user.identities ?? []).length > 1;
 
-  const oauthProviders = [
-    { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid #dadce0" },
-    { id: "discord"  as const, label: "Discord",  iconBg: "#5865F2",  iconColor: "#fff",    iconText: "D",  border: "none" },
-  ];
-
   return (
-    <div className="profile-page">
-      <div className="profile-card">
-        <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontSize: "0.9rem", fontWeight: 600, display: "inline-block", marginBottom: "1.5rem" }}>
-          ← Volver al inicio
-        </Link>
-        <div className="profile-header">
-          <div className="profile-avatar-lg">
-            {getInitials(currentName, user.email)}
-          </div>
-          <div>
-            <h2>{currentName || "Sin nombre"}</h2>
-            <p className="profile-email">{user.email}</p>
-            {isMasterAdmin && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span className="badge-admin">⭐ Maestro</span>
-                <Link href="/admin" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>[ Abrir Panel Maestro ]</Link>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+      <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
 
-        <form onSubmit={handleSave} className="profile-form">
-          <div className="form-group">
-            <label>Nombre/Apodo</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Tu nombre"
-              disabled={busy}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={user.email ?? ""}
-              disabled
-              className="input-disabled"
-            />
-            <span className="input-hint">El email no se puede cambiar desde aquí.</span>
-          </div>
-
-          {error && <p className="signin-error">{error}</p>}
-          {success && <p className="signin-info">{success}</p>}
-
-          <div className="profile-actions">
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
-              disabled={busy || !hasChanges}
-            >
-              {busy ? "Guardando..." : "Guardar cambios"}
-            </button>
-          </div>
-        </form>
-
-        <div className="profile-section">
-          <h3>Plan actual</h3>
-          {isPremium ? (
-            <>
-              <div className="plan-badge plan-premium">
-                ☁ {planLevel} — Cloud sync activo
-              </div>
-              <p className="profile-hint">Tus datos se sincronizan automáticamente con la nube.</p>
-            </>
-          ) : (
-            <>
-              <div className="plan-badge plan-free">
-                🌱 {planLevel} — Solo local
-              </div>
-              <p className="profile-hint">
-                Tus datos se guardan en este navegador. Sin sincronización en la nube.{" "}
-                <span style={{ color: "var(--primary)", fontWeight: 600 }}>Próximamente: Plan Premium.</span>
-              </p>
-            </>
+        {/* NAV */}
+        <div className="flex items-center justify-between">
+          <Link href="/" className="no-underline text-[var(--text-gray)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1">
+            ← Inicio
+          </Link>
+          {isMasterAdmin && (
+            <Link href="/admin" className="no-underline text-xs font-semibold text-[var(--text-white)] bg-[var(--warning-dark)] px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity">
+              Admin
+            </Link>
           )}
         </div>
 
-        <div className="linked-accounts-section">
-          <h3>Cuentas vinculadas</h3>
-          <p className="profile-hint" style={{ marginBottom: "0.75rem" }}>
-            Vinculá tu cuenta con Google o Discord para iniciar sesión con cualquiera de ellos.
-          </p>
-          {unlinkError && <p className="signin-error" style={{ marginBottom: "0.75rem" }}>{unlinkError}</p>}
-          {oauthProviders.map((p) => {
-            const isLinked = linkedProviders.has(p.id);
-            return (
-              <div key={p.id} className="identity-row">
-                <div
-                  className="identity-provider-icon"
-                  style={{ background: p.iconBg, color: p.iconColor, border: p.border }}
-                >
-                  {p.iconText}
-                </div>
-                <span className="identity-provider-name">{p.label}</span>
-                {isLinked ? (
-                  <>
-                    <span className="badge-linked">✓ Vinculado</span>
-                    <button
-                      className="btn-unlink-provider"
-                      disabled={!canUnlink}
-                      title={!canUnlink ? "Necesitás al menos 2 métodos de acceso para desvincular" : `Desvincular ${p.label}`}
-                      onClick={() => handleUnlink(p.id)}
-                    >
-                      Desvincular
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    className="btn-link-provider"
-                    disabled={linkingProvider !== null}
-                    onClick={() => handleLink(p.id)}
-                  >
-                    {linkingProvider === p.id ? "Redirigiendo..." : `Vincular con ${p.label}`}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+        {/* HEADER */}
+        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex items-center justify-center shrink-0 shadow-md">
+            {getInitials(currentName, user.email)}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg font-bold text-[var(--text)] m-0 truncate">{currentName || "Sin nombre"}</h1>
+            <p className="text-sm text-[var(--text-gray)] opacity-60 m-0 truncate">{user.email}</p>
+          </div>
+          {isMasterAdmin && (
+            <span className="badge badge-danger shrink-0">Master</span>
+          )}
         </div>
 
-        {isPremium && (
-          <div className="trash-section">
-            <button className="trash-toggle" onClick={handleToggleTrash}>
-              🗑 {showTrash ? "Ocultar papelera" : "Ver papelera"}
-              {trashItems.length > 0 && !showTrash && (
-                <span style={{ background: "#ef5350", color: "#fff", borderRadius: "10px", padding: "0 6px", fontSize: "0.72rem" }}>
-                  {trashItems.length}
-                </span>
-              )}
-            </button>
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {showTrash && (
-              <div className="trash-list">
-                {trashLoading ? (
-                  <p className="trash-empty">Cargando...</p>
-                ) : trashItems.length === 0 ? (
-                  <p className="trash-empty">La papelera está vacía.</p>
-                ) : (
-                  (() => {
-                    const groups: Record<string, { label: string; items: TrashItem[] }> = {
-                      plants:      { label: "🌿 Plantas", items: [] },
-                      propagations:{ label: "🧪 Propagaciones", items: [] },
-                      global_notes:{ label: "📝 Notas", items: [] },
-                      wishlist:    { label: "✨ Lista de Deseos", items: [] },
-                    };
-                    trashItems.forEach((item) => groups[item.table]?.items.push(item));
-                    return Object.entries(groups).map(([key, group]) =>
-                      group.items.length === 0 ? null : (
-                        <div key={key}>
-                          <p className="trash-group-title">{group.label}</p>
-                          {group.items.map((item) => (
-                            <div key={item.id} className="trash-item">
-                              <div className="trash-item-info">
-                                <span className="trash-item-name">{item.label}</span>
-                                {item.meta && <span className="trash-item-meta">{item.meta}</span>}
-                              </div>
-                              <button
-                                className="btn-restore"
-                                disabled={restoringId === item.id}
-                                onClick={() => handleRestore(item)}
-                              >
-                                {restoringId === item.id ? "..." : "Restaurar"}
-                              </button>
-                            </div>
-                          ))}
+          {/* COL 1: Editar perfil + Cuentas vinculadas */}
+          <div className="flex flex-col gap-6">
+
+            {/* Editar nombre */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+              <h2 className="text-sm font-bold text-[var(--text)] m-0">Editar perfil</h2>
+              <form onSubmit={handleSave} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Nombre</label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors disabled:opacity-40"
+                    placeholder="Tu nombre..."
+                    disabled={busy}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Email</label>
+                  <input
+                    type="email"
+                    value={user.email ?? ""}
+                    disabled
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm opacity-40 cursor-not-allowed"
+                  />
+                </div>
+
+                {error && (
+                  <p className="px-4 py-3 bg-[var(--danger-bg)] text-[var(--danger)] rounded-xl text-xs font-semibold border border-[var(--danger-border)] m-0">
+                    {error}
+                  </p>
+                )}
+                {success && (
+                  <p className="px-4 py-3 bg-[var(--success-bg)] text-[var(--success)] rounded-xl text-xs font-semibold border border-[var(--primary-light)]/30 m-0">
+                    {success}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={busy || !hasChanges}
+                  className="btn-primary w-full py-2.5 text-xs font-semibold uppercase tracking-widest disabled:opacity-40"
+                >
+                  {busy ? "Guardando..." : "Guardar cambios"}
+                </button>
+              </form>
+            </div>
+
+            {/* Cuentas vinculadas */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+              <div>
+                <h2 className="text-sm font-bold text-[var(--text)] m-0">Cuentas vinculadas</h2>
+                <p className="text-xs text-[var(--text-gray)] opacity-50 mt-0.5">Métodos de acceso a tu cuenta</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                {(["google", "discord"] as const).map((pid) => {
+                  const isLinked = linkedProviders.has(pid);
+                  const label = pid === "google" ? "Google" : "Discord";
+                  const iconBg = pid === "google" ? "var(--white)" : "var(--discord-blurple)";
+                  const iconColor = pid === "google" ? "var(--google-blue)" : "var(--white)";
+                  return (
+                    <div key={pid} className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
+                          style={{ background: iconBg, color: iconColor }}
+                        >
+                          {label[0]}
                         </div>
-                      )
-                    );
-                  })()
+                        <span className="text-sm font-semibold text-[var(--text)]">{label}</span>
+                        {isLinked && <span className="badge badge-success">Vinculado</span>}
+                      </div>
+                      {isLinked ? (
+                        <button
+                          onClick={() => handleUnlink(pid)}
+                          disabled={!canUnlink}
+                          className="text-xs text-[var(--danger)] font-semibold hover:underline disabled:opacity-30 cursor-pointer bg-transparent border-none"
+                        >
+                          Quitar
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleLink(pid)}
+                          disabled={linkingProvider !== null}
+                          className="btn-primary py-1 px-3 text-xs disabled:opacity-40"
+                        >
+                          Vincular
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {unlinkError && <p className="text-[var(--danger)] text-xs font-semibold m-0">{unlinkError}</p>}
+            </div>
+          </div>
+
+          {/* COL 2: Plan + Papelera */}
+          <div className="flex flex-col gap-6">
+
+            {/* Plan */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+              <h2 className="text-sm font-bold text-[var(--text)] m-0">Estado de la cuenta</h2>
+
+              {/* Plan badge */}
+              <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{planConfig.icon}</span>
+                  <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
+                </div>
+                {isPremium && (
+                  <span className="text-xs text-[var(--text-gray)] opacity-60">Vence {expirationDate}</span>
                 )}
               </div>
-            )}
+
+              {/* Slots */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 mb-0.5">Almacenamiento</p>
+                    <p className="text-2xl font-bold text-[var(--text)] m-0 leading-none">
+                      {usedSlots} <span className="text-base text-[var(--text-gray)] opacity-40 font-normal">/ {maxSlotsLabel}</span>
+                    </p>
+                  </div>
+                  {!isPremium && !isMasterAdmin && (
+                    <Link href="/pricing" className="btn-primary no-underline py-1.5 px-3 text-xs">
+                      Ampliar
+                    </Link>
+                  )}
+                </div>
+                <div className="w-full bg-[var(--border)] h-2 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--primary)] rounded-full transition-all duration-700"
+                    style={{ width: `${usagePercent}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Papelera */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+              <button
+                onClick={handleToggleTrash}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">🗑️</span>
+                  <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
+                  {trashItems.length > 0 && !showTrash && (
+                    <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />
+                  )}
+                </div>
+                <span className="text-xs text-[var(--text-gray)] opacity-40">{showTrash ? "▲" : "▼"}</span>
+              </button>
+
+              {showTrash && (
+                <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
+                  {trashLoading ? (
+                    <p className="text-center py-6 text-xs text-[var(--text-gray)] opacity-50 animate-pulse">Cargando...</p>
+                  ) : trashItems.length === 0 ? (
+                    <p className="text-center py-6 text-sm text-[var(--text-gray)] opacity-40 italic">Papelera vacía</p>
+                  ) : (
+                    (() => {
+                      const groups: Record<string, { label: string; items: TrashItem[] }> = {
+                        plants: { label: "🌿 Plantas", items: [] },
+                        propagations: { label: "🧪 Propagaciones", items: [] },
+                        global_notes: { label: "📝 Notas", items: [] },
+                        wishlist: { label: "✨ Deseos", items: [] },
+                      };
+                      trashItems.forEach((i) => groups[i.table]?.items.push(i));
+                      return Object.entries(groups).map(([k, g]) =>
+                        g.items.length === 0 ? null : (
+                          <div key={k} className="flex flex-col gap-2">
+                            <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 font-semibold">{g.label}</p>
+                            {g.items.map((i) => (
+                              <div key={i.id} className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]">
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
+                                  {i.meta && <span className="text-xs text-[var(--text-gray)] opacity-40 truncate block">{i.meta}</span>}
+                                </div>
+                                <button
+                                  onClick={() => handleRestore(i)}
+                                  disabled={restoringId === i.id}
+                                  className="btn-primary py-1 px-3 text-xs ml-3 shrink-0 disabled:opacity-40"
+                                >
+                                  {restoringId === i.id ? "..." : "Restaurar"}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )
+                      );
+                    })()
+                  )}
+                </div>
+              )}
+            </div>
+
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

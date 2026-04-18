@@ -13,9 +13,9 @@ interface GardenItemProps {
 export function GardenItem({ icon, label, type, onClick, subLabel }: GardenItemProps) {
   const getContainerStyle = () => {
     switch (type) {
-      case 'plant': return 'bg-white shadow-sm border border-zinc-100 rounded-2xl p-4 hover:shadow-lg hover:-translate-y-1';
-      case 'seed': return 'bg-amber-50/50 border border-amber-100 rounded-xl p-3 hover:bg-amber-50';
-      case 'inventory': return 'bg-zinc-50 border border-zinc-200 rounded-lg p-2 text-center grayscale hover:grayscale-0';
+      case 'plant': return 'bg-[var(--card-bg)] shadow-sm border border-[var(--border-light)] rounded-2xl p-4 hover:shadow-lg hover:-translate-y-1';
+      case 'seed': return 'bg-[var(--warning-bg-light)]/50 border border-[var(--warning-bg-light)] rounded-xl p-3 hover:bg-[var(--warning-bg-light)]';
+      case 'inventory': return 'bg-[var(--bg-faint)] border border-[var(--border)] rounded-lg p-2 text-center grayscale hover:grayscale-0';
       default: return '';
     }
   };
@@ -36,16 +36,16 @@ export function GardenItem({ icon, label, type, onClick, subLabel }: GardenItemP
       title={label}
     >
       <span className={`${getIconSize()} group-hover:scale-110 transition-transform`}>{icon}</span>
-      <span className="text-[0.65rem] font-bold text-zinc-500 uppercase tracking-wider text-center line-clamp-1 w-full">
+      <span className="text-[0.65rem] font-bold text-[var(--text-gray)] uppercase tracking-wider text-center line-clamp-1 w-full">
         {label}
       </span>
       {subLabel && (
-        <span className="text-[0.6rem] text-zinc-400 font-medium">{subLabel}</span>
+        <span className="text-[0.6rem] text-[var(--text-gray)] font-medium opacity-70">{subLabel}</span>
       )}
       
       {/* Decorative Pot for plants */}
       {type === 'plant' && (
-        <div className="w-8 h-3 bg-zinc-200 rounded-b-lg -mt-1 opacity-50 group-hover:bg-[var(--primary)] group-hover:opacity-100 transition-all"></div>
+        <div className="w-8 h-3 bg-[var(--border)] rounded-b-lg -mt-1 opacity-50 group-hover:bg-[var(--primary)] group-hover:opacity-100 transition-all"></div>
       )}
     </div>
   );

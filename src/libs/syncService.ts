@@ -2,7 +2,7 @@ import { supabaseBrowser } from "./db";
 import type { AppData } from "@/store/plantStore";
 import type { User } from "@supabase/supabase-js";
 
-export type PlanLevel = "Sin cuenta" | "Usuario" | "Premium" | "Master Admin";
+export type PlanLevel = "NoAccount" | "Free" | "Pro" | "Premium" | "Master";
 
 export function hasPremium(user: User | null): boolean {
   if (!user) return false;
@@ -19,20 +19,20 @@ export function hasPremium(user: User | null): boolean {
 }
 
 export function getPlanLevel(user: User | null): PlanLevel {
-  if (!user) return "Sin cuenta";
-  if (user.app_metadata?.role === "master_admin") return "Master Admin";
+  if (!user) return "NoAccount";
+  if (user.app_metadata?.role === "master_admin") return "Master";
 
   const hasAccess = !!user.app_metadata?.has_access;
   const expiresAt = user.app_metadata?.premium_expires_at;
 
   if (hasAccess) {
     if (expiresAt && new Date() > new Date(expiresAt)) {
-      return "Usuario"; // Expirado
+      return "Free"; // Expirado → vuelve a free
     }
     return "Premium";
   }
 
-  return "Usuario";
+  return "Free";
 }
 
 export async function syncToSupabase(data: AppData, userId: string): Promise<void> {
