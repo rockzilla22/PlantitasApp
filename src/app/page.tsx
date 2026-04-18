@@ -2,9 +2,12 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useStore } from "@nanostores/react";
+import { $user } from "@/store/authStore";
 
 export default function LandingPage() {
   const router = useRouter();
+  const user = useStore($user);
 
   const features = [
     {
@@ -72,7 +75,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="hero-actions-row">
-          <button className="btn-primary-large" onClick={() => router.push("/login")}>
+          <button className="btn-primary-large" onClick={() => router.push(user ? "/plants" : "/login")}>
             Empezar mi jardín — Gratis
           </button>
           <button className="btn-secondary-large" disabled title="Próximamente">

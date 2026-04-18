@@ -8,7 +8,7 @@ import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { hasPremium } from "@/libs/syncService";
+import { hasPremium, getPlanLevel } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 import Link from "next/link";
 
@@ -33,6 +33,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const displayName = user?.user_metadata?.custom_name ?? user?.user_metadata?.full_name ?? user?.email;
+  const planLevel = getPlanLevel(user);
 
   // Un solo effect: localStorage en mount (user=null), Supabase cuando user cambia
   useEffect(() => { loadData(); }, [user?.id]);
@@ -102,10 +103,16 @@ export function Header() {
     reader.onload = (ev) => {
       try {
         const importedData = JSON.parse(ev.target?.result as string);
-        setStoreData(importedData);
-        openModal("info", { title: "Importación Exitosa", message: "Se han importado los datos correctamente." });
-      } catch {
-        openModal("info", { title: "Error", message: "Archivo inválido." });
+
+        // Merge automático e inmediato
+        mergeData(importedData);
+
+        openModal("info", { 
+          title: "¡Datos Sincronizados!", 
+          message: "El archivo se ha fusionado correctamente con tu colección actual. No se perdió nada." 
+        });
+      } catch (err) {
+        openModal("info", { title: "Error", message: "El archivo JSON es inválido o está corrupto." });
       }
     };
     reader.readAsText(file);
@@ -189,8 +196,17 @@ export function Header() {
               <Link href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
                 {getInitials(displayName, user.email)}
               </Link>
-              <span className="h-display-name">{displayName}</span>
-              <button className="h-logout" onClick={handleLogout}>Salir</button>
+              <Link href="/profile" className="h-display-name" style={{ 
+                fontSize: "0.8rem", 
+                fontWeight: 800, 
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                textDecoration: 'none',
+                color: planLevel === 'Master Admin' ? '#ffcd03' : planLevel === 'Premium' ? '#a3e635' : 'rgba(255,255,255,0.7)'
+              }}>
+                {planLevel === 'Master Admin' ? 'Master' : planLevel}
+              </Link>
+              <button className="h-logout" style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }} onClick={handleLogout}>Salir</button>
             </div>
           ) : (
             <button
@@ -228,11 +244,31 @@ export function Header() {
               {tab.label}
             </a>
           ))}
+
+          {/* Export / Import en mobile */}
+          <div style={{ display: "flex", gap: "0.5rem", padding: "1rem 0.95rem 0", borderTop: "1px solid rgba(255,255,255,0.1)", marginTop: "0.5rem" }}>
+            <button
+              type="button"
+              className={`btn-backup${shouldFlash ? " flash-active" : ""}`}
+              onClick={() => { handleExport(); setIsMobileMenuOpen(false); }}
+              style={isDirty ? { borderColor: "var(--secondary)", color: "var(--secondary)", fontWeight: 700 } : {}}
+            >
+              {isDirty ? "⚠ Exportar" : "Exportar"}
+            </button>
+            <button
+              type="button"
+              className="btn-backup"
+              onClick={() => { importInputRef.current?.click(); setIsMobileMenuOpen(false); }}
+            >
+              Importar JSON
+            </button>
+          </div>
+
           {user && (
             <button
-              className="tab-link mt-4"
+              className="tab-link"
               onClick={handleLogout}
-              style={{ color: "var(--danger)", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1rem", textAlign: "left" }}
+              style={{ color: "var(--danger)", borderTop: "1px solid rgba(255,255,255,0.1)", marginTop: "0.5rem", paddingTop: "1rem", textAlign: "left" }}
             >
               Cerrar sesión
             </button>
