@@ -47,16 +47,16 @@ export default function SeasonPage() {
     <section id="tab-season" className="tab-content active">
       <div className="view-header">
         <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-xl font-bold m-0">📅 Planeación</h2>
-          <div className="sort-group flex bg-black/5 p-1 rounded-xl gap-1">
+          <h2 className="text-xl font-bold m-0 text-[var(--primary)]">📅 Planeación</h2>
+          <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
             <button 
-              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'type' ? 'bg-white text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'type' ? 'bg-[var(--white)] text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('type')}
             >
               🏷️ Tipo
             </button>
             <button 
-              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'desc' ? 'bg-white text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'desc' ? 'bg-[var(--white)] text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('desc')}
             >
               🔤 Descripción
@@ -65,37 +65,37 @@ export default function SeasonPage() {
         </div>
       </div>
 
-      <div className="inventory-sections">
+      <div className="inventory-sections grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1600px] mx-auto">
         {seasons.map(s => (
-          <div key={s.name} className="inventory-card !flex flex-col">
-            <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-3 mb-4">
-                <h3 className="m-0 text-lg font-black flex items-center gap-2">
-                  <span className="text-2xl">{s.icon}</span> {s.name}
+          <div key={s.name} className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)] flex flex-col">
+            <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-4 mb-6">
+                <h3 className="m-0 text-xl font-black flex items-center gap-3 text-[var(--primary)]">
+                  <span className="text-3xl">{s.icon}</span> {s.name}
                 </h3>
-                <button className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] font-black" onClick={() => handleAddTask(s.name)}>
+                <button className="btn-primary h-9 min-h-[36px] px-4 text-xs font-black uppercase tracking-widest" onClick={() => handleAddTask(s.name)}>
                   + Acción
                 </button>
             </div>
             
-            <ul className="flex flex-col gap-2 p-0 m-0 list-none">
+            <ul className="flex flex-col gap-3 p-0 m-0 list-none">
                 {seasonalTasks[s.name]?.length === 0 && (
-                  <p className="text-[0.8rem] text-zinc-400 text-center py-4 italic">Sin planes activos.</p>
+                  <p className="text-[0.9rem] text-[var(--text-gray)] text-center py-8 italic opacity-50">Sin planes activos.</p>
                 )}
                 {getSortedTasks(s.name).map((t, idx) => (
-                  <li key={`${t.type}-${idx}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 !p-1">
+                  <li key={`${t.type}-${idx}`} className="inventory-item bg-[var(--primary)]/[0.05] hover:bg-[var(--primary)]/[0.08] border border-[var(--primary)]/10 transition-all py-4 px-4 rounded-[1.5rem] shadow-sm flex items-center justify-between gap-4">
                     {/* Info Tarea */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <span className="text-xl shrink-0" title={t.type}>{getTaskIcon(t.type)}</span>
-                      <p className="m-0 text-[0.85rem] font-bold text-zinc-800 truncate leading-tight" title={t.desc}>
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <span className="text-2xl shrink-0" title={t.type}>{getTaskIcon(t.type)}</span>
+                      <p className="m-0 text-[0.95rem] font-black text-[var(--text)] truncate leading-tight" title={t.desc}>
                         {t.desc}
                       </p>
                     </div>
 
                     {/* Acciones */}
-                    <div className="flex items-center gap-1 shrink-0 ml-2 border-l border-zinc-200 pl-3">
-                      <button className="p-1.5 text-xl hover:scale-125 transition-transform" title="Agendar" onClick={() => openModal('calendar', { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}>📅</button>
-                      <button className="p-1.5 hover:bg-white rounded-lg transition-all opacity-60 hover:opacity-100" title="Editar" onClick={() => openModal('edit-season-task', { ...t, season: s.name, index: idx })}>✏️</button>
-                      <button className="p-1.5 text-[var(--danger)] hover:bg-red-50 rounded-lg transition-all opacity-60 hover:opacity-100" title="Borrar" onClick={() => handleRemove(s.name, idx)}>🗑️</button>
+                    <div className="flex items-center gap-2 shrink-0 ml-2 border-l border-[var(--border)] pl-4">
+                      <button className="p-2 text-2xl hover:scale-125 transition-transform" title="Agendar" onClick={() => openModal('calendar', { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}>📅</button>
+                      <button className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all opacity-60 hover:opacity-100 shadow-sm" title="Editar" onClick={() => openModal('edit-season-task', { ...t, season: s.name, index: idx })}>✏️</button>
+                      <button className="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg-light)] rounded-xl transition-all opacity-60 hover:opacity-100 shadow-sm" title="Borrar" onClick={() => handleRemove(s.name, idx)}>🗑️</button>
                     </div>
                   </li>
                 ))}

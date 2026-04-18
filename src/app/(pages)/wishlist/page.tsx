@@ -24,15 +24,15 @@ export default function WishlistPage() {
     <section id="tab-wishlist" className="tab-content active">
       <div className="view-header">
         <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-xl font-bold m-0">✨ Lista de Deseos</h2>
-          <div className="group flex bg-black/5 p-1.5 rounded-2xl gap-1.5 shadow-sm">
+          <h2 className="text-xl font-bold m-0 text-[var(--primary)]">✨ Lista de Deseos</h2>
+          <div className="group flex bg-[var(--black-soft)] p-1.5 rounded-2xl gap-1.5 shadow-sm">
             {["Todas", "Alta", "Media", "Baja"].map((p) => (
               <button
                 key={p}
                 className={`px-4 py-2 text-[0.8rem] font-bold rounded-xl min-w-[50px] min-h-[32px] transition-all ${
                   priorityFilter === p
-                    ? "bg-white text-[var(--primary)] shadow-sm"
-                    : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-white/50"
+                    ? "bg-[var(--white)] text-[var(--primary)] shadow-sm"
+                    : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-[var(--white-soft)]"
                 }`}
                 onClick={() => setPriorityFilter(p)}
               >
@@ -48,7 +48,7 @@ export default function WishlistPage() {
 
       <div id="wishlist-container" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 w-full px-1">
         {filteredWishlist.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic">
+          <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2.5rem]">
             {wishlist.length === 0 ? "No hay deseos registrados." : "No hay coincidencias."}
           </div>
         ) : (
@@ -57,7 +57,7 @@ export default function WishlistPage() {
             return (
               <div
                 key={id}
-                className="card wish-card !min-h-fit !h-auto flex flex-col p-5 bg-white rounded-[2rem] shadow-md hover:shadow-lg transition-all group overflow-hidden gap-y-6"
+                className="card wish-card !min-h-fit !h-auto flex flex-col p-8 bg-[var(--card-bg)] rounded-[2.5rem] shadow-md hover:shadow-lg transition-all group overflow-hidden gap-y-10"
                 style={{
                   borderTop: `5px solid ${priority === "Alta" ? "var(--danger)" : priority === "Media" ? "var(--secondary)" : "var(--primary-light)"}`,
                 }}
@@ -65,7 +65,8 @@ export default function WishlistPage() {
                 {/* HEADER: Grid 2 columnas estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
-                    <h4 className="m-0 text-base font-black text-zinc-800 leading-tight">✨ {name}</h4>
+                    <h4 className="m-0 text-lg font-black text-[var(--text)] leading-tight truncate">✨ {name}</h4>
+                    <small className="text-[0.7rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">Deseo</small>
                   </div>
                   <div className="flex flex-col items-end gap-y-2">
                     <span className={`badge shrink-0 ${priority === "Alta" ? "badge-danger" : "badge-warning"}`}>{priority}</span>
@@ -73,15 +74,15 @@ export default function WishlistPage() {
                 </div>
 
                 {/* BODY: Notas con borde superior sutil */}
-                <div className="flex-1 pt-8">
+                <div className="flex-1 border-t border-[var(--border-lightest)] pt-8">
                   <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
                     📝 {notes || "Sin notas adicionales."}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones con separador */}
-                <div className="flex items-center justify-between pt-8 mt-auto">
-                  <button className="btn-primary h-6 text-base font-black" onClick={() => removeWish(id)}>
+                <div className="flex items-center justify-between border-t border-[var(--border-lightest)] pt-8 mt-auto text-[var(--footer-bg)]">
+                  <button className="btn-primary h-8 min-h-[32px] px-4 text-[0.7rem] font-black" onClick={() => removeWish(id)}>
                     💸 ¡Comprado!
                   </button>
                   <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">

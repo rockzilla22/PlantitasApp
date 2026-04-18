@@ -43,56 +43,56 @@ export default function InventoryPage() {
   return (
     <section id="tab-inventory" className="tab-content active">
       <div className="view-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <h2 style={{ fontSize: '1.2rem', margin: 0 }}>📦 Inventario</h2>
-          <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '3px', borderRadius: '10px', gap: '2px' }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-xl font-bold m-0 text-[var(--primary)]">📦 Inventario</h2>
+          <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
             <button 
-              className={`btn-text ${sortBy === 'name' ? 'active' : ''}`} 
-              style={{ fontSize: '0.7rem', padding: '4px 8px', borderRadius: '7px', background: sortBy === 'name' ? 'white' : 'transparent', color: sortBy === 'name' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'name' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'name' ? 'bg-[var(--white)] text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('name')}
             >
               🏷️ Nombre
             </button>
             <button 
-              className={`btn-text ${sortBy === 'qty' ? 'active' : ''}`} 
-              style={{ fontSize: '0.7rem', padding: '4px 8px', borderRadius: '7px', background: sortBy === 'qty' ? 'white' : 'transparent', color: sortBy === 'qty' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'qty' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'qty' ? 'bg-[var(--white)] text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('qty')}
             >
               🔢 Cantidad
             </button>
           </div>
         </div>
-        <button className="btn-primary" style={{ minHeight: '38px', height: '38px', padding: '0 12px', fontSize: '0.85rem' }} onClick={handleAddItem}>+ Añadir</button>
+        <button className="btn-primary h-9 min-h-[36px] px-4 text-xs font-bold uppercase tracking-widest" onClick={handleAddItem}>+ Añadir</button>
       </div>
-      <div className="inventory-sections">
+      <div className="inventory-sections grid grid-cols-1 md:grid-cols-2 gap-8">
         {categories.map(cat => (
-          <div key={cat.id} className="inventory-card">
-            <h3>{cat.icon} {cat.label}</h3>
-            <ul id={`list-${cat.id}`}>
+          <div key={cat.id} className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)]">
+            <h3 className="text-[var(--primary)] font-black mb-6 flex items-center gap-3 text-lg">
+              <span className="text-2xl">{cat.icon}</span> {cat.label}
+            </h3>
+            <ul className="flex flex-col gap-3 p-0 m-0 list-none">
               {inventory[cat.id]?.length === 0 && (
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Vacío.</p>
+                <p className="text-[0.9rem] text-[var(--text-gray)] text-center py-8 italic opacity-50">Vacío.</p>
               )}
               {getSortedItems(cat.id).map((item, index) => (
-                <li key={`${item.name}-${index}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all py-3 px-3 mb-2 last:mb-0 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap !p-1">
+                <li key={`${item.name}-${index}`} className="inventory-item bg-[var(--primary)]/[0.05] hover:bg-[var(--primary)]/[0.08] border border-[var(--primary)]/10 transition-all py-3 px-4 rounded-[1.5rem] shadow-sm flex items-center justify-between gap-4">
                    {/* Izquierda: Info Principal */}
-                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <button className="text-xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
-                      <strong className="text-[var(--text)] text-sm font-black truncate" title={item.name}>📦 {item.name}</strong>
+                   <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <button className="text-2xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
+                      <strong className="text-[var(--text)] text-[0.95rem] font-black truncate" title={item.name}>📦 {item.name}</strong>
                    </div>
 
                    {/* Centro/Derecha: Controles y Cantidad */}
-                   <div className="flex items-center gap-3 shrink-0">
-                      <div className="flex items-center bg-white rounded-xl border border-[var(--primary)]/10 p-1 shadow-sm">
+                   <div className="flex items-center gap-4 shrink-0">
+                      <div className="flex items-center bg-[var(--card-bg)] rounded-xl border border-[var(--primary)]/10 p-1 shadow-sm">
                           <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, -1)}>-</button>
-                          <span className="text-[0.7rem] font-black uppercase px-2 text-[var(--primary)] min-w-[60px] text-center">
+                          <span className="text-[0.75rem] font-black uppercase px-3 text-[var(--primary)] min-w-[70px] text-center">
                             {item.qty} {item.unit}
                           </span>
                           <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, 1)}>+</button>
                       </div>
 
-                      <div className="flex gap-1 ml-2 border-l border-[var(--border)] pl-3">
-                        <button className="p-1.5 hover:bg-[var(--card-bg)] rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
-                        <button className="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => handleRemove(cat.id, item.name)}>🗑️</button>
+                      <div className="flex items-center gap-1 border-l border-[var(--border)] pl-4">
+                        <button className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100 shadow-sm" onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
+                        <button className="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg-light)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100 shadow-sm" onClick={() => handleRemove(cat.id, item.name)}>🗑️</button>
                       </div>
                   </div>
                 </li>

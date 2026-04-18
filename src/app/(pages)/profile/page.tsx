@@ -7,8 +7,10 @@ import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
-import { loadData } from "@/store/plantStore";
+import { loadData, $store } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
+import configProject from "@/data/configProject";
+import { useMemo } from "react";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
@@ -132,6 +134,21 @@ export default function ProfilePage() {
   const isMasterAdmin = user.app_metadata?.role === "master_admin";
   const planLevel = getPlanLevel(user);
   const isPremium = hasPremium(user);
+  const planConfig = Object.values(configProject.plans).find(p => p.id === planLevel) ?? configProject.plans.NONE;
+
+  const data = useStore($store);
+  
+  const usedSlots = useMemo(() => {
+    const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
+    const seasonCount = Object.values(data.seasonalTasks).reduce((sum, arr) => sum + arr.length, 0);
+    return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+  }, [data]);
+
+  const maxSlots = isMasterAdmin ? 'Ilimitado' : (50 + (user.app_metadata?.purchased_slots || 0));
+
+  const expirationDate = user.app_metadata?.premium_expires_at 
+    ? new Date(user.app_metadata.premium_expires_at).toLocaleDateString()
+    : 'No activa';
 
   const currentName = user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "";
   const hasChanges = fullName.trim() !== currentName;
@@ -140,19 +157,19 @@ export default function ProfilePage() {
   const canUnlink = (user.identities ?? []).length > 1;
 
   const oauthProviders = [
-    { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid var(--border)" },
-    { id: "discord"  as const, label: "Discord",  iconBg: "#5865F2",  iconColor: "#fff",    iconText: "D",  border: "none" },
+    { id: "google"   as const, label: "Google",   iconBg: "var(--white)",     iconColor: "var(--google-blue)", iconText: "G",  border: "1px solid var(--border)" },
+    { id: "discord"  as const, label: "Discord",  iconBg: "var(--discord-blurple)",  iconColor: "var(--white)",    iconText: "D",  border: "none" },
   ];
 
   return (
-    <div className="profile-page animate-in fade-in duration-700">
+    <div className="profile-page animate-in fade-in duration-700 mx-auto w-full max-w-[1400px]">
       <div className="profile-card shadow-2xl rounded-[2.5rem] border border-[var(--border-light)] overflow-hidden">
         <Link href="/" className="no-underline text-[var(--primary)] font-black text-xs uppercase tracking-widest hover:opacity-70 transition-opacity mb-8 inline-block px-8">
           ← Volver al Laboratorio
         </Link>
         
         <div className="profile-header bg-[var(--muted-bg)] p-10 mb-8 border-b border-[var(--border-light)] flex items-center gap-6">
-          <div className="profile-avatar-lg shadow-xl ring-4 ring-white">
+          <div className="profile-avatar-lg shadow-xl ring-4 ring-[var(--white)]">
             {getInitials(currentName, user.email)}
           </div>
           <div className="min-w-0 flex-1">
@@ -202,7 +219,7 @@ export default function ProfilePage() {
               className="btn-primary w-full py-4 text-xs font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
               disabled={busy || !hasChanges}
             >
-              {busy ? "Procesando..." : "Sincronizar Perfil"}
+              {busy ? "Procesando..." : "Guardar Cambios"}
             </button>
           </div>
         </form>
@@ -246,7 +263,7 @@ export default function ProfilePage() {
                 <div key={p.id} className="identity-row flex items-center justify-between bg-[var(--muted-bg)] p-4 rounded-2xl border border-[var(--border-light)]">
                   <div className="flex items-center gap-4">
                     <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center font-black shadow-inner border border-white/20"
+                      className="w-10 h-10 rounded-full flex items-center justify-center font-black shadow-inner border border-[var(--white)]/20"
                       style={{ background: p.iconBg, color: p.iconColor }}
                     >
                       {p.iconText}
@@ -257,7 +274,7 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-4">
                       <span className="text-[var(--success)] text-xs font-black uppercase tracking-widest opacity-80">✓ Vinculado</span>
                       <button
-                        className="btn-text !p-2 !min-h-0 text-[var(--danger)] text-[0.65rem] font-black uppercase tracking-widest hover:bg-[var(--danger-bg)] rounded-lg transition-all"
+                        className="btn-text !p-2 !min-h-0 text-[var(--danger)] text-[0.65rem] font-black uppercase tracking-widest hover:bg-[var(--danger-bg-light)] rounded-lg transition-all"
                         disabled={!canUnlink}
                         title={!canUnlink ? "Necesitás al menos 2 métodos para desvincular" : `Desvincular ${p.label}`}
                         onClick={() => handleUnlink(p.id)}
@@ -283,7 +300,7 @@ export default function ProfilePage() {
         {isPremium && (
           <div className="trash-section px-10 pb-10 border-t-4 border-dashed border-[var(--muted-bg)] pt-10">
             <button 
-              className="w-full flex items-center justify-between bg-zinc-900 text-white p-6 rounded-3xl shadow-xl hover:bg-black transition-all group"
+              className="w-full flex items-center justify-between bg-[var(--dark-surface)] text-[var(--text-white)] p-6 rounded-3xl shadow-xl hover:bg-[var(--black)] transition-all group border-none cursor-pointer"
               onClick={handleToggleTrash}
             >
               <div className="flex items-center gap-4">
@@ -292,7 +309,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center gap-3">
                 {trashItems.length > 0 && !showTrash && (
-                  <span className="bg-[var(--danger)] text-white text-[0.65rem] font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
+                  <span className="bg-[var(--danger)] text-[var(--white)] text-[0.65rem] font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
                     {trashItems.length} ITEMS
                   </span>
                 )}

@@ -7,48 +7,87 @@
 
 /* ── Variables ─────────────────────────────────────────── */
 :root {
-  /* Core */
+  /* Brand Colors */
   --primary: #2e7d32;
   --primary-light: #4caf50;
   --secondary: #ffa000;
-  --background: #d5e9c0;
+  --background: #f1f8e9;
   --card-bg: #ffffff;
-  --text: var(--footer-bg);
+  --brand-dark: #1a2e1a;
+  --brand-foreground: #263238;
+
+  /* Text Colors */
+  --text: #000000;
   --text-gray: #465861;
-  --text-brown: #382f2a;
   --text-white: #ffffff;
+  --text-muted: #666666;
+  --text-dark: #333333;
+  --text-brown: #382f2a;
+
+  /* Semantic Status */
   --danger: #d32f2f;
+  --danger-dark: #c62828;
+  --danger-bg: #fef2f2;
+  --danger-bg-light: #ffebee;
+  --danger-border: #fecaca;
+  
   --success: #388e3c;
+  --success-bg: #f0fdf4;
+  --success-bg-light: #e8f5e9;
+  
+  --warning: #f59e0b;
+  --warning-dark: #ef6c00;
+  --warning-bg: #fffbeb;
+  --warning-bg-light: #fff3e0;
+  
+  --info: #3b82f6;
+  --info-dark: #0288d1;
+  --info-bg: #eff6ff;
+  --info-bg-light: #e1f5fe;
+
+  /* UI Elements */
   --border: #e0e0e0;
+  --border-mid: #cccccc;
+  --border-light: #f3f4f6;
+  --border-lightest: #eeeeee;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --radius: 12px;
-  
-  /* Extended - backgrounds y borders */
-  --border-light: #f3f4f6;
+
+  /* Theme Extras */
+  --note-bg: #fff9c4;
   --muted-bg: #f5f5f5;
-  --danger-bg: #fef2f2;
-  --danger-border: #fecaca;
-  --success-bg: #f0fdf4;
-  --warning-bg: #fffbeb;
-  --warning: #f59e0b;
-  --info-bg: #eff6ff;
-  --info: #3b82f6;
-  
-  /* Premium / Special */
+  --bg-faint: #f1f1f1;
+  --bg-faint-alt: #f9f9f9;
   --gold: #fbbf24;
   --brown-dark: #451a03;
   --blue-premium: #3b82f6;
   --blue-premium-dark: #1d4ed8;
-  
+  --footer-bg: #382f2a;
+
+  /* Social Colors */
+  --google-blue: #4285f4;
+  --google-green: #34a853;
+  --google-yellow: #fbbc05;
+  --google-red: #ea4335;
+  --discord-blurple: #5865f2;
+
+  /* Neutrals & Alphas */
+  --white:             #ffffff;
+  --black:             #000000;
+  --black-soft:        rgba(0,0,0,0.05);
+  --white-soft:        rgba(255,255,255,0.5);
+  --white-glass:       rgba(255,255,255,0.6);
+  --dark-surface:      #18181b; 
+  --light-surface:     #fafafa;
+  --neutral-mid:       #e4e4e7;
+
   /* Backward-compat aliases */
   --color-main: var(--primary);
   --color-background: var(--background);
   --color-foreground: var(--text);
   --bg-card: var(--card-bg);
   --bg-surface: var(--background);
-  --text-muted: var(--text-gray);
   --border-dim: var(--border);
-  --footer-bg: #382f2a;
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -81,7 +120,7 @@ body {
   top: 0;
   z-index: 1000;
   background: var(--primary);
-  color: white;
+  color: var(--text-white);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -166,13 +205,13 @@ body {
     display: inline-block;
     font-size: 0.85rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-white);
   }
 
   .h-logout {
     display: inline-block;
     font-size: 0.8rem;
-    color: white;
+    color: var(--text-white);
     font-weight: 700;
     background: none;
     border: none;
@@ -221,7 +260,7 @@ body {
 .mobile-menu-toggle span {
   width: 18px;
   height: 2px;
-  background: white;
+  background: var(--text-white);
   border-radius: 2px;
   transition:
     transform 0.2s,
@@ -264,7 +303,7 @@ body {
   font-size: 1rem; /* ≥ 16px prevents iOS zoom */
   transition: all 0.3s ease;
   color: var(--text);
-  background: white !important;
+  background: var(--card-bg) !important;
 }
 
 #global-search:focus {
@@ -285,7 +324,7 @@ body {
   top: calc(100% + 5px);
   left: 0;
   right: 0;
-  background: white;
+  background: var(--card-bg);
   color: var(--text);
   border-radius: var(--radius);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -314,7 +353,7 @@ body {
 }
 
 .search-result-item:hover {
-  background: #f5f5f5;
+  background: var(--bg-faint-alt);
 }
 .search-result-item:last-child {
   border-bottom: none;
@@ -350,7 +389,7 @@ body {
   background: transparent !important;
   font-weight: 600;
   font-size: 0.92rem;
-  color: white !important;
+  color: var(--text-white) !important;
   opacity: 0.8;
   cursor: pointer;
   border-radius: 14px;
@@ -376,12 +415,12 @@ body {
 
 .tab-link.active {
   background: rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
+  color: var(--text-white) !important;
   opacity: 1 !important;
 }
 .tab-link:hover:not(.active) {
   background: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
+  color: var(--text-white) !important;
   opacity: 1 !important;
 }
 
@@ -536,7 +575,7 @@ body {
     transform: translateX(-50%);
     width: 2px;
     height: 100%;
-    background: #ccc;
+    background: var(--border-mid);
     border-radius: 2px;
   }
 
@@ -584,7 +623,7 @@ body {
 
 @media (min-width: 1024px) {
   .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
   }
 }
@@ -628,9 +667,6 @@ body {
 }
 
 @media (min-width: 768px) {
-  .card {
-    padding: 1.2rem;
-  }
   .card:hover {
     transform: translateY(-4px);
   }
@@ -638,7 +674,7 @@ body {
 
 .card.selected {
   border-color: var(--primary);
-  background: #f1f8e9;
+  background: var(--success-bg-light);
 }
 .card p {
   font-size: 0.9rem;
@@ -660,20 +696,20 @@ body {
   text-transform: uppercase;
 }
 .badge-success {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--success-bg-light);
+  color: var(--primary);
 }
 .badge-warning {
-  background: #fff3e0;
-  color: #ef6c00;
+  background: var(--warning-bg-light);
+  color: var(--warning-dark);
 }
 .badge-danger {
-  background: #ffebee;
-  color: #c62828;
+  background: var(--danger-bg-light);
+  color: var(--danger-dark);
 }
 .badge-info {
-  background: #e1f5fe;
-  color: #0288d1;
+  background: var(--info-bg-light);
+  color: var(--info-dark);
 }
 
 /* ── Inventory ─────────────────────────────────────────── */
@@ -691,7 +727,7 @@ body {
 }
 
 .inventory-card {
-  background: white;
+  background: var(--card-bg);
   padding: 1rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -728,7 +764,7 @@ body {
 
 /* ── Notes ─────────────────────────────────────────────── */
 .note-item {
-  background: #fff9c4;
+  background: var(--note-bg);
   padding: 1rem;
   border-radius: var(--radius);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -755,7 +791,7 @@ body {
 }
 
 .season-card {
-  background: white;
+  background: var(--card-bg);
   padding: 1.25rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -782,7 +818,7 @@ body {
 }
 .season-task-item {
   padding: 6px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-lightest);
   font-size: 0.85rem;
   display: flex;
   align-items: flex-start;
@@ -807,7 +843,7 @@ body {
 }
 
 .prop-card {
-  background: white;
+  background: var(--card-bg);
   padding: 1.25rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -822,7 +858,7 @@ body {
   margin: 0.5rem 0 1rem;
 }
 .microclima-tag {
-  background: #f1f1f1;
+  background: var(--bg-faint);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -834,7 +870,7 @@ body {
 
 /* ── Logs ──────────────────────────────────────────────── */
 .log-item {
-  background: #f9f9f9;
+  background: var(--bg-faint-alt);
   padding: 0.8rem;
   border-radius: 8px;
   margin-bottom: 0.5rem;
@@ -853,7 +889,7 @@ dialog {
   width: 95%;
   max-width: 500px;
   margin: auto;
-  background: white;
+  background: var(--card-bg);
   color: var(--text);
 }
 
@@ -895,7 +931,7 @@ textarea {
   border: 2px solid var(--border);
   border-radius: 8px;
   font-size: 1rem; /* ≥ 16px prevents iOS zoom on-focus */
-  background: white;
+  background: var(--card-bg);
   color: var(--text);
 }
 
@@ -925,7 +961,7 @@ textarea:focus {
 /* ── Buttons ───────────────────────────────────────────── */
 .btn-primary {
   background: var(--primary);
-  color: white;
+  color: var(--text-white);
   border: none;
   padding: 0.7rem 1.25rem;
   border-radius: 8px;
@@ -949,9 +985,9 @@ textarea:focus {
 .btn-secondary {
   padding: 0.55rem 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border, #e0e0e0);
+  border: 1px solid var(--border);
   background: transparent;
-  color: var(--text, #333);
+  color: var(--text-dark);
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.15s;
@@ -990,7 +1026,7 @@ textarea:focus {
 }
 
 .btn-backup {
-  background: white;
+  background: var(--card-bg);
   color: var(--primary);
   padding: 0 12px;
   border-radius: 8px;
@@ -1011,7 +1047,7 @@ textarea:focus {
 }
 .btn-backup:hover {
   background: var(--secondary);
-  color: white;
+  color: var(--text-white);
   border-color: var(--secondary);
 }
 
@@ -1029,13 +1065,13 @@ textarea:focus {
 }
 @keyframes flash {
   from {
-    background: white;
+    background: var(--card-bg);
     color: var(--primary);
     transform: scale(1);
   }
   to {
     background: var(--secondary);
-    color: white;
+    color: var(--text-white);
     border-color: var(--secondary);
     transform: scale(1.05);
   }
@@ -1375,7 +1411,7 @@ textarea:focus {
   font-weight: 600;
 }
 .plan-free {
-  background: var(--success-bg);
+  background: var(--success-bg-light);
   color: var(--primary);
   border: 1px solid var(--primary-light);
 }
@@ -1437,7 +1473,7 @@ textarea:focus {
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--success);
-  background: var(--success-bg);
+  background: var(--success-bg-light);
   border-radius: 10px;
   padding: 0.15rem 0.55rem;
   white-space: nowrap;
@@ -1485,7 +1521,7 @@ textarea:focus {
   flex-shrink: 0;
 }
 .btn-unlink-provider:hover:not(:disabled) {
-  background: var(--danger-bg);
+  background: var(--danger-bg-light);
 }
 .btn-unlink-provider:disabled {
   opacity: 0.35;
@@ -1713,14 +1749,14 @@ textarea:focus {
   border-color: var(--border);
 }
 .admin-action-master.is-active {
-  background: var(--warning-bg);
-  color: var(--warning);
+  background: var(--warning-bg-light);
+  color: var(--warning-dark);
   border-color: var(--secondary);
 }
 .admin-action-master:hover:not(:disabled) {
-  background: var(--warning-bg);
-  border-color: var(--warning);
-  color: var(--warning);
+  background: var(--warning-bg-light);
+  border-color: var(--warning-dark);
+  color: var(--warning-dark);
 }
 
 .admin-action-premium {
@@ -1729,14 +1765,14 @@ textarea:focus {
   border-color: var(--border);
 }
 .admin-action-premium.is-active {
-  background: var(--info-bg);
-  color: var(--info);
+  background: var(--info-bg-light);
+  color: var(--info-dark);
   border-color: var(--primary-light);
 }
 .admin-action-premium:hover:not(:disabled) {
-  background: var(--info-bg);
-  border-color: var(--info);
-  color: var(--info);
+  background: var(--info-bg-light);
+  border-color: var(--info-dark);
+  color: var(--info-dark);
 }
 
 .admin-action:disabled {

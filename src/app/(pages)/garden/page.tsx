@@ -5,25 +5,19 @@ import Link from "next/link";
 
 export default function GardenPage() {
   return (
-    <section id="tab-garden" className="tab-content active">
-      <div className="max-w-md w-full bg-white/60 backdrop-blur-md rounded-[2.5rem] border border-white shadow-xl text-center">
-        <br />
-        <div className="text-5xl mb-10">🚧</div>
-        <br />
-        <h1 className="text-3xl font-black text-[var(--primary)] tracking-tight">Jardín Digital</h1>
-        <br />
-        <p className="text-zinc-500 font-medium leading-relaxed">
-          Estamos cultivando esta terreno. Muy pronto podrás ver tu colección representada visualmente en un refugio digital interactivo.
+    <section className="min-h-[80vh] flex items-center justify-center p-6 bg-[var(--background)] animate-in fade-in duration-700">
+      <div className="max-w-md w-full bg-[var(--white-glass)] backdrop-blur-md rounded-[2.5rem] border border-[var(--white)] shadow-xl text-center p-12">
+        <div className="text-6xl mb-6">🚧</div>
+        <h1 className="text-3xl font-black text-[var(--primary)] mb-4 tracking-tight">Mi Jardín Digital</h1>
+        <p className="text-[var(--text-gray)] font-medium mb-12 leading-relaxed opacity-80">
+          Estamos cultivando esta sección. Muy pronto podrás ver tu colección representada visualmente en un refugio digital interactivo.
         </p>
-        <br />
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center mt-8 mb-8 bg-[var(--primary)] text-white px-16 py-6 rounded-2xl font-black text-base no-underline hover:bg-[var(--secondary)] hover:scale-105 transition-all shadow-xl active:scale-95 tracking-wider min-w-[180px]"
+        <Link 
+          href="/" 
+          className="inline-block bg-[var(--primary)] text-[var(--text-white)] px-12 py-5 rounded-2xl font-black text-base no-underline hover:bg-[var(--secondary)] hover:scale-105 transition-all shadow-xl active:scale-95 tracking-wide uppercase"
         >
-          Regresar
+          VOLVER AL INICIO
         </Link>
-        <br />
-        <br />
       </div>
     </section>
   );
