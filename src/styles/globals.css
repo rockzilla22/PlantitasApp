@@ -336,8 +336,8 @@ body {
     gap: 0.5rem;
     margin-bottom: 1rem;
     position: sticky;
-    /* Mobile: header is ~3 rows → ≈ 200px */
-    top: 200px;
+    /* Ajustado a la nueva altura del Header minimalista */
+    top: 56px; 
     background: var(--background);
     z-index: 40;
     padding: 0.6rem 0;
@@ -345,10 +345,9 @@ body {
 
 .view-header h2 { font-size: 1.2rem; font-weight: bold; }
 
-@media (min-width: 768px) {
+@media (min-width: 820px) {
     .view-header {
-        /* Desktop: header is 1 row → ≈ 130px */
-        top: 130px;
+        top: 96px; /* Altura del header desktop real */
         margin-bottom: 1.5rem;
     }
     .view-header h2 { font-size: 1.5rem; }

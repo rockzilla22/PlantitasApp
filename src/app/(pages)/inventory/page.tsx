@@ -43,26 +43,26 @@ export default function InventoryPage() {
   return (
     <section id="tab-inventory" className="tab-content active">
       <div className="view-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <h2>📦 Inventario de Insumos</h2>
-          <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <h2 style={{ fontSize: '1.2rem', margin: 0 }}>📦 Inventario</h2>
+          <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '3px', borderRadius: '10px', gap: '2px' }}>
             <button 
               className={`btn-text ${sortBy === 'name' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'name' ? 'white' : 'transparent', color: sortBy === 'name' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'name' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.7rem', padding: '4px 8px', borderRadius: '7px', background: sortBy === 'name' ? 'white' : 'transparent', color: sortBy === 'name' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'name' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('name')}
             >
-              🔤 Nombre
+              🏷️ Nombre
             </button>
             <button 
               className={`btn-text ${sortBy === 'qty' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'qty' ? 'white' : 'transparent', color: sortBy === 'qty' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'qty' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              style={{ fontSize: '0.7rem', padding: '4px 8px', borderRadius: '7px', background: sortBy === 'qty' ? 'white' : 'transparent', color: sortBy === 'qty' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'qty' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
               onClick={() => setSortBy('qty')}
             >
               🔢 Cantidad
             </button>
           </div>
         </div>
-        <button className="btn-primary" onClick={handleAddItem}>Añadir Insumo</button>
+        <button className="btn-primary" style={{ minHeight: '38px', height: '38px', padding: '0 12px', fontSize: '0.85rem' }} onClick={handleAddItem}>+ Añadir</button>
       </div>
       <div className="inventory-sections">
         {categories.map(cat => (

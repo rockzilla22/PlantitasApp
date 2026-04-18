@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer className="app-footer">
@@ -11,9 +13,12 @@ export function Footer() {
             />
           </svg>
         </a>
-        <a href="/privacy" className="btn-text" style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textDecoration: 'none' }}>
+        <Link href="/pricing" className="btn-text" style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textDecoration: 'none' }}>
+          Planes
+        </Link>
+        <Link href="/privacy" className="btn-text" style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textDecoration: 'none' }}>
           Privacidad y Términos
-        </a>
+        </Link>
       </div>
     </footer>
   );

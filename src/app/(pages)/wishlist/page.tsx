@@ -5,11 +5,11 @@ import { $store, removeWish } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
 import { useState, useMemo } from "react";
 
-export default function wishlistPage() {
+export default function WishlistPage() {
   const { wishlist } = useStore($store);
   const [priorityFilter, setPriorityFilter] = useState("Todas");
 
-  const filteredwishlist = useMemo(() => {
+  const filteredWishlist = useMemo(() => {
     return wishlist.filter(item => {
       const matchesPriority = priorityFilter === "Todas" || item.priority === priorityFilter;
       return matchesPriority;
@@ -23,63 +23,71 @@ export default function wishlistPage() {
   return (
     <section id="tab-wishlist" className="tab-content active">
       <div className="view-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <h2>✨ Lista de Deseos</h2>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
-              {["Todas", "Alta", "Media", "Baja"].map(p => (
-                <button
-                  key={p}
-                  className={`btn-text ${priorityFilter === p ? 'active' : ''}`}
-                  style={{ 
-                    fontSize: '0.75rem', 
-                    padding: '4px 10px', 
-                    borderRadius: '8px', 
-                    background: priorityFilter === p ? 'white' : 'transparent', 
-                    color: priorityFilter === p ? 'var(--primary)' : 'var(--text-gray)',
-                    boxShadow: priorityFilter === p ? '0 2px 5px rgba(0,0,0,0.1)' : 'none'
-                  }}
-                  onClick={() => setPriorityFilter(p)}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-lg min-[820px]:text-xl font-bold m-0 text-[var(--primary)]">✨ Deseos</h2>
+          <div className="sort-group flex bg-black/5 p-1 rounded-xl gap-1">
+            {["Todas", "Alta", "Media", "Baja"].map(p => (
+              <button
+                key={p}
+                className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${
+                  priorityFilter === p 
+                    ? 'bg-white text-[var(--primary)] shadow-sm' 
+                    : 'text-[var(--text-gray)] hover:text-[var(--primary)]'
+                }`}
+                onClick={() => setPriorityFilter(p)}
+              >
+                {p}
+              </button>
+            ))}
           </div>
         </div>
-        <button className="btn-primary" onClick={handleAddWish}>Añadir Deseo</button>
+        <button 
+          className="btn-primary h-9 min-h-[36px] px-4 text-xs font-bold" 
+          onClick={handleAddWish}
+        >
+          + Añadir
+        </button>
       </div>
-      <div id="wishlist-container" className="grid-container">
-        {filteredwishlist.length === 0 ? (
-          <div className="empty-state">
-            <p>{wishlist.length === 0 ? "No hay deseos registrados." : "No se encontraron coincidencias."}</p>
+
+      <div id="wishlist-container" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4 w-full">
+        {filteredWishlist.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-[var(--text-gray)]">
+            <p>{wishlist.length === 0 ? "No hay deseos registrados." : "No hay coincidencias."}</p>
           </div>
         ) : (
-          filteredwishlist.map(item => {
+          filteredWishlist.map(item => {
             const { name = "Sin nombre", priority = "Media", notes = "", id } = item;
             return (
-              <div key={id} className="card wish-card">
-                <div className="wish-card-top">
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', wordBreak: 'break-word', color: 'var(--text)' }}>
+              <div key={id} className="card wish-card !min-h-fit !h-auto flex flex-col p-5 bg-white rounded-3xl border border-[var(--border)] shadow-sm">
+                {/* TOP: Nombre y Badge */}
+                <div className="flex justify-between items-start gap-4 mb-3">
+                    <h3 className="m-0 text-[1.1rem] leading-tight font-black text-gray-900 break-words flex-1">
                       ✨ {name}
                     </h3>
-                    <span className={`badge ${priority === 'Alta' ? 'badge-danger' : 'badge-warning'}`}>
+                    <span className={`badge shrink-0 ${priority === 'Alta' ? 'badge-danger' : 'badge-warning'}`}>
                       {priority}
                     </span>
                 </div>
 
-                <div className="wish-card-body">
-                  <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-gray)', wordBreak: 'break-word', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
+                {/* BODY: Notas */}
+                <div className="flex-1 mb-6 min-h-[40px]">
+                  <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed break-words whitespace-pre-wrap">
                     📝 {notes || 'Sin notas'}
                   </p>
                 </div>
 
-                <div className="wish-card-actions">
-                    <button className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.85rem' }} onClick={() => removeWish(id)}>💸 ¡Listo!</button>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="btn-text" style={{ fontSize: '1.2rem', padding: '4px' }} onClick={() => openModal('calendar', { title: `Comprar: ${name}`, desc: `Prioridad: ${priority}. Notas: ${notes}` })}>📅</button>
-                      <button className="btn-text" style={{ padding: '4px' }} onClick={() => openModal('edit-wish', item)}>✏️</button>
-                      <button className="btn-text" style={{ color: 'var(--danger)', padding: '4px' }} onClick={() => {
+                {/* ACTIONS: Footer de la card */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                    <button 
+                      className="btn-primary h-9 min-h-[36px] px-4 text-xs font-bold" 
+                      onClick={() => removeWish(id)}
+                    >
+                      💸 ¡Listo!
+                    </button>
+                    <div className="flex gap-1">
+                      <button className="p-2 text-xl hover:scale-110 transition-transform" onClick={() => openModal('calendar', { title: `Comprar: ${name}`, desc: `Prioridad: ${priority}. Notas: ${notes}` })}>📅</button>
+                      <button className="p-2 text-base hover:scale-110 transition-transform" onClick={() => openModal('edit-wish', item)}>✏️</button>
+                      <button className="p-2 text-base text-[var(--danger)] hover:scale-110 transition-transform" onClick={() => {
                         openModal("confirm", {
                           title: "¿Eliminar deseo?",
                           message: "Se quitará de la lista.",
