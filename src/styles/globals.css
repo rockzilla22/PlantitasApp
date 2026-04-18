@@ -296,7 +296,7 @@
     font-size: 1rem; /* ≥ 16px prevents iOS zoom */
     transition: all 0.3s ease;
     color: var(--text);
-    background: var(--card-bg) !important;
+    background: var(--input-bg);
   }
 
   #global-search:focus {
@@ -1001,6 +1001,42 @@
   .btn-primary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  .btn-danger {
+    background: var(--danger);
+    color: var(--text-white);
+    border: 1px solid var(--danger);
+    padding: 0.7rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    &:hover:not(:disabled) { opacity: 0.85; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  .btn-warning {
+    background: var(--secondary);
+    color: var(--text-white);
+    border: 1px solid var(--secondary);
+    padding: 0.7rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    &:hover:not(:disabled) { opacity: 0.85; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
 
   .btn-secondary {

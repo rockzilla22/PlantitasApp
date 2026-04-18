@@ -221,7 +221,7 @@ export function Header() {
                 className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isProfileMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
-                <div className="w-9 h-9 rounded-full bg-[var(--card-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
+                <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
                   {getInitials(displayName, user.email)}
                 </div>
                 <span className="hidden md:block uppercase text-[0.7rem] tracking-wide" style={{ color: planConfig.color }}>
@@ -235,7 +235,7 @@ export function Header() {
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute right-0 top-full w-72 bg-[var(--card-bg)]/100 backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 !p-2">
+                <div className="absolute right-0 top-full w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 !p-2">
                   {/* Info Header */}
                   <div className="!py-2 text-center">
                     <p className="text-sm text-[var(--text)] truncate mt-1">{displayName}</p>
