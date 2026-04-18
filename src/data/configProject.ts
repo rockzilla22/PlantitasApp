@@ -85,7 +85,7 @@ export interface ConfigProject {
     EN: NavigationLocale;
   };
 
-  // Catálogo de Planes
+  // Catálogo de Planes (Monetización)
   plans: {
     [key: string]: {
       id: string;
@@ -93,6 +93,9 @@ export interface ConfigProject {
       icon: string;
       color: string;
       description: string;
+      maxSlots: number;      // Límite de items (plantas + notas + etc)
+      hasCloud: boolean;     // Sincronización en la nube activa
+      billingType: 'free' | 'one-time' | 'subscription' | 'system';
     };
   };
 }
@@ -126,7 +129,6 @@ const configProject: ConfigProject = {
   twitter: "@JFEspanolito",
 
   // Rutas hacia imagenes base
-  // se recomienda que las imagenes sean de 1200x630px para OG y 1024x512px para Twitter
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
@@ -210,6 +212,9 @@ const configProject: ConfigProject = {
       icon: "👤",
       color: "var(--text-gray)",
       description: "Modo invitado. Tus datos se guardan solo en este navegador.",
+      maxSlots: 25,
+      hasCloud: false,
+      billingType: 'free',
     },
     FREE: {
       id: "Usuario",
@@ -217,27 +222,39 @@ const configProject: ConfigProject = {
       icon: "🌱",
       color: "var(--primary-light)",
       description: "Cuenta básica. Acceso a gestión botánica local.",
+      maxSlots: 50,
+      hasCloud: false,
+      billingType: 'free',
     },
     PRO: {
       id: "Pro",
       label: "Pro",
-      icon: "🌱",
-      color: "var(--primary-light)",
-      description: "Cuenta PRO. Acceso a gestión botánica avanzada.",
+      icon: "💎",
+      color: "var(--secondary)",
+      description: "Pago único. Ampliá tu capacidad local permanentemente.",
+      maxSlots: 200,
+      hasCloud: true,
+      billingType: 'one-time',
     },
     PREMIUM: {
       id: "Premium",
       label: "Premium",
       icon: "✨",
       color: "var(--primary)",
-      description: "Acceso total. Sincronización automática en la nube y soporte prioritario.",
+      description: "Acceso total. Sincronización en la nube e ilimitados.",
+      maxSlots: 999999,
+      hasCloud: true,
+      billingType: 'subscription',
     },
     MASTER: {
       id: "Master Admin",
       label: "Master",
       icon: "🛡️",
       color: "var(--gold)",
-      description: "Nivel de sistema. Control total administrativo e integridad suprema.",
+      description: "Nivel de sistema. Control total e integridad suprema.",
+      maxSlots: 999999,
+      hasCloud: true,
+      billingType: 'system',
     },
   },
 };

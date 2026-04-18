@@ -54,9 +54,11 @@ export function Header() {
 
   const displayName = user?.user_metadata?.custom_name ?? user?.user_metadata?.full_name ?? user?.email;
   const planLevel = getPlanLevel(user);
-  const planConfig = Object.values(configProject.plans).find(p => p.id === planLevel) ?? configProject.plans.NONE;
+  const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
 
-  useEffect(() => { loadData(); }, [user?.id]);
+  useEffect(() => {
+    loadData();
+  }, [user?.id]);
 
   useEffect(() => {
     const supabase = supabaseBrowser();
@@ -222,10 +224,7 @@ export function Header() {
                 <div className="w-9 h-9 rounded-full bg-[var(--card-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
                   {getInitials(displayName, user.email)}
                 </div>
-                <span
-                  className="hidden md:block font-black uppercase text-[0.7rem] tracking-wide"
-                  style={{ color: planConfig.color }}
-                >
+                <span className="hidden md:block font-black uppercase text-[0.7rem] tracking-wide" style={{ color: planConfig.color }}>
                   {planConfig.label}
                 </span>
                 <span
@@ -236,59 +235,45 @@ export function Header() {
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute right-0 top-full mt-3 w-72 bg-[var(--card-bg)]/98 backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 top-full w-72 bg-[var(--card-bg)]/100 backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 !p-2">
                   {/* Info Header */}
-                  <div className="px-10 py-6 bg-[var(--muted-bg)] border-b border-[var(--border-light)] text-right">
-                    <p className="text-[0.6rem] text-[var(--text-gray)] font-black uppercase tracking-[0.15em] opacity-60">Cuenta Activa</p>
+                  <div className="!py-2 text-center">
                     <p className="text-sm text-[var(--text)] font-black truncate mt-1">{displayName}</p>
                     <p className="text-[0.7rem] text-[var(--text-gray)] truncate mt-0.5 opacity-80 italic">{user?.email}</p>
-
-                    <hr className="mt-4 border-0 h-px bg-[var(--border-light)] opacity-100" />
                   </div>
 
-                  {/* Items empujados a la derecha */}
-                  <div className="py-4 flex flex-col items-end">
+                  {/* Navigation Links */}
+                  <div className="py-2 pb-5 flex flex-col items-stretch w-full">
                     <Link
                       href="/profile"
                       onClick={(e) => handleNav(e, "/profile")}
-                      className="flex flex-row-reverse items-center gap-4 pr-10 pl-6 py-3 w-full hover:bg-[var(--muted-bg)] no-underline text-[var(--text-gray)] text-sm font-bold transition-colors group"
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
-                      <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--muted-bg)] text-xl group-hover:scale-110 transition-transform">
-                        👤
-                      </span>
-                      <span>Perfil</span>
+                      <span className="text-left">Perfil</span>
                     </Link>
                     <Link
                       href="/pricing"
                       onClick={(e) => handleNav(e, "/pricing")}
-                      className="flex flex-row-reverse items-center gap-4 pr-10 pl-6 py-3 w-full hover:bg-[var(--muted-bg)] no-underline text-[var(--text-gray)] text-sm font-bold transition-colors group"
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
-                      <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--muted-bg)] text-xl group-hover:scale-110 transition-transform">
-                        💎
-                      </span>
-                      <span>Planes</span>
+                      <span className="text-left">Planes</span>
                     </Link>
                     <Link
                       href="/privacy"
                       onClick={(e) => handleNav(e, "/privacy")}
-                      className="flex flex-row-reverse items-center gap-4 pr-10 pl-6 py-3 w-full hover:bg-[var(--muted-bg)] no-underline text-[var(--text-gray)] text-sm font-bold transition-colors group"
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
-                      <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--muted-bg)] text-xl group-hover:scale-110 transition-transform">
-                        📜
-                      </span>
-                      <span>Privacidad</span>
+                      <span className="text-left">Privacidad</span>
                     </Link>
                   </div>
 
-                  <div className="py-2 pb-5 flex flex-col items-end">
+                  {/*Close Session*/}
+                  <div className="py-2 pb-5 !mt-4 flex flex-col items-stretch w-full">
                     <button
                       onClick={handleLogout}
-                      className="flex flex-row-reverse items-center gap-4 pr-10 pl-6 py-4 w-full hover:bg-[var(--danger-bg)] no-underline text-[var(--danger)] text-sm font-bold transition-colors text-right border-none bg-transparent cursor-pointer group"
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--secondary)] no-underline text-[var(--danger)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
-                      <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--danger-bg)] text-xl group-hover:rotate-12 transition-transform">
-                        🚪
-                      </span>
-                      <span>Cerrar Sesión</span>
+                      <span className="text-center">Cerrar Sesión</span>
                     </button>
                   </div>
                 </div>
