@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/libs/db";
@@ -77,6 +78,9 @@ export function SignInForm({ redirectTo = "/" }: Props) {
 
   return (
     <div className="signin-card">
+      <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontSize: "0.9rem", fontWeight: 600, display: "inline-block", marginBottom: "1.5rem" }}>
+        ← Volver al inicio
+      </Link>
 
       <div className="signin-header" style={{ opacity: 0.5 }}>
         <span className="signin-logo">🌿</span>

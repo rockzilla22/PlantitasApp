@@ -22,7 +22,6 @@ export default function ProfilePage() {
   const authLoading = useStore($authLoading);
 
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +45,6 @@ export default function ProfilePage() {
       // Priorizamos custom_name (el que el usuario eligió en la app)
       // sobre full_name (el que viene de Discord/Google)
       setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
-      setPhone(user.phone ?? "");
     }
   }, [user]);
 
@@ -64,7 +62,6 @@ export default function ProfilePage() {
     setRestoringId(item.id);
     await restoreTrashItem(item.table, item.id, user!.id);
     setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
-    await loadData();
     setRestoringId(null);
   };
 
@@ -110,8 +107,7 @@ export default function ProfilePage() {
       data: { 
         custom_name: fullName.trim(),
         full_name: fullName.trim() // Lo guardamos en ambos para compatibilidad
-      },
-      phone: phone.trim() || "",
+      }
     });
 
     if (error) {
@@ -135,8 +131,7 @@ export default function ProfilePage() {
   const isPremium = hasPremium(user);
 
   const currentName = user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "";
-  const initialPhone = user?.phone || "";
-  const hasChanges = fullName.trim() !== currentName || phone.trim() !== initialPhone;
+  const hasChanges = fullName.trim() !== currentName;
 
   const linkedProviders = new Set((user.identities ?? []).map((i) => i.provider));
   const canUnlink = (user.identities ?? []).length > 1;
@@ -160,7 +155,10 @@ export default function ProfilePage() {
             <h2>{currentName || "Sin nombre"}</h2>
             <p className="profile-email">{user.email}</p>
             {isMasterAdmin && (
-              <span className="badge-admin">⭐ Master</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span className="badge-admin">⭐ Maestro</span>
+                <Link href="/admin" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>[ Abrir Panel Maestro ]</Link>
+              </div>
             )}
           </div>
         </div>
@@ -173,17 +171,6 @@ export default function ProfilePage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Tu nombre"
-              disabled={busy}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Teléfono <span className="label-optional">(opcional)</span></label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+54 9 11 1234-5678"
               disabled={busy}
             />
           </div>

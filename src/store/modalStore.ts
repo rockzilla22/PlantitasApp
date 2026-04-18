@@ -8,6 +8,7 @@ export type ModalType =
   | "add-note" | "edit-note"
   | "add-item" | "edit-item"
   | "calendar" | "info" | "confirm" | "import-choice"
+  | "admin-premium" | "admin-master"
   | null;
 
 export interface ModalContext {

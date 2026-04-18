@@ -6,9 +6,14 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 /**
  * CLIENTE DE NAVEGADOR (Client Components)
+ * Singleton — una sola instancia por sesión de browser.
  */
+let _browserClient: ReturnType<typeof createBrowserClient> | null = null;
+
 export const supabaseBrowser = () => {
+  if (_browserClient) return _browserClient;
   if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("❌ SUPABASE ERROR: Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
     const createMock = (): any => {
       // La función mock que se ejecuta al llamar a algo como .getUser()
       const mockFunc = () => {
@@ -34,7 +39,8 @@ export const supabaseBrowser = () => {
     };
     return createMock();
   }
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  _browserClient = createBrowserClient(supabaseUrl, supabaseAnonKey);
+  return _browserClient;
 };
 
 /**

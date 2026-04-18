@@ -172,7 +172,7 @@ export const saveData = (data: AppData) => {
         .then(() => $syncStatus.set("synced"))
         .catch(() => $syncStatus.set("error"))
         .finally(() => { _syncTimeout = null; });
-    }, 2000); 
+    }, 5000);
   }
 };
 

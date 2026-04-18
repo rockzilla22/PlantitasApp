@@ -170,7 +170,7 @@ const configProject: ConfigProject = {
   // ======================================================
   navigation: {
     ES: {
-      plants: { label: "Mis Plantas", href: "/plants" },
+      plants: { label: "🌿 Mis Plantas", href: "/plants" },
       nursery: { label: "🧪 Propagación", href: "/nursery" },
       season: { label: "📅 Temporada", href: "/season" },
       wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
@@ -178,7 +178,7 @@ const configProject: ConfigProject = {
       notes: { label: "📝 Notas", href: "/notes" },
     },
     EN: {
-      plants: { label: "My Plants", href: "/plants" },
+      plants: { label: "🌿 My Plants", href: "/plants" },
       nursery: { label: "🧪 Nursery", href: "/nursery" },
       season: { label: "📅 Season", href: "/season" },
       wishlist: { label: "✨ Wishlist", href: "/wishlist" },
