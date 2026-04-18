@@ -1,20 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
-import { loadData, $store } from "@/store/plantStore";
+import { $store } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
-import { useMemo } from "react";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
-    return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+    return name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   }
   return (fallback?.[0] ?? "U").toUpperCase();
 }
@@ -23,6 +22,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const user = useStore($user);
   const authLoading = useStore($authLoading);
+  const data = useStore($store);
 
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -38,15 +38,11 @@ export default function ProfilePage() {
   const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-    }
+    if (!authLoading && !user) router.push("/login");
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (user) {
-      setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
-    }
+    if (user) setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
   }, [user]);
 
   const handleToggleTrash = async () => {
@@ -106,265 +102,284 @@ export default function ProfilePage() {
     setBusy(true);
     setError(null);
     setSuccess(null);
-
-    const supabase = supabaseBrowser();
-    const { error } = await supabase.auth.updateUser({
-      data: { 
-        custom_name: fullName.trim(),
-        full_name: fullName.trim()
-      }
+    const { error } = await supabaseBrowser().auth.updateUser({
+      data: { custom_name: fullName.trim(), full_name: fullName.trim() },
     });
-
     if (error) {
       setError(translateError(error.message));
     } else {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        $user.set(data.user);
-      }
-      setSuccess("¡Perfil actualizado con éxito!");
+      const { data } = await supabaseBrowser().auth.getUser();
+      if (data.user) $user.set(data.user);
+      setSuccess("¡Perfil actualizado!");
     }
-
     setBusy(false);
     submitting.current = false;
   };
 
-  if (authLoading || !user) return <div className="p-20 text-center animate-pulse text-[var(--primary)] font-black uppercase tracking-widest">Cargando Identidad...</div>;
+  if (authLoading || !user)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Sincronizando...</p>
+      </div>
+    );
 
   const isMasterAdmin = user.app_metadata?.role === "master_admin";
   const planLevel = getPlanLevel(user);
   const isPremium = hasPremium(user);
-  const planConfig = Object.values(configProject.plans).find(p => p.id === planLevel) ?? configProject.plans.NONE;
+  const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
 
-  const data = useStore($store);
-  
   const usedSlots = useMemo(() => {
     const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
     const seasonCount = Object.values(data.seasonalTasks).reduce((sum, arr) => sum + arr.length, 0);
     return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
   }, [data]);
 
-  const maxSlots = isMasterAdmin ? 'Ilimitado' : (50 + (user.app_metadata?.purchased_slots || 0));
+  const maxSlots = isMasterAdmin ? Infinity : 50 + (user.app_metadata?.purchased_slots || 0);
+  const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
+  const usagePercent = isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots as number)) * 100);
 
-  const expirationDate = user.app_metadata?.premium_expires_at 
+  const expirationDate = user.app_metadata?.premium_expires_at
     ? new Date(user.app_metadata.premium_expires_at).toLocaleDateString()
-    : 'No activa';
-
+    : "Ilimitada";
   const currentName = user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "";
   const hasChanges = fullName.trim() !== currentName;
-
   const linkedProviders = new Set((user.identities ?? []).map((i) => i.provider));
   const canUnlink = (user.identities ?? []).length > 1;
 
-  const oauthProviders = [
-    { id: "google"   as const, label: "Google",   iconBg: "var(--white)",     iconColor: "var(--google-blue)", iconText: "G",  border: "1px solid var(--border)" },
-    { id: "discord"  as const, label: "Discord",  iconBg: "var(--discord-blurple)",  iconColor: "var(--white)",    iconText: "D",  border: "none" },
-  ];
-
   return (
-    <div className="profile-page animate-in fade-in duration-700 mx-auto w-full max-w-[1400px]">
-      <div className="profile-card shadow-2xl rounded-[2.5rem] border border-[var(--border-light)] overflow-hidden">
-        <Link href="/" className="no-underline text-[var(--primary)] font-black text-xs uppercase tracking-widest hover:opacity-70 transition-opacity mb-8 inline-block px-8">
-          ← Volver al Laboratorio
-        </Link>
-        
-        <div className="profile-header bg-[var(--muted-bg)] p-10 mb-8 border-b border-[var(--border-light)] flex items-center gap-6">
-          <div className="profile-avatar-lg shadow-xl ring-4 ring-[var(--white)]">
+    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+      <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
+
+        {/* NAV */}
+        <div className="flex items-center justify-between">
+          <Link href="/" className="no-underline text-[var(--text-gray)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1">
+            ← Inicio
+          </Link>
+          {isMasterAdmin && (
+            <Link href="/admin" className="no-underline text-xs font-semibold text-[var(--text-white)] bg-[var(--warning-dark)] px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity">
+              Admin
+            </Link>
+          )}
+        </div>
+
+        {/* HEADER */}
+        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex items-center justify-center shrink-0 shadow-md">
             {getInitials(currentName, user.email)}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="font-black text-2xl text-[var(--text)] truncate leading-tight">{currentName || "Invitado"}</h2>
-            <p className="profile-email text-[var(--text-gray)] font-medium opacity-60 truncate">{user.email}</p>
-            {isMasterAdmin && (
-              <div className="flex items-center gap-4 mt-3">
-                <span className="badge-admin">★ MAESTRO</span>
-                <Link href="/admin" className="text-[0.65rem] font-black text-[var(--primary)] uppercase tracking-widest no-underline hover:underline">
-                  [ Estación de Mando ]
-                </Link>
-              </div>
-            )}
+            <h1 className="text-lg font-bold text-[var(--text)] m-0 truncate">{currentName || "Sin nombre"}</h1>
+            <p className="text-sm text-[var(--text-gray)] opacity-60 m-0 truncate">{user.email}</p>
           </div>
+          {isMasterAdmin && (
+            <span className="badge badge-danger shrink-0">Master</span>
+          )}
         </div>
 
-        <form onSubmit={handleSave} className="profile-form px-10 pb-10">
-          <div className="form-group">
-            <label className="uppercase text-[0.65rem] font-black tracking-widest text-[var(--text-gray)] opacity-60 mb-2 block">Identidad Botánica</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Tu nombre o apodo"
-              className="bg-[var(--card-bg)] border-[var(--border)] p-3 rounded-xl font-bold focus:border-[var(--primary)] outline-none transition-all w-full"
-              disabled={busy}
-            />
-          </div>
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <div className="form-group mt-6">
-            <label className="uppercase text-[0.65rem] font-black tracking-widest text-[var(--text-gray)] opacity-60 mb-2 block">Correo Electrónico</label>
-            <input
-              type="email"
-              value={user.email ?? ""}
-              disabled
-              className="bg-[var(--muted-bg)] border-[var(--border-light)] p-3 rounded-xl font-bold opacity-50 cursor-not-allowed w-full"
-            />
-            <span className="text-[0.65rem] text-[var(--text-gray)] italic mt-2 block opacity-50">El email está vinculado a tu cuenta y no puede cambiarse.</span>
-          </div>
+          {/* COL 1: Editar perfil + Cuentas vinculadas */}
+          <div className="flex flex-col gap-6">
 
-          {error && <p className="signin-error mt-4">{error}</p>}
-          {success && <p className="signin-info mt-4">{success}</p>}
-
-          <div className="profile-actions mt-10">
-            <button
-              type="submit"
-              className="btn-primary w-full py-4 text-xs font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
-              disabled={busy || !hasChanges}
-            >
-              {busy ? "Procesando..." : "Guardar Cambios"}
-            </button>
-          </div>
-        </form>
-
-        <div className="profile-section px-10 pb-10 border-t border-[var(--border-light)] pt-10">
-          <h3 className="font-black text-sm uppercase tracking-widest text-[var(--text)] mb-6 text-center">Nivel de Acceso</h3>
-          <div className="flex justify-center">
-            {isPremium ? (
-              <div className="flex flex-col items-center gap-4">
-                <div className="plan-badge plan-premium !px-8 !py-4 shadow-xl !text-lg">
-                  ☁ {planLevel}
+            {/* Editar nombre */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+              <h2 className="text-sm font-bold text-[var(--text)] m-0">Editar perfil</h2>
+              <form onSubmit={handleSave} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Nombre</label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors disabled:opacity-40"
+                    placeholder="Tu nombre..."
+                    disabled={busy}
+                  />
                 </div>
-                <p className="profile-hint text-center font-bold text-[var(--primary)]">Sincronización Cloud Activa ✨</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-4 w-full">
-                <div className="plan-badge plan-free !px-8 !py-4 shadow-md !text-lg">
-                  🌱 {planLevel}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Email</label>
+                  <input
+                    type="email"
+                    value={user.email ?? ""}
+                    disabled
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm opacity-40 cursor-not-allowed"
+                  />
                 </div>
-                <p className="profile-hint text-center max-w-sm mx-auto italic">
-                  Tus datos residen localmente en este dispositivo.
-                </p>
-                <Link href="/pricing" className="text-xs font-black text-[var(--primary)] uppercase tracking-widest no-underline border-b-2 border-[var(--primary)] pb-1 hover:opacity-70 transition-all">
-                  Mejorar Plan ahora
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div className="linked-accounts-section px-10 pb-10 border-t border-[var(--border-light)] pt-10">
-          <h3 className="font-black text-sm uppercase tracking-widest text-[var(--text)] mb-2">Métodos de Acceso</h3>
-          <p className="profile-hint text-xs mb-8 opacity-60">
-            Gestioná tus conexiones con Google o Discord para mayor seguridad.
-          </p>
-          {unlinkError && <p className="signin-error mb-6">{unlinkError}</p>}
-          <div className="flex flex-col gap-4">
-            {oauthProviders.map((p) => {
-              const isLinked = linkedProviders.has(p.id);
-              return (
-                <div key={p.id} className="identity-row flex items-center justify-between bg-[var(--muted-bg)] p-4 rounded-2xl border border-[var(--border-light)]">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center font-black shadow-inner border border-[var(--white)]/20"
-                      style={{ background: p.iconBg, color: p.iconColor }}
-                    >
-                      {p.iconText}
+                {error && (
+                  <p className="px-4 py-3 bg-[var(--danger-bg)] text-[var(--danger)] rounded-xl text-xs font-semibold border border-[var(--danger-border)] m-0">
+                    {error}
+                  </p>
+                )}
+                {success && (
+                  <p className="px-4 py-3 bg-[var(--success-bg)] text-[var(--success)] rounded-xl text-xs font-semibold border border-[var(--primary-light)]/30 m-0">
+                    {success}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={busy || !hasChanges}
+                  className="btn-primary w-full py-2.5 text-xs font-semibold uppercase tracking-widest disabled:opacity-40"
+                >
+                  {busy ? "Guardando..." : "Guardar cambios"}
+                </button>
+              </form>
+            </div>
+
+            {/* Cuentas vinculadas */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+              <div>
+                <h2 className="text-sm font-bold text-[var(--text)] m-0">Cuentas vinculadas</h2>
+                <p className="text-xs text-[var(--text-gray)] opacity-50 mt-0.5">Métodos de acceso a tu cuenta</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                {(["google", "discord"] as const).map((pid) => {
+                  const isLinked = linkedProviders.has(pid);
+                  const label = pid === "google" ? "Google" : "Discord";
+                  const iconBg = pid === "google" ? "var(--white)" : "var(--discord-blurple)";
+                  const iconColor = pid === "google" ? "var(--google-blue)" : "var(--white)";
+                  return (
+                    <div key={pid} className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
+                          style={{ background: iconBg, color: iconColor }}
+                        >
+                          {label[0]}
+                        </div>
+                        <span className="text-sm font-semibold text-[var(--text)]">{label}</span>
+                        {isLinked && <span className="badge badge-success">Vinculado</span>}
+                      </div>
+                      {isLinked ? (
+                        <button
+                          onClick={() => handleUnlink(pid)}
+                          disabled={!canUnlink}
+                          className="text-xs text-[var(--danger)] font-semibold hover:underline disabled:opacity-30 cursor-pointer bg-transparent border-none"
+                        >
+                          Quitar
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleLink(pid)}
+                          disabled={linkingProvider !== null}
+                          className="btn-primary py-1 px-3 text-xs disabled:opacity-40"
+                        >
+                          Vincular
+                        </button>
+                      )}
                     </div>
-                    <span className="font-black text-sm text-[var(--text)]">{p.label}</span>
+                  );
+                })}
+              </div>
+              {unlinkError && <p className="text-[var(--danger)] text-xs font-semibold m-0">{unlinkError}</p>}
+            </div>
+          </div>
+
+          {/* COL 2: Plan + Papelera */}
+          <div className="flex flex-col gap-6">
+
+            {/* Plan */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+              <h2 className="text-sm font-bold text-[var(--text)] m-0">Estado de la cuenta</h2>
+
+              {/* Plan badge */}
+              <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{planConfig.icon}</span>
+                  <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
+                </div>
+                {isPremium && (
+                  <span className="text-xs text-[var(--text-gray)] opacity-60">Vence {expirationDate}</span>
+                )}
+              </div>
+
+              {/* Slots */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 mb-0.5">Almacenamiento</p>
+                    <p className="text-2xl font-bold text-[var(--text)] m-0 leading-none">
+                      {usedSlots} <span className="text-base text-[var(--text-gray)] opacity-40 font-normal">/ {maxSlotsLabel}</span>
+                    </p>
                   </div>
-                  {isLinked ? (
-                    <div className="flex items-center gap-4">
-                      <span className="text-[var(--success)] text-xs font-black uppercase tracking-widest opacity-80">✓ Vinculado</span>
-                      <button
-                        className="btn-text !p-2 !min-h-0 text-[var(--danger)] text-[0.65rem] font-black uppercase tracking-widest hover:bg-[var(--danger-bg-light)] rounded-lg transition-all"
-                        disabled={!canUnlink}
-                        title={!canUnlink ? "Necesitás al menos 2 métodos para desvincular" : `Desvincular ${p.label}`}
-                        onClick={() => handleUnlink(p.id)}
-                      >
-                        [ Desvincular ]
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className="btn-primary !py-2 !px-4 !min-h-0 text-[0.65rem] font-black uppercase tracking-widest shadow-md hover:scale-105 transition-all"
-                      disabled={linkingProvider !== null}
-                      onClick={() => handleLink(p.id)}
-                    >
-                      {linkingProvider === p.id ? "Conectando..." : `Vincular`}
-                    </button>
+                  {!isPremium && !isMasterAdmin && (
+                    <Link href="/pricing" className="btn-primary no-underline py-1.5 px-3 text-xs">
+                      Ampliar
+                    </Link>
                   )}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {isPremium && (
-          <div className="trash-section px-10 pb-10 border-t-4 border-dashed border-[var(--muted-bg)] pt-10">
-            <button 
-              className="w-full flex items-center justify-between bg-[var(--dark-surface)] text-[var(--text-white)] p-6 rounded-3xl shadow-xl hover:bg-[var(--black)] transition-all group border-none cursor-pointer"
-              onClick={handleToggleTrash}
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-2xl group-hover:rotate-12 transition-transform">🗑️</span>
-                <span className="font-black uppercase tracking-[0.2em] text-sm">Caja de Recuperación</span>
+                <div className="w-full bg-[var(--border)] h-2 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--primary)] rounded-full transition-all duration-700"
+                    style={{ width: `${usagePercent}%` }}
+                  />
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                {trashItems.length > 0 && !showTrash && (
-                  <span className="bg-[var(--danger)] text-[var(--white)] text-[0.65rem] font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
-                    {trashItems.length} ITEMS
-                  </span>
-                )}
-                <span className="text-xl opacity-40">{showTrash ? "▲" : "▼"}</span>
-              </div>
-            </button>
+            </div>
 
-            {showTrash && (
-              <div className="trash-list animate-in slide-in-from-top-4 duration-500 mt-6 bg-[var(--muted-bg)] rounded-3xl p-6 border border-[var(--border-light)] shadow-inner">
-                {trashLoading ? (
-                  <p className="trash-empty text-center py-10 font-black animate-pulse uppercase tracking-widest text-[var(--text-gray)]">Escaneando Papelera...</p>
-                ) : trashItems.length === 0 ? (
-                  <p className="trash-empty text-center py-10 italic text-[var(--text-gray)]">La papelera está vacía.</p>
-                ) : (
-                  (() => {
-                    const groups: Record<string, { label: string; items: TrashItem[] }> = {
-                      plants:      { label: "🌿 Plantas", items: [] },
-                      propagations:{ label: "🧪 Propagaciones", items: [] },
-                      global_notes:{ label: "📝 Notas", items: [] },
-                      wishlist:    { label: "✨ Lista de Deseos", items: [] },
-                    };
-                    trashItems.forEach((item) => groups[item.table]?.items.push(item));
-                    return Object.entries(groups).map(([key, group]) =>
-                      group.items.length === 0 ? null : (
-                        <div key={key} className="mb-8 last:mb-0">
-                          <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[var(--primary)] mb-4 opacity-70 flex items-center gap-2">
-                            <span className="w-8 h-px bg-[var(--primary)] opacity-30"></span>
-                            {group.label}
-                          </p>
-                          <div className="flex flex-col gap-2">
-                            {group.items.map((item) => (
-                              <div key={item.id} className="trash-item flex items-center justify-between bg-[var(--card-bg)] p-4 rounded-2xl border border-[var(--border-light)] shadow-sm hover:shadow-md transition-all">
-                                <div className="trash-item-info flex flex-col min-w-0">
-                                  <span className="trash-item-name font-black text-sm text-[var(--text)] truncate">{item.label}</span>
-                                  {item.meta && <span className="trash-item-meta text-[0.65rem] font-bold text-[var(--text-gray)] opacity-40 uppercase tracking-tighter mt-0.5">{item.meta}</span>}
+            {/* Papelera */}
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+              <button
+                onClick={handleToggleTrash}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">🗑️</span>
+                  <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
+                  {trashItems.length > 0 && !showTrash && (
+                    <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />
+                  )}
+                </div>
+                <span className="text-xs text-[var(--text-gray)] opacity-40">{showTrash ? "▲" : "▼"}</span>
+              </button>
+
+              {showTrash && (
+                <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
+                  {trashLoading ? (
+                    <p className="text-center py-6 text-xs text-[var(--text-gray)] opacity-50 animate-pulse">Cargando...</p>
+                  ) : trashItems.length === 0 ? (
+                    <p className="text-center py-6 text-sm text-[var(--text-gray)] opacity-40 italic">Papelera vacía</p>
+                  ) : (
+                    (() => {
+                      const groups: Record<string, { label: string; items: TrashItem[] }> = {
+                        plants: { label: "🌿 Plantas", items: [] },
+                        propagations: { label: "🧪 Propagaciones", items: [] },
+                        global_notes: { label: "📝 Notas", items: [] },
+                        wishlist: { label: "✨ Deseos", items: [] },
+                      };
+                      trashItems.forEach((i) => groups[i.table]?.items.push(i));
+                      return Object.entries(groups).map(([k, g]) =>
+                        g.items.length === 0 ? null : (
+                          <div key={k} className="flex flex-col gap-2">
+                            <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 font-semibold">{g.label}</p>
+                            {g.items.map((i) => (
+                              <div key={i.id} className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]">
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
+                                  {i.meta && <span className="text-xs text-[var(--text-gray)] opacity-40 truncate block">{i.meta}</span>}
                                 </div>
                                 <button
-                                  className="btn-primary !min-h-0 !py-2 !px-5 !text-[0.65rem] !font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all"
-                                  disabled={restoringId === item.id}
-                                  onClick={() => handleRestore(item)}
+                                  onClick={() => handleRestore(i)}
+                                  disabled={restoringId === i.id}
+                                  className="btn-primary py-1 px-3 text-xs ml-3 shrink-0 disabled:opacity-40"
                                 >
-                                  {restoringId === item.id ? "..." : "Restaurar"}
+                                  {restoringId === i.id ? "..." : "Restaurar"}
                                 </button>
                               </div>
                             ))}
                           </div>
-                        </div>
-                      )
-                    );
-                  })()
-                )}
-              </div>
-            )}
+                        )
+                      );
+                    })()
+                  )}
+                </div>
+              )}
+            </div>
+
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

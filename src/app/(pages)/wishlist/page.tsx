@@ -65,7 +65,7 @@ export default function WishlistPage() {
                 {/* HEADER: Grid 2 columnas estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
-                    <h4 className="m-0 text-lg font-black text-[var(--text)] leading-tight truncate">✨ {name}</h4>
+                    <h4 className="m-0 text-lg text-[var(--text)] leading-tight truncate">✨ {name}</h4>
                     <small className="text-[0.7rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">Deseo</small>
                   </div>
                   <div className="flex flex-col items-end gap-y-2">
@@ -74,14 +74,14 @@ export default function WishlistPage() {
                 </div>
 
                 {/* BODY: Notas con borde superior sutil */}
-                <div className="flex-1 border-t border-[var(--border-lightest)] pt-8">
+                <div className="flex-1 border-t border-[var(--border-light)] pt-8">
                   <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
                     📝 {notes || "Sin notas adicionales."}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones con separador */}
-                <div className="flex items-center justify-between border-t border-[var(--border-lightest)] pt-8 mt-auto text-[var(--footer-bg)]">
+                <div className="flex items-center justify-between border-t border-[var(--border-light)] pt-8 mt-auto text-[var(--footer-bg)]">
                   <button className="btn-primary h-8 min-h-[32px] px-4 text-[0.7rem] font-black" onClick={() => removeWish(id)}>
                     💸 ¡Comprado!
                   </button>

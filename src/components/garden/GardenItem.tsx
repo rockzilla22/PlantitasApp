@@ -15,7 +15,7 @@ export function GardenItem({ icon, label, type, onClick, subLabel }: GardenItemP
     switch (type) {
       case 'plant': return 'bg-[var(--card-bg)] shadow-sm border border-[var(--border-light)] rounded-2xl p-4 hover:shadow-lg hover:-translate-y-1';
       case 'seed': return 'bg-[var(--warning-bg-light)]/50 border border-[var(--warning-bg-light)] rounded-xl p-3 hover:bg-[var(--warning-bg-light)]';
-      case 'inventory': return 'bg-[var(--light-surface)] border border-[var(--border)] rounded-lg p-2 text-center grayscale hover:grayscale-0';
+      case 'inventory': return 'bg-[var(--bg-faint)] border border-[var(--border)] rounded-lg p-2 text-center grayscale hover:grayscale-0';
       default: return '';
     }
   };
@@ -45,7 +45,7 @@ export function GardenItem({ icon, label, type, onClick, subLabel }: GardenItemP
       
       {/* Decorative Pot for plants */}
       {type === 'plant' && (
-        <div className="w-8 h-3 bg-[var(--neutral-mid)] rounded-b-lg -mt-1 opacity-50 group-hover:bg-[var(--primary)] group-hover:opacity-100 transition-all"></div>
+        <div className="w-8 h-3 bg-[var(--border)] rounded-b-lg -mt-1 opacity-50 group-hover:bg-[var(--primary)] group-hover:opacity-100 transition-all"></div>
       )}
     </div>
   );

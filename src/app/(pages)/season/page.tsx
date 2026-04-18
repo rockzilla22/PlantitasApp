@@ -69,10 +69,10 @@ export default function SeasonPage() {
         {seasons.map(s => (
           <div key={s.name} className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)] flex flex-col">
             <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-4 mb-6">
-                <h3 className="m-0 text-xl font-black flex items-center gap-3 text-[var(--primary)]">
+                <h3 className="m-0 text-xl flex items-center gap-3 text-[var(--primary)]">
                   <span className="text-3xl">{s.icon}</span> {s.name}
                 </h3>
-                <button className="btn-primary h-9 min-h-[36px] px-4 text-xs font-black uppercase tracking-widest" onClick={() => handleAddTask(s.name)}>
+                <button className="btn-primary h-9 min-h-[36px] px-4 text-xs uppercase tracking-widest" onClick={() => handleAddTask(s.name)}>
                   + Acción
                 </button>
             </div>
@@ -86,7 +86,7 @@ export default function SeasonPage() {
                     {/* Info Tarea */}
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                       <span className="text-2xl shrink-0" title={t.type}>{getTaskIcon(t.type)}</span>
-                      <p className="m-0 text-[0.95rem] font-black text-[var(--text)] truncate leading-tight" title={t.desc}>
+                      <p className="m-0 text-[0.95rem] text-[var(--text)] truncate leading-tight" title={t.desc}>
                         {t.desc}
                       </p>
                     </div>

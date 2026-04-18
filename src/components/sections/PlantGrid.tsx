@@ -29,9 +29,9 @@ export function PlantGrid({ plants }: PlantGridProps) {
           <div
             key={plant.id}
             onClick={() => $selectedPlantId.set(plant.id)}
-            className={`card !min-h-fit !h-auto flex flex-col bg-[var(--card-bg)] rounded-[2.5rem] border transition-all cursor-pointer group shadow-md hover:shadow-lg overflow-hidden  gap-y-6 ${
-              selectedId === plant.id 
-                ? 'ring-2 ring-[var(--primary)]/20 bg-[var(--success-bg)]/10' 
+            className={`card min-h-fit h-auto flex flex-col bg-[var(--card-bg)] rounded-[2.5rem] border transition-all cursor-pointer group shadow-md hover:shadow-lg overflow-hidden gap-y-3 ${
+              selectedId === plant.id
+                ? 'ring-2 ring-[var(--primary)]/20 bg-[var(--success-bg)]/10'
                 : 'border-[var(--border)]'
             }`}
             style={{ borderTop: `5px solid ${selectedId === plant.id ? 'var(--primary)' : 'var(--primary-light)'}` }}
@@ -39,7 +39,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
             {/* ROW 1: HEADER (Identidad) */}
             <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                 <div className="flex flex-col gap-y-2 min-w-0">
-                    <h4 className="m-0 text-lg font-black text-[var(--text)] leading-tight truncate">
+                    <h4 className="m-0 text-lg text-[var(--text)] leading-tight truncate">
                       {plant.icon} {plant.name}
                     </h4>
                     <small className="text-[0.8rem] font-bold text-[var(--text-gray)] uppercase tracking-widest truncate block opacity-70">
@@ -47,23 +47,23 @@ export function PlantGrid({ plants }: PlantGridProps) {
                     </small>
                 </div>
                 <div className="flex flex-col items-end gap-y-2 shrink-0">
-                    <span className="badge badge-success !text-[0.7rem] !px-3 !py-1">
+                    <span className="badge badge-success text-[0.7rem] px-3 py-1">
                       {plant.type}
                     </span>
-                    <small className="text-[0.7rem] font-black text-[var(--primary)] opacity-50 uppercase tracking-tighter">
+                    <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">
                       💡 {plant.light}
                     </small>
                 </div>
             </div>
 
             {/* ROW 2: BODY (Info Técnica) */}
-            <div className="flex-1 pt-8">
-               <div className="flex justify-between items-center rounded-2xl px-5 py-4">
+            <div className="pt-1">
+               <div className="flex justify-between items-center rounded-2xl px-5 py-3">
                   <div className="flex flex-col gap-y-2">
                     <span className="text-[0.8rem] font-bold text-[var(--text-gray)] block mb-1 opacity-60">Último Riego</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[0.8rem] font-black text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
+                    <span className="text-[0.8rem] text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
                       💧 {formatDate(plant.lastWateredDate)}
                     </span>
                   </div>
@@ -71,11 +71,11 @@ export function PlantGrid({ plants }: PlantGridProps) {
             </div>
 
             {/* ROW 3: FOOTER (Acciones) */}
-            <div className="flex items-center justify-between pt-8 mt-auto text-[var(--footer-bg)]">
+            <div className="flex items-center justify-between pt-2 mt-auto text-[var(--footer-bg)]">
                 <div className="flex flex-col gap-y-2">
-                  <span className="text-[0.85rem] font-black italic">Perfil Completo</span>
+                  <span className="text-[0.85rem] italic">Perfil Completo</span>
                 </div>
-                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--muted-bg)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
+                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
                   ➔
                 </button>
             </div>

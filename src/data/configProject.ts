@@ -118,11 +118,11 @@ const configProject: ConfigProject = {
   // 🌐 METADATOS / SEO
   // ======================================================
   language: "es-AR",
-  themeColor: "#1a2e1a",
+  themeColor: "var(--brand-dark)",
   colors: {
-    main: "#2e7d32",
-    background: "#f1f8e9",
-    foreground: "#263238",
+    main: "var(--primary)",
+    background: "var(--background)",
+    foreground: "var(--brand-foreground)",
   },
   keywords: ["plantas", "botánica", "gestión", "jardinería", "huerta"],
   author: "JFEspanolito",

@@ -149,7 +149,7 @@ export function Header() {
                   <a
                     key={idx}
                     href={m.href}
-                    className="search-result-item hover:bg-[var(--muted-bg)]"
+                    className="search-result-item hover:bg-[var(--bg-faint)]"
                     onClick={(e) => {
                       if (m.action) m.action();
                       $searchQuery.set("");
@@ -224,7 +224,7 @@ export function Header() {
                 <div className="w-9 h-9 rounded-full bg-[var(--card-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
                   {getInitials(displayName, user.email)}
                 </div>
-                <span className="hidden md:block font-black uppercase text-[0.7rem] tracking-wide" style={{ color: planConfig.color }}>
+                <span className="hidden md:block uppercase text-[0.7rem] tracking-wide" style={{ color: planConfig.color }}>
                   {planConfig.label}
                 </span>
                 <span
@@ -238,7 +238,7 @@ export function Header() {
                 <div className="absolute right-0 top-full w-72 bg-[var(--card-bg)]/100 backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 !p-2">
                   {/* Info Header */}
                   <div className="!py-2 text-center">
-                    <p className="text-sm text-[var(--text)] font-black truncate mt-1">{displayName}</p>
+                    <p className="text-sm text-[var(--text)] truncate mt-1">{displayName}</p>
                     <p className="text-[0.7rem] text-[var(--text-gray)] truncate mt-0.5 opacity-80 italic">{user?.email}</p>
                   </div>
 

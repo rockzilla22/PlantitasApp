@@ -74,7 +74,7 @@ export default function NurseryPage() {
                  {/* HEADER: Estilo Nursery Pro */}
                  <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
                     <div>
-                        <h4 className="m-0 text-base font-black text-[var(--text)] leading-tight truncate w-[140px]">🧪 {prop.name}</h4>
+                        <h4 className="m-0 text-base text-[var(--text)] leading-tight truncate w-[140px]">🧪 {prop.name}</h4>
                         <small className="text-[0.65rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">{getMethodIcon(prop.method)} {prop.method}</small>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
@@ -84,23 +84,23 @@ export default function NurseryPage() {
                 </div>
 
                 {/* BODY: Notas con borde superior sutil */}
-                <div className="flex-1 mb-6 border-t border-[var(--border-lightest)] pt-3">
+                <div className="flex-1 mb-6 border-t border-[var(--border-light)] pt-3">
                   <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
                     📝 {prop.notes || 'Sin notas del proceso.'}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-lightest)] mt-auto text-[var(--text-gray)]">
+                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-gray)]">
                     <div className="flex gap-2">
                         {prop.status === 'Activo' ? (
                           <>
                             <button className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] font-black" onClick={() => updatePropStatus(prop.id, 'Éxito')}>✅ Logrado</button>
-                            <button className="btn-text h-8 min-h-[32px] text-[var(--danger)] text-[0.7rem] font-black hover:bg-[var(--danger-bg-light)] rounded-xl px-2 transition-colors" onClick={() => updatePropStatus(prop.id, 'Fracaso')}>❌ Falló</button>
+                            <button className="btn-text h-8 min-h-[32px] text-[var(--danger)] text-[0.7rem] hover:bg-[var(--danger-bg-light)] rounded-xl px-2 transition-colors" onClick={() => updatePropStatus(prop.id, 'Fracaso')}>❌ Falló</button>
                           </>
                         ) : prop.status === 'Éxito' ? (
                             <button 
-                              className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] font-black bg-[var(--secondary)]"
+                              className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] bg-[var(--secondary)]"
                               onClick={() => handleGraduate(prop)}
                             >
                               🪴 Graduar

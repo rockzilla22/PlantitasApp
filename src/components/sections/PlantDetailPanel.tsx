@@ -115,7 +115,7 @@ export function PlantDetailPanel() {
         <span className="microclima-tag">💤 {plant.dormancy}</span>
       </div>
 
-      <div className="log-section" style={{ background: 'var(--muted-bg)', padding: '1rem', borderRadius: 'var(--radius)', marginTop: '1rem' }}>
+      <div className="log-section" style={{ background: 'var(--bg-faint)', padding: '1rem', borderRadius: 'var(--radius)', marginTop: '1rem' }}>
         <h3 style={{ marginBottom: '0.5rem' }}>🧪 Registro</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
           <select value={logAction} onChange={(e) => { setLogAction(e.target.value); setInventoryItem(""); }}>
@@ -175,7 +175,7 @@ export function PlantDetailPanel() {
             <button
               key={f}
               className="btn-backup"
-              style={{ padding: '2px 8px', fontSize: '0.75rem', ...(logFilter === f ? { background: 'var(--primary)', color: '#fff' } : {}) }}
+              style={{ padding: '2px 8px', fontSize: '0.75rem', ...(logFilter === f ? { background: 'var(--primary)', color: 'var(--text-white)' } : {}) }}
               onClick={() => setLogFilter(f)}
             >
               {f}

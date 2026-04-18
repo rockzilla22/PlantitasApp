@@ -65,7 +65,7 @@ export default function InventoryPage() {
       <div className="inventory-sections grid grid-cols-1 md:grid-cols-2 gap-8">
         {categories.map(cat => (
           <div key={cat.id} className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)]">
-            <h3 className="text-[var(--primary)] font-black mb-6 flex items-center gap-3 text-lg">
+            <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg">
               <span className="text-2xl">{cat.icon}</span> {cat.label}
             </h3>
             <ul className="flex flex-col gap-3 p-0 m-0 list-none">
@@ -77,17 +77,17 @@ export default function InventoryPage() {
                    {/* Izquierda: Info Principal */}
                    <div className="flex items-center gap-4 min-w-0 flex-1">
                       <button className="text-2xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
-                      <strong className="text-[var(--text)] text-[0.95rem] font-black truncate" title={item.name}>📦 {item.name}</strong>
+                      <strong className="text-[var(--text)] text-[0.95rem] truncate" title={item.name}>📦 {item.name}</strong>
                    </div>
 
                    {/* Centro/Derecha: Controles y Cantidad */}
                    <div className="flex items-center gap-4 shrink-0">
                       <div className="flex items-center bg-[var(--card-bg)] rounded-xl border border-[var(--primary)]/10 p-1 shadow-sm">
-                          <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, -1)}>-</button>
-                          <span className="text-[0.75rem] font-black uppercase px-3 text-[var(--primary)] min-w-[70px] text-center">
+                          <button className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, -1)}>-</button>
+                          <span className="text-[0.75rem] uppercase px-3 text-[var(--primary)] min-w-[70px] text-center">
                             {item.qty} {item.unit}
                           </span>
-                          <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, 1)}>+</button>
+                          <button className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, 1)}>+</button>
                       </div>
 
                       <div className="flex items-center gap-1 border-l border-[var(--border)] pl-4">
