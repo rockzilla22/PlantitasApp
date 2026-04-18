@@ -207,7 +207,7 @@ const configProject: ConfigProject = {
   // ======================================================
   plans: {
     NONE: {
-      id: "Sin cuenta",
+      id: "NoAccount",
       label: "Sin cuenta",
       icon: "👤",
       color: "var(--text-gray)",
@@ -217,7 +217,7 @@ const configProject: ConfigProject = {
       billingType: 'free',
     },
     FREE: {
-      id: "Usuario",
+      id: "Free",
       label: "Usuario",
       icon: "🌱",
       color: "var(--primary-light)",
@@ -247,7 +247,7 @@ const configProject: ConfigProject = {
       billingType: 'subscription',
     },
     MASTER: {
-      id: "Master Admin",
+      id: "Master",
       label: "Master",
       icon: "🛡️",
       color: "var(--gold)",

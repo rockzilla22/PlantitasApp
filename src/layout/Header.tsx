@@ -139,12 +139,12 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => $searchQuery.set(e.target.value)}
                 autoComplete="off"
-                className="bg-[var(--card-bg)] text-[var(--text)] border-[var(--border)] rounded-full"
+                className="bg-[var(--input-bg)] text-[var(--text)] border-[var(--border)] rounded-full"
               />
               <span className="search-icon">🔍</span>
             </div>
             {searchQuery && searchResults.length > 0 && (
-              <div className="search-results-panel active bg-[var(--card-bg)] rounded-[var(--radius)] shadow-2xl">
+              <div className="search-results-panel active bg-[var(--input-bg)] rounded-[var(--radius)] shadow-2xl">
                 {searchResults.map((m, idx) => (
                   <a
                     key={idx}
@@ -218,7 +218,7 @@ export function Header() {
             <div className="relative" ref={profileMenuRef}>
               <button
                 type="button"
-                className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isProfileMenuOpen ? "bg-[var(--text-white)]/10 rounded-full" : ""}`}
+                className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isProfileMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <div className="w-9 h-9 rounded-full bg-[var(--card-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">

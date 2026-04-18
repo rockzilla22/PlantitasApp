@@ -224,7 +224,7 @@ export default function LandingPage() {
         }
 
         .btn-primary-large {
-          background: var(--primary);
+          background: var(--input-bg);
           color: white;
           border: none;
           padding: 1rem 2rem;

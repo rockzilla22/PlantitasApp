@@ -98,13 +98,13 @@ export function PlantDetailPanel() {
     <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <h2 style={{ margin: 0 }}>{plant.icon} {plant.name}</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="flex gap-1">
           {!isWideLayout && (
-            <button className="btn-text" style={{ padding: 0 }} onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
+            <button className="icon-btn" onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
           )}
-          <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}>📅</button>
-          <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal("edit-plant", plant)}>✏️</button>
-          <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={handleDeletePlant}>🗑️</button>
+          <button className="icon-btn" onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}>📅</button>
+          <button className="icon-btn" onClick={() => openModal("edit-plant", plant)}>✏️</button>
+          <button className="icon-btn icon-btn--danger" onClick={handleDeletePlant}>🗑️</button>
         </div>
       </div>
 

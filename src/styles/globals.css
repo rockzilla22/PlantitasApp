@@ -11,8 +11,9 @@
   --primary: #2e7d32;
   --primary-light: #4caf50;
   --secondary: #ffa000;
-  --background: #f1f8e9;
-  --card-bg: #ffffff;
+  --background: #d7e2ca;
+  --input-bg: #ffffff;  
+  --card-bg: rgba(225,191,146, 0.4);
   --brand-dark: #1a2e1a;
   --brand-foreground: #263238;
 
@@ -950,24 +951,49 @@ textarea:focus {
   }
 }
 
+/* ── Icon buttons ──────────────────────────────────────── */
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.icon-btn:hover {
+  background: var(--background);
+  border-color: var(--primary);
+}
+.icon-btn--danger:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
 /* ── Buttons ───────────────────────────────────────────── */
 .btn-primary {
-  background: var(--primary);
-  color: var(--text-white);
-  border: none;
+  background: var(--input-bg);
+  color: var(--primary);
+  border: 1px solid var(--primary);
   padding: 0.7rem 1.25rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
   min-height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--secondary);
+  background: var(--primary);
+  color: var(--input-bg);
 }
 .btn-primary:disabled {
   opacity: 0.6;
@@ -978,7 +1004,7 @@ textarea:focus {
   padding: 0.55rem 1.25rem;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: transparent;
+  background: var(--input-bg);
   color: var(--text);
   font-size: 0.9rem;
   cursor: pointer;
@@ -990,7 +1016,7 @@ textarea:focus {
 }
 
 .btn-text {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--text-gray);
   font-weight: 600;
@@ -1005,9 +1031,9 @@ textarea:focus {
 }
 
 .btn-logoff {
-  background: none;
+  background: var(--input-bg);
   border: none;
-  color: var(--text-white);
+  color: var(--text);
   font-weight: 600;
   cursor: pointer;
   padding: 0.5rem 1rem;
@@ -1018,7 +1044,7 @@ textarea:focus {
 }
 
 .btn-backup {
-  background: var(--card-bg);
+  background: var(--input-bg);
   color: var(--primary);
   padding: 0 12px;
   border-radius: 8px;
@@ -1190,7 +1216,7 @@ textarea:focus {
   padding: 0.8rem 1rem;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--card-bg);
+  background: var(--input-bg);
   color: var(--text);
   font-size: 0.95rem;
   font-weight: 600;
@@ -1199,7 +1225,7 @@ textarea:focus {
 }
 
 .btn-oauth:hover:not(:disabled) {
-  background: var(--bg-faint);
+  background: var(--background);
   border-color: var(--primary-light);
   transform: translateY(-2px);
 }
@@ -1478,7 +1504,7 @@ textarea:focus {
   border-radius: 6px;
   border: 1px solid var(--primary);
   color: var(--primary);
-  background: transparent;
+  background: var(--input-bg);
   cursor: pointer;
   font-weight: 600;
   white-space: nowrap;
@@ -1503,7 +1529,7 @@ textarea:focus {
   border-radius: 6px;
   border: 1px solid var(--danger-border);
   color: var(--danger);
-  background: transparent;
+  background: var(--input-bg);
   cursor: pointer;
   font-weight: 600;
   white-space: nowrap;
@@ -1599,7 +1625,7 @@ textarea:focus {
   border-radius: 6px;
   border: 1px solid var(--primary);
   color: var(--primary);
-  background: transparent;
+  background: var(--input-bg);
   cursor: pointer;
   white-space: nowrap;
   font-weight: 600;

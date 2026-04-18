@@ -91,17 +91,18 @@ export default function AdminPanel() {
       const emailMatch = (u.email || "").toLowerCase().includes(searchTerm.toLowerCase());
       const idMatch = (u.id || "").toLowerCase().includes(searchTerm.toLowerCase());
       const matchesSearch = nameMatch || emailMatch || idMatch;
-      const matchesRole = roleFilter === "all" || (roleFilter === "master" ? u.role === "master_admin" : u.role !== "master_admin");
-      const matchesPlan = planFilter === "all" || (planFilter === "premium" ? u.hasPremium : !u.hasPremium);
+      const matchesRole = roleFilter === "all" || (roleFilter === "Master" ? u.role === "master_admin" : u.role !== "master_admin");
+      const userPlan = getPlanConfig(u).id;
+      const matchesPlan = planFilter === "all" || planFilter === userPlan;
       return matchesSearch && matchesRole && matchesPlan;
     });
   }, [users, searchTerm, roleFilter, planFilter]);
 
   const totalMasters = users.filter((u) => u.role === "master_admin").length;
   const totalPremium = users.filter((u) => u.hasPremium).length;
+  const totalUsers = users.filter((u) => u.role !== "master_admin" && !u.hasPremium).length;
 
-  if (!currentUser || currentUser.app_metadata?.role !== "master_admin")
-    return null;
+  if (!currentUser || currentUser.app_metadata?.role !== "master_admin") return null;
 
   if (loading && users.length === 0)
     return (
@@ -130,6 +131,10 @@ export default function AdminPanel() {
               <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--text)]">{users.length}</span>
                 <span className="text-xs text-[var(--text)] opacity-80 uppercase tracking-wider">Total</span>
+              </div>
+              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+                <span className="text-lg font-bold text-[var(--info-dark)]">{totalUsers}</span>
+                <span className="text-xs text-[var(--info-dark)]  uppercase tracking-wider">Usuarios</span>
               </div>
               <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
@@ -181,7 +186,7 @@ export default function AdminPanel() {
                     onChange={(e) => setRoleFilter(e.target.value)}
                   >
                     <option value="all">Todos</option>
-                    <option value="master">Master</option>
+                    <option value="Master">Master</option>
                     <option value="user">Usuario</option>
                   </select>
                 </div>
@@ -193,8 +198,9 @@ export default function AdminPanel() {
                     onChange={(e) => setPlanFilter(e.target.value)}
                   >
                     <option value="all">Todos</option>
-                    <option value="premium">Premium</option>
-                    <option value="free">Gratis</option>
+                    {Object.values(configProject.plans).map((p) => (
+                      <option key={p.id} value={p.id}>{p.icon} {p.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex items-end">
