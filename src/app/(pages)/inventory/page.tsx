@@ -93,8 +93,8 @@ export default function InventoryPage() {
                     >
                       📅
                     </button>
-                    <strong className="text-[var(--text)] text-[0.95rem] truncate" title={item.name}>
-                      📦 {item.name}
+                    <strong className="text-[var(--text-brown)] font-semibold text-[0.95rem] truncate" title={item.name}>
+                      {item.name}
                     </strong>
                   </div>
 
