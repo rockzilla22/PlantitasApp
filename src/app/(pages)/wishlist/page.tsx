@@ -65,7 +65,9 @@ export default function WishlistPage() {
                 {/* HEADER: Grid 2 columnas estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
-                    <h4 className="m-0 text-lg text-[var(--text)] leading-tight truncate">✨ {name}</h4>
+                    <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
+                      <span className="text-2xl"> ✨ </span> {name}
+                    </h3>
                     <small className="text-[0.7rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">Deseo</small>
                   </div>
                   <div className="flex flex-col items-end gap-y-2">

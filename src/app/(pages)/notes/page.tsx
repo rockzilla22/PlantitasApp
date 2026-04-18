@@ -31,35 +31,31 @@ export default function NotesPage() {
             .map((note) => (
               <div
                 key={note.id}
-                className="card !min-h-fit !h-auto flex flex-col p-5 bg-[var(--card-bg)] rounded-[2.5rem] border border-[var(--border-light)] shadow-sm hover:shadow-md transition-all group overflow-hidden gap-y-6"
+                className="card !min-h-fit !h-auto flex flex-col p-5 bg-[var(--card-bg)] rounded-[2.5rem] border border-[var(--border-light)] shadow-sm hover:shadow-md transition-all group overflow-hidden"
                 style={{ borderTop: "5px solid var(--primary-light)" }}
               >
                 {/* HEADER: Estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
                   <div>
-                    <h4 className="m-0 text-base text-[var(--text)] leading-tight truncate w-[140px]">📝 Nota Global</h4>
-                    <small className="text-[0.65rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">
-                      Pensamiento
-                    </small>
+                    <h3 className="text-[var(--primary)] flex items-center gap-3 text-lg font-bold">
+                      <span className="text-2xl"> 📝 </span> Nota Global
+                    </h3>
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
-                    <span className="badge badge-info">📜 Nota</span>
-                    <small className="text-[0.6rem] font-bold text-[var(--text-gray)] opacity-40">
-                      📅 {new Date(note.id).toLocaleDateString()}
-                    </small>
+                    <span className="badge badge-info">{new Date(note.id).toLocaleDateString()}</span>
                   </div>
                 </div>
 
                 {/* BODY: El contenido de la nota con el diseño de quote */}
-                <div className="flex-1 mb-6 border-t border-[var(--border-light)] pt-4">
+                <div className="flex-1 border-t border-[var(--border-light)] pt-4">
                   <div className="bg-[var(--input-bg)] rounded-2xl p-4 border border-[var(--border-light)] italic text-[var(--text)] text-sm leading-relaxed break-words whitespace-pre-wrap">
                     " {note.content} "
                   </div>
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-muted)]">
-                  <span className="text-[0.6rem] opacity-40 tracking-tighter uppercase">REF: {note.id.toString().slice(-6)}</span>
+                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] text-[var(--text-muted)]">
+                  <span className="text-[0.6rem] opacity-40 tracking-tighter uppercase"></span>
                   <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                     <button
                       className="p-2 text-xl hover:scale-110 transition-transform"

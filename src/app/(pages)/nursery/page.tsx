@@ -116,7 +116,9 @@ export default function NurseryPage() {
                 {/* HEADER: Estilo Nursery Pro */}
                 <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
                   <div>
-                    <h4 className="m-0 text-base text-[var(--text)] leading-tight truncate w-[140px]">🧪 {prop.name}</h4>
+                    <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
+                      <span className="text-2xl"> 🧪 </span> {prop.name}
+                    </h3>
                     <small className="text-[0.65rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">
                       {getMethodIcon(prop.method)} {prop.method}
                     </small>
