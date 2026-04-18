@@ -31,6 +31,21 @@ export function Header() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const importInputRef = useRef<HTMLInputElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Click outside para cerrar profile menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    if (isProfileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isProfileMenuOpen]);
 
   const displayName = user?.user_metadata?.custom_name ?? user?.user_metadata?.full_name ?? user?.email;
   const planLevel = getPlanLevel(user);
@@ -190,23 +205,93 @@ export function Header() {
             <input ref={importInputRef} type="file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
           </div>
 
-          {/* Auth */}
+          {/* Auth con Dropdown */}
           {user ? (
-            <div className="flex items-center gap-2">
-              <Link href="/profile" className="user-avatar" title="Ver perfil" onClick={(e) => handleNav(e, "/profile")}>
-                {getInitials(displayName, user.email)}
-              </Link>
-              <Link href="/profile" className="h-display-name" style={{ 
-                fontSize: "0.8rem", 
-                fontWeight: 800, 
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                textDecoration: 'none',
-                color: planLevel === 'Master Admin' ? '#ffcd03' : planLevel === 'Premium' ? '#a3e635' : 'rgba(255,255,255,0.7)'
-              }}>
-                {planLevel === 'Master Admin' ? 'Master' : planLevel}
-              </Link>
-              <button className="h-logout" style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }} onClick={handleLogout}>Salir</button>
+            <div 
+              className="relative" 
+              ref={profileMenuRef}
+            >
+              <div 
+                className={`flex items-center gap-2 cursor-pointer p-1 rounded-full transition-all ${isProfileMenuOpen ? 'bg-white/10' : ''}`}
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              >
+                <div className="user-avatar">
+                  {getInitials(displayName, user.email)}
+                </div>
+                <span className="h-display-name" style={{ 
+                  fontSize: "0.8rem", 
+                  fontWeight: 800, 
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  textDecoration: 'none',
+                  color: planLevel === 'Master Admin' ? '#ffcd03' : planLevel === 'Premium' ? '#a3e635' : 'rgba(255,255,255,0.7)'
+                }}>
+                  {planLevel === 'Master Admin' ? 'Master' : planLevel}
+                </span>
+                <span className={`text-[0.6rem] transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180' : ''}`}>▼</span>
+              </div>
+
+              {/* Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <div 
+                  className="absolute top-full right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-zinc-200/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* User info header */}
+                  <div className="px-4 py-3 bg-zinc-50/50 border-b border-zinc-100">
+                    <p className="text-xs text-zinc-400 font-medium uppercase tracking-wide">Cuenta</p>
+                    <p className="text-sm text-zinc-800 font-semibold truncate mt-0.5">{displayName}</p>
+                    <p className="text-xs text-zinc-500 truncate">{user?.email}</p>
+                  </div>
+                  
+                  {/* Menu items */}
+                  <div className="py-1.5">
+                    <Link 
+                      href="/profile" 
+                      onClick={(e) => handleNav(e, "/profile")} 
+                      className="flex items-center gap-3 px-4 py-2.5 mx-1.5 rounded-xl hover:bg-primary/5 no-underline text-zinc-700 text-sm font-medium transition-all group"
+                    >
+                      <span className="w-5 h-5 flex items-center justify-center rounded-md bg-zinc-100 group-hover:bg-primary/10 text-zinc-500 group-hover:text-primary text-xs transition-colors">👤</span>
+                      Mi Perfil
+                      <span className="ml-auto text-zinc-300 group-hover:text-primary">→</span>
+                    </Link>
+                    
+                    <Link 
+                      href="/pricing" 
+                      onClick={(e) => handleNav(e, "/pricing")} 
+                      className="flex items-center gap-3 px-4 py-2.5 mx-1.5 rounded-xl hover:bg-primary/5 no-underline text-zinc-700 text-sm font-medium transition-all group"
+                    >
+                      <span className="w-5 h-5 flex items-center justify-center rounded-md bg-zinc-100 group-hover:bg-primary/10 text-zinc-500 group-hover:text-primary text-xs transition-colors">💎</span>
+                      Planes
+                      <span className="ml-auto text-zinc-300 group-hover:text-primary">→</span>
+                    </Link>
+                    
+                    <Link 
+                      href="/privacy" 
+                      onClick={(e) => handleNav(e, "/privacy")} 
+                      className="flex items-center gap-3 px-4 py-2.5 mx-1.5 rounded-xl hover:bg-primary/5 no-underline text-zinc-700 text-sm font-medium transition-all group"
+                    >
+                      <span className="w-5 h-5 flex items-center justify-center rounded-md bg-zinc-100 group-hover:bg-primary/10 text-zinc-500 group-hover:text-primary text-xs transition-colors">📜</span>
+                      Privacidad
+                      <span className="ml-auto text-zinc-300 group-hover:text-primary">→</span>
+                    </Link>
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className="mx-4 my-1 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+                  
+                  {/* Logout */}
+                  <div className="py-1.5 pb-2">
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 px-4 py-2.5 mx-1.5 w-[calc(100%-12px)] rounded-xl hover:bg-red-50 no-underline text-red-600 text-sm font-medium transition-all text-left border-none bg-transparent cursor-pointer"
+                    >
+                      <span className="w-5 h-5 flex items-center justify-center rounded-md bg-red-50 text-red-500 text-xs">🚪</span>
+                      Cerrar Sesión
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <button

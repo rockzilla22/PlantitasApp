@@ -13,10 +13,10 @@ export function Footer() {
             />
           </svg>
         </a>
-        <Link href="/pricing" className="btn-text" style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textDecoration: 'none' }}>
+        <Link href="/pricing" className="btn-text" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>
           Planes
         </Link>
-        <Link href="/privacy" className="btn-text" style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textDecoration: 'none' }}>
+        <Link href="/privacy" className="btn-text" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>
           Privacidad y Términos
         </Link>
       </div>

@@ -176,6 +176,7 @@ const configProject: ConfigProject = {
       wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
       inventory: { label: "📦 Inventario", href: "/inventory" },
       notes: { label: "📝 Notas", href: "/notes" },
+      garden: { label: "🏡 Jardín", href: "/garden" },
     },
     EN: {
       plants: { label: "🌿 My Plants", href: "/plants" },
@@ -184,6 +185,7 @@ const configProject: ConfigProject = {
       wishlist: { label: "✨ Wishlist", href: "/wishlist" },
       inventory: { label: "📦 Inventory", href: "/inventory" },
       notes: { label: "📝 Notes", href: "/notes" },
+      garden: { label: "🏡 Garden", href: "/garden" },
     },
   },
 };
