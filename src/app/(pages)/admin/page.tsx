@@ -100,7 +100,8 @@ export default function AdminPanel() {
 
   const totalMasters = users.filter((u) => u.role === "master_admin").length;
   const totalPremium = users.filter((u) => u.hasPremium).length;
-  const totalUsers = users.filter((u) => u.role !== "master_admin" && !u.hasPremium).length;
+  const totalPro = users.filter((u) => u.isPro && !u.hasPremium && u.role !== "master_admin").length;
+  const totalUsers = users.filter((u) => u.role !== "master_admin" && !u.hasPremium && !u.isPro).length;
 
   if (!currentUser || currentUser.app_metadata?.role !== "master_admin") return null;
 
@@ -136,13 +137,17 @@ export default function AdminPanel() {
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalUsers}</span>
                 <span className="text-xs text-[var(--info-dark)]  uppercase tracking-wider">Usuarios</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
-                <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
-                <span className="text-xs text-[var(--warning-dark)]  uppercase tracking-wider">Masters</span>
+              <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
+                <span className="text-lg font-bold text-[var(--primary)]">{totalPro}</span>
+                <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Pro</span>
               </div>
               <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalPremium}</span>
-                <span className="text-xs text-[var(--info-dark)]  uppercase tracking-wider">Premium</span>
+                <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Premium</span>
+              </div>
+              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
+                <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
+                <span className="text-xs text-[var(--warning-dark)]  uppercase tracking-wider">Masters</span>
               </div>
             </div>
           </div>
@@ -171,7 +176,7 @@ export default function AdminPanel() {
                 <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] opacity-80 mb-1.5 block">Buscar</label>
                 <input
                   type="text"
-                  className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors"
                   placeholder="Nombre, email o ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -181,7 +186,7 @@ export default function AdminPanel() {
                 <div>
                   <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] opacity-80 mb-1.5 block">Rol</label>
                   <select
-                    className="px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-xs outline-none cursor-pointer focus:border-[var(--primary)] transition-colors"
+                    className="px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-xs outline-none cursor-pointer focus:border-[var(--primary)] transition-colors"
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                   >
@@ -193,7 +198,7 @@ export default function AdminPanel() {
                 <div>
                   <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] opacity-80 mb-1.5 block">Plan</label>
                   <select
-                    className="px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-xs outline-none cursor-pointer focus:border-[var(--primary)] transition-colors"
+                    className="px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-xs outline-none cursor-pointer focus:border-[var(--primary)] transition-colors"
                     value={planFilter}
                     onChange={(e) => setPlanFilter(e.target.value)}
                   >
@@ -208,7 +213,7 @@ export default function AdminPanel() {
                     title="Recargar"
                     onClick={loadUsers}
                     disabled={loading}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
                     <span className={loading ? "inline-block animate-spin" : ""}>⟳</span>
                   </button>

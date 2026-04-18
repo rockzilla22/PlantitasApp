@@ -94,7 +94,7 @@ export default function SeasonPage() {
                     <span className="text-2xl shrink-0" title={t.type}>
                       {getTaskIcon(t.type)}
                     </span>
-                    <p className="m-0 text-[0.95rem] text-[var(--text)] truncate leading-tight" title={t.desc}>
+                    <p className="m-0 text-[0.95rem] font-semibold text-[var(--text-brown)] truncate leading-tight" title={t.desc}>
                       {t.desc}
                     </p>
                   </div>

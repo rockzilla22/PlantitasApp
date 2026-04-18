@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { addPlant, $store, addPropagation, addWish, addNote, updateInventoryItem, addSeasonTask, updatePlant, updatePropagation, updateWish, updateSeasonTask, updateNote, mergeData, setStoreData } from "@/store/plantStore";
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { PotLabel } from "@/components/ui/PotLabel";
+import configProject from "@/data/configProject";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -28,76 +29,118 @@ const renderOptions = (options: Option[]) =>
   ));
 
 function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: () => void }) {
-  const [action, setAction] = useState<"add" | "remove" | "clear">("add");
+  const [activePlanTab, setActivePlanTab] = useState<"FREE" | "PRO" | "PREMIUM">("PREMIUM");
+  const p = configProject.plans;
 
   return (
-    <form method="dialog" onSubmit={(e) => {
-      e.preventDefault();
-      const fd = new FormData(e.currentTarget);
-      if (action === "clear") {
-        props?.onConfirm({ action: "clear" });
-      } else {
-        const amount = fd.get("p-amount") as string;
-        const unit = fd.get("p-unit") as "days" | "months";
-        props?.onConfirm({ action, amount, unit, hasPremium: action === "add" });
-      }
-      handleClose();
-    }}>
-      <h3>Gestionar Tiempo Premium</h3>
-      <p className="my-4 text-sm text-[var(--text-gray)]">
-        Usuario: <strong>{props?.userName}</strong>
+    <div className="admin-manage-modal">
+      <h3 className="text-xl font-black text-[var(--primary)] mb-2">Gestionar Usuario</h3>
+      <p className="mb-6 text-xs font-bold text-[var(--text-gray)] opacity-60 uppercase tracking-widest border-b border-[var(--border-light)] pb-4">
+        Operador: <span className="text-[var(--text)]">{props?.userName}</span>
       </p>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex bg-[var(--background)] p-1 rounded-xl gap-1">
-          {(["add", "remove", "clear"] as const).map((a) => (
-            <button
-              key={a}
-              type="button"
-              className={`flex-1 py-2 text-[0.7rem] font-bold rounded-lg transition-all ${
-                action === a 
-                  ? (a === 'add' ? 'bg-[var(--primary)] text-[var(--text-white)]' : a === 'clear' ? 'bg-[var(--danger)] text-[var(--text-white)]' : 'bg-[var(--secondary)] text-[var(--text-white)]') 
-                  : 'text-[var(--text-gray)] hover:bg-[var(--card-bg)]/50'
-              }`}
-              onClick={() => setAction(a)}
-            >
-              {a === "add" ? "Añadir" : a === "remove" ? "Quitar" : "Resetear"}
-            </button>
-          ))}
-        </div>
+      {/* TABS DE PLAN */}
+      <div className="flex bg-[var(--bg-faint)] p-1.5 rounded-2xl gap-1.5 mb-8 shadow-inner">
+        {(["FREE", "PRO", "PREMIUM"] as const).map((planKey) => (
+          <button
+            key={planKey}
+            type="button"
+            className={`flex-1 py-3 text-[0.65rem] font-black uppercase tracking-widest rounded-xl transition-all ${
+              activePlanTab === planKey
+                ? "bg-[var(--white)] text-[var(--primary)] shadow-md"
+                : "text-[var(--text-gray)] opacity-40 hover:opacity-100"
+            }`}
+            onClick={() => setActivePlanTab(planKey)}
+          >
+            {p[planKey].icon} {p[planKey].label}
+          </button>
+        ))}
+      </div>
 
-        {action !== "clear" ? (
-          <div className="form-grid grid grid-cols-2 gap-4">
-            <div className="form-group mb-0">
-              <label>Cantidad</label>
-              <input type="number" name="p-amount" defaultValue="1" min="1" required />
-            </div>
-            <div className="form-group mb-0">
-              <label>Unidad</label>
-              <select name="p-unit" defaultValue="months">
-                <option value="months">Meses</option>
-                <option value="days">Días</option>
-              </select>
-            </div>
-          </div>
-        ) : (
-          <p className="text-xs text-[var(--danger)] font-medium text-center">
-            Se eliminará todo el tiempo acumulado y volverá al plan gratuito.
-          </p>
+      <div className="space-y-6">
+        {activePlanTab === "PREMIUM" && (
+          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            props?.onConfirm({ 
+              action: "add", 
+              hasPremium: true, 
+              amount: fd.get("amount"), 
+              unit: fd.get("unit") 
+            });
+            handleClose();
+          }}>
+             <div className="bg-[var(--info-bg)]/30 p-6 rounded-3xl border border-[var(--info)]/10">
+                <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">🎁 REGALAR MEMBRESÍA PREMIUM</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="form-group mb-0">
+                    <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Cantidad</label>
+                    <input type="number" name="amount" defaultValue="1" min="1" required className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
+                  </div>
+                  <div className="form-group mb-0">
+                    <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Unidad</label>
+                    <select name="unit" defaultValue="months" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-xs">
+                      <option value="months">Meses</option>
+                      <option value="days">Días</option>
+                    </select>
+                  </div>
+                </div>
+             </div>
+             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em]">Aplicar Tiempo Premium</button>
+          </form>
         )}
 
-        <div className="modal-actions mt-4">
-          <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-          <button 
-            type="submit" 
-            className="btn-primary" 
-            style={{ background: action === 'clear' ? 'var(--danger)' : action === 'remove' ? 'var(--secondary)' : 'var(--primary)' }}
-          >
-            {action === "add" ? "Confirmar y Activar" : action === "remove" ? "Reducir Tiempo" : "Confirmar Reset"}
-          </button>
-        </div>
+        {activePlanTab === "PRO" && (
+          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            props?.onConfirm({ 
+              action: "set_pro", 
+              slotsToGift: parseInt(fd.get("slots") as string || "0")
+            });
+            handleClose();
+          }}>
+             <div className="bg-[var(--success-bg)]/50 p-6 rounded-3xl border border-[var(--primary)]/10">
+                <p className="m-0 text-xs font-bold text-[var(--primary)] mb-4">💎 ASCENDER A PRO + REGALAR SLOTS</p>
+                <div className="form-group mb-0">
+                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Slots de Expansión</label>
+                  <input type="number" name="slots" defaultValue="0" min="0" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
+                  <span className="text-[0.55rem] opacity-40 mt-2 block italic">Los slots se suman a su límite actual de Pro ({p.PRO.maxSlots}).</span>
+                </div>
+             </div>
+             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--secondary)]">Activar Nivel Pro</button>
+          </form>
+        )}
+
+        {activePlanTab === "FREE" && (
+          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            const slots = parseInt(fd.get("slots") as string || "0");
+            if (slots > 0) {
+              props?.onConfirm({ action: "set_free", slotsToGift: slots });
+            } else {
+              props?.onConfirm({ action: "set_free" });
+            }
+            handleClose();
+          }}>
+             <div className="bg-[var(--warning-bg)]/50 p-6 rounded-3xl border border-[var(--secondary)]/10">
+                <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-4">🌱 NIVEL USUARIO (BASE)</p>
+                <div className="form-group mb-0">
+                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Regalar Slots Extras</label>
+                  <input type="number" name="slots" defaultValue="0" min="0" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
+                  <span className="text-[0.55rem] opacity-40 mt-2 block italic">Esto aumentará sus slots permanentes más allá de los {p.FREE.maxSlots} base.</span>
+                </div>
+             </div>
+             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--text-gray)]">Resetear a Nivel Usuario</button>
+          </form>
+        )}
       </div>
-    </form>
+
+      <div className="mt-8 flex justify-center">
+        <button type="button" className="btn-text text-[0.6rem] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-all" onClick={handleClose}>Cancelar Operación</button>
+      </div>
+    </div>
   );
 }
 

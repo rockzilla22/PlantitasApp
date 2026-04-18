@@ -31,6 +31,7 @@ export async function getAllUsers() {
     name: u.user_metadata?.custom_name || u.user_metadata?.full_name || "Sin nombre",
     role: u.app_metadata?.role || "user",
     hasPremium: !!u.app_metadata?.has_access,
+    isPro: !!u.app_metadata?.is_pro,
     premiumStartedAt: u.app_metadata?.premium_started_at,
     premiumExpiresAt: u.app_metadata?.premium_expires_at,
     lastSignIn: u.last_sign_in_at
@@ -39,10 +40,12 @@ export async function getAllUsers() {
 
 export async function updateUserStatus(userId: string, updates: { 
   role?: string, 
-  hasPremium?: boolean, 
+  hasPremium?: boolean,
+  isPro?: boolean,
+  slotsToGift?: number,
   amount?: string, 
   unit?: "days" | "months",
-  action?: "add" | "remove" | "clear"
+  action?: "add" | "remove" | "clear" | "set_pro" | "set_free"
 }) {
   if (!(await checkIsMaster())) throw new Error("No autorizado");
 
@@ -51,34 +54,52 @@ export async function updateUserStatus(userId: string, updates: {
 
   let expiresAt = user.app_metadata?.premium_expires_at ? new Date(user.app_metadata.premium_expires_at) : new Date();
   let startedAt = user.app_metadata?.premium_started_at || null;
+  let purchasedSlots = user.app_metadata?.purchased_slots || 0;
+  let isPro = !!user.app_metadata?.is_pro;
+  let hasPremium = !!user.app_metadata?.has_access;
 
-  if (updates.hasPremium === true) {
-    // Si no tenia premium o ya venció, reiniciamos la fecha de inicio a HOY
-    if (!user.app_metadata?.has_access || (user.app_metadata?.premium_expires_at && new Date(user.app_metadata.premium_expires_at) < new Date())) {
-      startedAt = new Date().toISOString();
-      expiresAt = new Date();
+  if (updates.action === "clear" || updates.action === "set_free") {
+    hasPremium = false;
+    isPro = false;
+    purchasedSlots = 0;
+    expiresAt = null as any;
+    startedAt = null;
+  } else if (updates.action === "set_pro") {
+    isPro = true;
+    if (updates.slotsToGift) purchasedSlots += updates.slotsToGift;
+  } else {
+    // Premium handling
+    if (updates.hasPremium === true) {
+      if (!hasPremium || (user.app_metadata?.premium_expires_at && new Date(user.app_metadata.premium_expires_at) < new Date())) {
+        startedAt = new Date().toISOString();
+        expiresAt = new Date();
+      }
+      const val = parseInt(updates.amount || "0");
+      if (updates.unit === "months") expiresAt.setMonth(expiresAt.getMonth() + val);
+      else expiresAt.setDate(expiresAt.getDate() + val);
+      hasPremium = true;
+    } else if (updates.action === "remove") {
+      const val = parseInt(updates.amount || "0");
+      if (updates.unit === "months") expiresAt.setMonth(expiresAt.getMonth() - val);
+      else expiresAt.setDate(expiresAt.getDate() - val);
     }
 
-    const val = parseInt(updates.amount || "0");
-    if (updates.unit === "months") expiresAt.setMonth(expiresAt.getMonth() + val);
-    else expiresAt.setDate(expiresAt.getDate() + val);
-  } 
-  
-  if (updates.action === "remove") {
-    const val = parseInt(updates.amount || "0");
-    if (updates.unit === "months") expiresAt.setMonth(expiresAt.getMonth() - val);
-    else expiresAt.setDate(expiresAt.getDate() - val);
+    if (updates.slotsToGift !== undefined) {
+      purchasedSlots += updates.slotsToGift;
+    }
+    
+    if (updates.isPro !== undefined) isPro = updates.isPro;
   }
 
-  const finalHasAccess = updates.action === "clear" ? false : (updates.hasPremium ?? !!user.app_metadata?.has_access);
-  const finalExpiresAt = updates.action === "clear" ? null : expiresAt.toISOString();
-  const finalStartedAt = updates.action === "clear" ? null : startedAt;
+  const finalExpiresAt = (updates.action === "clear" || updates.action === "set_free") ? null : (expiresAt ? expiresAt.toISOString() : null);
 
   const newAppMetadata = {
     ...user.app_metadata,
     ...(updates.role !== undefined && { role: updates.role }),
-    has_access: finalHasAccess,
-    premium_started_at: finalStartedAt,
+    has_access: hasPremium,
+    is_pro: isPro,
+    purchased_slots: Math.max(0, purchasedSlots),
+    premium_started_at: startedAt,
     premium_expires_at: finalExpiresAt
   };
 

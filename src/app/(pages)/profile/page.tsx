@@ -192,7 +192,7 @@ export default function ProfilePage() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors disabled:opacity-40"
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm outline-none focus:border-[var(--primary)] transition-colors disabled:opacity-40"
                     placeholder="Tu nombre..."
                     disabled={busy}
                   />
@@ -203,7 +203,7 @@ export default function ProfilePage() {
                     type="email"
                     value={user.email ?? ""}
                     disabled
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] text-[var(--text)] text-sm opacity-40 cursor-not-allowed"
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm opacity-40 cursor-not-allowed"
                   />
                 </div>
 
