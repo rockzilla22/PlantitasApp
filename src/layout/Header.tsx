@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, setStoreData, $selectedPlantId } from "@/store/plantStore";
+import { $store, loadData, setStoreData, $selectedPlantId, mergeData } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading } from "@/store/authStore";
@@ -246,7 +246,7 @@ export function Header() {
           ))}
 
           {/* Export / Import en mobile */}
-          <div style={{ display: "flex", gap: "0.5rem", padding: "1rem 0.95rem 0", borderTop: "1px solid rgba(255,255,255,0.1)", marginTop: "0.5rem" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", padding: "1rem 0.95rem 0", borderTop: "1px solid rgba(255,255,255,0.1)", marginTop: "0.5rem" }}>
             <button
               type="button"
               className={`btn-backup${shouldFlash ? " flash-active" : ""}`}
