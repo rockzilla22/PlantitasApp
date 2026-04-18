@@ -11,6 +11,7 @@ import {
   INVENTORY_CATEGORIES,
   INVENTORY_UNITS,
   LIGHT_LEVELS,
+  PLANT_LOCATIONS,
   PLANT_TYPES,
   POT_TYPES,
   PROP_METHODS,
@@ -104,6 +105,8 @@ export function Modals() {
   const { type, props } = useStore($activeModal);
   const { plants } = useStore($store);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [plantType, setPlantType] = useState("🌿|Planta");
+  const [plantLocation, setPlantLocation] = useState("Sala");
 
   useEffect(() => {
     if (type && dialogRef.current) {
@@ -113,11 +116,20 @@ export function Modals() {
     }
   }, [type]);
 
+  useEffect(() => {
+    if (type !== "add-plant" && type !== "edit-plant") {
+      return;
+    }
+
+    const currentLocation = props?.location || "Sala";
+    const hasCatalogLocation = PLANT_LOCATIONS.some((option) => option.value === currentLocation);
+
+    setPlantLocation(hasCatalogLocation ? currentLocation : "Otros");
+  }, [props?.location, type]);
+
   const handleClose = () => {
     closeModal();
   };
-
-  const [plantType, setPlantType] = useState("🌿|Planta");
 
   // --- Handlers ---
   const handlePlantSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -133,11 +145,17 @@ export function Modals() {
       icon = parts[0]; typeLabel = parts[1];
     }
 
+    const selectedLocation = fd.get("p-location") as string;
+    const customLocation = (fd.get("p-custom-location") as string | null)?.trim();
+    const location = selectedLocation === "Otros"
+      ? customLocation || "Otros"
+      : selectedLocation || "No especificada";
+
     const data = {
       name: fd.get("p-name") as string,
       icon,
       type: typeLabel,
-      location: (fd.get("p-location") as string) || "No especificada",
+      location,
       light: fd.get("p-light") as any,
       potType: fd.get("p-pot") as any,
       dormancy: fd.get("p-dormancy") as any,
@@ -256,7 +274,27 @@ export function Modals() {
               )}
             </div>
             <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="form-group mb-0"><label>📍 Ubicación</label><input type="text" name="p-location" className="p-2 text-sm sm:text-base" defaultValue={props?.location || ""} /></div>
+              <div className="form-group mb-0">
+                <label>📍 Ubicación</label>
+                <select
+                  name="p-location"
+                  className="p-2 text-sm sm:text-base"
+                  value={plantLocation}
+                  onChange={(event) => setPlantLocation(event.target.value)}
+                >
+                  {renderOptions(PLANT_LOCATIONS)}
+                </select>
+                {plantLocation === "Otros" && (
+                  <input
+                    type="text"
+                    name="p-custom-location"
+                    className="mt-2 p-2 text-sm sm:text-base"
+                    placeholder="Ej: Lavadero, Ventana norte, Terraza"
+                    defaultValue={props?.location && !PLANT_LOCATIONS.some((option) => option.value === props.location) ? props.location : ""}
+                    required
+                  />
+                )}
+              </div>
               <div className="form-group mb-0">
                 <label>☀️ Luz</label>
                 <select name="p-light" className="p-2 text-sm sm:text-base" defaultValue={props?.light || "Media"}>

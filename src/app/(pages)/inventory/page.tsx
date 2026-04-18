@@ -32,11 +32,11 @@ export default function InventoryPage() {
     }
   };
 
-  const handleRemove = (cat: InventoryCategory, index: number) => {
+  const handleRemove = (cat: InventoryCategory, name: string) => {
     openModal("confirm", {
       title: "¿Eliminar insumo?",
       message: "Se quitará del inventario.",
-      onConfirm: () => removeInventoryItem(cat, index)
+      onConfirm: () => removeInventoryItem(cat, name)
     });
   };
 
@@ -73,22 +73,26 @@ export default function InventoryPage() {
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Vacío.</p>
               )}
               {getSortedItems(cat.id).map((item, index) => (
-                <li key={`${item.name}-${index}`} className="inventory-item">
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
-                        <strong>📦 {item.name}</strong>
+                <li key={`${item.name}-${index}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all py-3 px-3 mb-2 last:mb-0 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap !p-1">
+                   {/* Izquierda: Info Principal */}
+                   <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <button className="text-xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
+                      <strong className="text-zinc-800 text-sm font-black truncate" title={item.name}>📦 {item.name}</strong>
+                   </div>
+
+                   {/* Centro/Derecha: Controles y Cantidad */}
+                   <div className="flex items-center gap-3 shrink-0">
+                      <div className="flex items-center bg-white rounded-xl border border-[var(--primary)]/10 p-1 shadow-sm">
+                          <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, -1)}>-</button>
+                          <span className="text-[0.7rem] font-black uppercase px-2 text-[var(--primary)] min-w-[60px] text-center">
+                            {item.qty} {item.unit}
+                          </span>
+                          <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, 1)}>+</button>
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
-                        <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={() => handleRemove(cat.id, index)}>🗑️</button>
-                      </div>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.3rem' }}>
-                      <span>🧪 {item.qty} {item.unit}</span>
-                      <div>
-                          <button className="btn-backup" onClick={() => updateItemQty(cat.id, index, -1)}>-</button>
-                          <button className="btn-backup" onClick={() => updateItemQty(cat.id, index, 1)}>+</button>
+
+                      <div className="flex gap-1 ml-2 border-l border-zinc-200 pl-3">
+                        <button className="p-1.5 hover:bg-white rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
+                        <button className="p-1.5 text-[var(--danger)] hover:bg-red-50 rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => handleRemove(cat.id, item.name)}>🗑️</button>
                       </div>
                   </div>
                 </li>

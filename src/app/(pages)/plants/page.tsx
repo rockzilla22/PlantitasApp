@@ -25,14 +25,12 @@ export default function HomePage() {
     <section id="tab-plants" className="tab-content active">
       <div className="plants-layout">
         <div className="plants-main-area">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 bg-[var(--background)] py-2 min-[820px]:sticky min-[820px]:top-[100px] min-[820px]:z-40 min-[820px]:mb-6">
+          <div className="!mb-4 flex flex-wrap items-center justify-between gap-3 bg-[var(--background)] py-2 min-[820px]:sticky min-[820px]:top-[100px] min-[820px]:z-40 min-[820px]:mb-10">
             <h2 className="text-[1.2rem] font-bold min-[820px]:text-[1.5rem]">Mis Plantas</h2>
             <button className="btn-primary" onClick={handleAddPlant}>Añadir Planta</button>
           </div>
-          <br />
-          <div className="mt-4">
-            <PlantGrid plants={plants} />
-          </div>
+          
+          <PlantGrid plants={plants} />
         </div>
         <Resizer />
         <PlantDetailPanel />

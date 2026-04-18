@@ -5,59 +5,102 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
+import configProject from "@/data/configProject";
 
 export default function PricingPage() {
   const router = useRouter();
   const user = useStore($user);
+  const p = configProject.plans;
 
   return (
-    <div className="landing-container py-12">
+    <div className="landing-container py-12 animate-in fade-in duration-700">
       <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
          <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem" }}>
           ← Volver al inicio
         </Link>
       </header>
 
-      {/* How it Works / Plans (Literal de la Home) */}
-      <section className="info-section bg-soft" style={{ margin: '0 auto', maxWidth: '1000px' }}>
+      {/* Títulos originales */}
+      <section className="info-section bg-soft" style={{ margin: '0 auto', maxWidth: '1400px' }}>
         <div className="section-title">
-          <h2>Privacidad por diseño</h2>
-          <p>Tus datos son tuyos. Elige cómo guardarlos.</p>
+          <h2>Cultiva sin límites</h2>
+          <p>Tus datos son tuyos. Elige el nivel de expansión que necesitas.</p>
         </div>
 
         <div className="plans-grid">
-          <div className="plan-card">
-            <h3>Plan Gratuito 🌱</h3>
-            <p className="plan-subtitle">100% Local y Privado</p>
+          
+          {/* MODO INVITADO (SIN CUENTA) */}
+          <div className="plan-card guest">
+            <h3>{p.NONE.label} {p.NONE.icon}</h3>
+            <p className="plan-subtitle">Uso Efímero</p>
             <ul>
-              <li>✅ Todas las funciones incluidas</li>
-              <li>✅ Datos en tu navegador (almacenamiento local)</li>
-              <li>✅ Respaldo e Importación manual</li>
-              <li>✅ Sin necesidad de crear cuenta</li>
+              <li>❌ Sin registro / perfil</li>
+              <li>❌ Sin respaldo real</li>
+              <li>⚠️ Límite: {p.NONE.maxSlots} items</li>
+              <li>⚠️ Riesgo de pérdida al borrar cache</li>
             </ul>
             <button 
               className="btn-primary-large" 
-              style={{ marginTop: '2rem', width: '100%', minWidth: 'unset' }}
-              onClick={() => router.push(user ? "/plants" : "/login")}
+              style={{ marginTop: '2rem', width: '100%', background: 'var(--text-gray)', opacity: 0.8 }}
+              onClick={() => router.push("/plants")}
             >
-              Empezar mi jardín
+              Solo Probar
             </button>
           </div>
 
+          {/* PLAN GRATUITO (CON CUENTA) */}
+          <div className="plan-card">
+            <h3>{p.FREE.label} {p.FREE.icon}</h3>
+            <p className="plan-subtitle">Identidad Botánica</p>
+            <ul>
+              <li>✅ Tu perfil guardado</li>
+              <li>✅ Límite: {p.FREE.maxSlots} items</li>
+              <li>✅ Historial de acciones</li>
+              <li>❌ Sin sincronización nube</li>
+            </ul>
+            <button 
+              className="btn-primary-large" 
+              style={{ marginTop: '2rem', width: '100%' }}
+              onClick={() => router.push(user ? "/plants" : "/login")}
+            >
+              Crear Cuenta
+            </button>
+          </div>
+
+          {/* PLAN PREMIUM */}
           <div className="plan-card premium">
             <div className="premium-badge">RECOMENDADO</div>
-            <h3>Plan Premium ☁</h3>
+            <h3>{p.PREMIUM.label} {p.PREMIUM.icon}</h3>
             <p className="plan-subtitle">Sincronización en la Nube</p>
             <ul>
               <li>✅ Todo lo del plan gratuito</li>
-              <li>✅ Respaldo automático en la nube</li>
+              <li>✅ Items ILIMITADOS</li>
+              <li>✅ Respaldo automático Cloud</li>
               <li>✅ Acceso multi-dispositivo</li>
-              <li>✅ Papelera de registros recuperable</li>
             </ul>
             <button 
               className="btn-secondary-large" 
               disabled 
-              style={{ marginTop: '2rem', width: '100%', minWidth: 'unset', opacity: 0.6 }}
+              style={{ marginTop: '2rem', width: '100%', opacity: 0.6 }}
+            >
+              Próximamente
+            </button>
+          </div>
+
+          {/* PLAN PRO */}
+          <div className="plan-card pro">
+            <h3>{p.PRO.label} {p.PRO.icon}</h3>
+            <p className="plan-subtitle">Expansión Permanente</p>
+            <ul>
+              <li>✅ Pago único vitalicio</li>
+              <li>✅ +{p.PRO.maxSlots} slots adicionales</li>
+              <li>✅ Sin suscripciones</li>
+              <li>✅ Sincronización Cloud</li>
+            </ul>
+            <button 
+              className="btn-secondary-large" 
+              disabled 
+              style={{ marginTop: '2rem', width: '100%', opacity: 0.6, borderColor: 'var(--secondary)', color: 'var(--secondary)' }}
             >
               Próximamente
             </button>
@@ -67,7 +110,7 @@ export default function PricingPage() {
 
       <style jsx>{`
         .landing-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 2rem 1rem;
         }
@@ -92,6 +135,7 @@ export default function PricingPage() {
           font-size: 2.5rem;
           color: var(--primary);
           margin-bottom: 1rem;
+          font-weight: 900;
         }
 
         .section-title p {
@@ -101,95 +145,125 @@ export default function PricingPage() {
 
         .plans-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          max-width: 900px;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 1.5rem;
+          max-width: 1400px;
           margin: 0 auto;
         }
 
-        @media (max-width: 768px) {
+        @media (min-width: 1200px) {
           .plans-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(4, 1fr);
           }
         }
 
         .plan-card {
-          padding: 3rem;
+          padding: 2.5rem 2rem;
           background: var(--background);
           border-radius: var(--radius);
           border: 1px solid var(--border);
           position: relative;
           display: flex;
           flex-direction: column;
+          transition: transform 0.3s ease;
+        }
+
+        .plan-card:hover {
+          transform: translateY(-5px);
         }
 
         .plan-card.premium {
           background: white;
           border: 2px solid var(--secondary);
-          box-shadow: 0 10px 30px rgba(255, 160, 0, 0.1);
+          box-shadow: 0 10px 40px rgba(255, 160, 0, 0.15);
+        }
+
+        .plan-card.pro {
+          background: white;
+          border: 1px solid var(--border);
         }
 
         .premium-badge {
           position: absolute;
           top: -12px;
-          right: 20px;
+          left: 50%;
+          transform: translateX(-50%);
           background: var(--secondary);
           color: white;
-          padding: 0.25rem 0.75rem;
+          padding: 0.35rem 1rem;
           border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 800;
+          font-size: 0.7rem;
+          font-weight: 900;
+          letter-spacing: 1px;
+          white-space: nowrap;
         }
 
         .plan-card h3 {
-          font-size: 1.5rem;
+          font-size: 1.6rem;
           margin-bottom: 0.5rem;
+          font-weight: 900;
         }
 
         .plan-subtitle {
           color: var(--text-gray);
-          margin-bottom: 2rem;
+          margin-bottom: 2.5rem;
           font-size: 0.9rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          opacity: 0.7;
         }
 
         .plan-card ul {
           list-style: none;
           flex: 1;
+          padding: 0;
+          margin: 0;
         }
 
         .plan-card li {
-          margin-bottom: 0.75rem;
+          margin-bottom: 1rem;
           font-size: 0.95rem;
+          font-weight: 500;
+          color: var(--text-gray);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
         }
 
         .btn-primary-large {
           background: var(--primary);
           color: white;
           border: none;
-          padding: 1rem 2rem;
+          padding: 1.2rem 2rem;
           border-radius: var(--radius);
-          font-size: 1.1rem;
-          font-weight: 600;
+          font-size: 1rem;
+          font-weight: 800;
           white-space: nowrap;
           cursor: pointer;
-          transition: transform 0.2s;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
         .btn-secondary-large {
           background: white;
           color: var(--secondary);
           border: 2px solid var(--secondary);
-          padding: 1rem 2rem;
+          padding: 1.2rem 2rem;
           border-radius: var(--radius);
-          font-size: 1.1rem;
-          font-weight: 600;
+          font-size: 1rem;
+          font-weight: 800;
           white-space: nowrap;
           cursor: pointer;
-          transition: transform 0.2s;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
         .btn-primary-large:hover:not(:disabled) {
-          transform: translateY(-5px);
+          background: var(--secondary);
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
       `}</style>
     </div>

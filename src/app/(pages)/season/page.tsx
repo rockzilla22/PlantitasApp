@@ -35,22 +35,28 @@ export default function SeasonPage() {
     }
   };
 
+  const handleRemove = (season: Season, index: number) => {
+    openModal("confirm", {
+      title: "¿Eliminar tarea?",
+      message: "Se quitará del plan de temporada.",
+      onConfirm: () => removeSeasonTask(season, index)
+    });
+  };
+
   return (
     <section id="tab-season" className="tab-content active">
       <div className="view-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <h2>📅 Planeación Anual</h2>
-          <div className="sort-group" style={{ display: 'flex', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '10px', gap: '2px' }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-xl font-bold m-0">📅 Planeación</h2>
+          <div className="sort-group flex bg-black/5 p-1 rounded-xl gap-1">
             <button 
-              className={`btn-text ${sortBy === 'type' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'type' ? 'white' : 'transparent', color: sortBy === 'type' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'type' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'type' ? 'bg-white text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('type')}
             >
               🏷️ Tipo
             </button>
             <button 
-              className={`btn-text ${sortBy === 'desc' ? 'active' : ''}`} 
-              style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', background: sortBy === 'desc' ? 'white' : 'transparent', color: sortBy === 'desc' ? 'var(--primary)' : 'var(--text-gray)', boxShadow: sortBy === 'desc' ? '0 2px 5px rgba(0,0,0,0.1)' : 'none' }}
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === 'desc' ? 'bg-white text-[var(--primary)] shadow-sm' : 'text-[var(--text-gray)] hover:text-[var(--primary)]'}`} 
               onClick={() => setSortBy('desc')}
             >
               🔤 Descripción
@@ -58,27 +64,38 @@ export default function SeasonPage() {
           </div>
         </div>
       </div>
-      <div id="season-grid" className="season-grid">
+
+      <div className="inventory-sections">
         {seasons.map(s => (
-          <div key={s.name} className="inventory-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid var(--background)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
-                <h3 style={{ margin: 0 }}>{s.icon} {s.name}</h3>
-                <button className="btn-primary" style={{ padding: '5px 12px', fontSize: '0.85rem' }} onClick={() => handleAddTask(s.name)}>+ Añadir Acción</button>
+          <div key={s.name} className="inventory-card !flex flex-col">
+            <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-3 mb-4">
+                <h3 className="m-0 text-lg font-black flex items-center gap-2">
+                  <span className="text-2xl">{s.icon}</span> {s.name}
+                </h3>
+                <button className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] font-black" onClick={() => handleAddTask(s.name)}>
+                  + Acción
+                </button>
             </div>
-            <ul className="season-task-list">
+            
+            <ul className="flex flex-col gap-2 p-0 m-0 list-none">
                 {seasonalTasks[s.name]?.length === 0 && (
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Sin planes.</p>
+                  <p className="text-[0.8rem] text-zinc-400 text-center py-4 italic">Sin planes activos.</p>
                 )}
                 {getSortedTasks(s.name).map((t, idx) => (
-                  <li key={`${t.type}-${idx}`} className="season-task-item">
-                    <div style={{ flex: 1 }}>
-                      <strong>{getTaskIcon(t.type)} {t.type}</strong>
-                      <p style={{ margin: '2px 0 0 0' }}>📝 {t.desc}</p>
+                  <li key={`${t.type}-${idx}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 !p-1">
+                    {/* Info Tarea */}
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <span className="text-xl shrink-0" title={t.type}>{getTaskIcon(t.type)}</span>
+                      <p className="m-0 text-[0.85rem] font-bold text-zinc-800 truncate leading-tight" title={t.desc}>
+                        {t.desc}
+                      </p>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="btn-text" style={{ fontSize: '1.1rem', padding: 0 }} onClick={() => openModal('calendar', { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}>📅</button>
-                      <button className="btn-text" style={{ padding: 0 }} onClick={() => openModal('edit-season-task', { ...t, season: s.name, index: idx })}>✏️</button>
-                      <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={() => removeSeasonTask(s.name, idx)}>🗑️</button>
+
+                    {/* Acciones */}
+                    <div className="flex items-center gap-1 shrink-0 ml-2 border-l border-zinc-200 pl-3">
+                      <button className="p-1.5 text-xl hover:scale-125 transition-transform" title="Agendar" onClick={() => openModal('calendar', { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}>📅</button>
+                      <button className="p-1.5 hover:bg-white rounded-lg transition-all opacity-60 hover:opacity-100" title="Editar" onClick={() => openModal('edit-season-task', { ...t, season: s.name, index: idx })}>✏️</button>
+                      <button className="p-1.5 text-[var(--danger)] hover:bg-red-50 rounded-lg transition-all opacity-60 hover:opacity-100" title="Borrar" onClick={() => handleRemove(s.name, idx)}>🗑️</button>
                     </div>
                   </li>
                 ))}

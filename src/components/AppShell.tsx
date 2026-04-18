@@ -18,12 +18,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Suspense fallback={null}>
-        <Header />
-      </Suspense>
-      <main id="app-container">{children}</main>
-      <Modals />
-      <Footer />
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
+        <main id="app-container">{children}</main>
+        <Modals />
+        <Footer />
     </>
   );
 }

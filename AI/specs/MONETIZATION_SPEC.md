@@ -4,6 +4,7 @@
 
 | Tier | Precio | Cloud | Slots | Comportamiento |
 |------|--------|-------|-------|-----------------|
+| **No Account** | $0 | ❌ | 25 total | Límite rígido |
 | **Free** | $0 | ❌ | 50 total | Límite rígido |
 | **Pro** (one-time) | $3-15 USD | ❌ | +50 por compra | Acumulable hasta 200 max |
 | **Premium** (sub) | $3/mes o $30/año | ✅ | Unlimited | Revierte a 50 al vencer |

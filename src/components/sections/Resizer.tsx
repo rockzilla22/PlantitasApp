@@ -24,10 +24,14 @@ export function Resizer() {
       const container = document.querySelector('.plants-layout');
       if (container) {
         const rect = container.getBoundingClientRect();
+        const containerWidth = rect.width;
         const containerRight = rect.right;
         const newWidth = containerRight - e.clientX;
         
-        if (newWidth > 300 && newWidth < 800) {
+        const minWidth = containerWidth * 0.2; // 20%
+        const maxWidth = containerWidth * 0.8; // 80%
+        
+        if (newWidth >= minWidth && newWidth <= maxWidth) {
           $resizerWidth.set(newWidth);
         }
       }

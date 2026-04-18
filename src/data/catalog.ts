@@ -81,6 +81,22 @@ export const INVENTORY_UNITS: Option[] = [
   { value: "u.", label: "u. (Unidades)" },
 ];
 
+export const PLANT_LOCATIONS: Option[] = [
+  { value: "Sala", label: "🛋️ Sala" },
+  { value: "Comedor", label: "🪑 Comedor" },
+  { value: "Cocina", label: "🍳 Cocina" },
+  { value: "Recámara", label: "🛌 Recámara" },
+  { value: "Baño", label: "🚿 Baño" },
+  { value: "Estudio", label: "🖥️ Estudio" },
+  { value: "Entrada", label: "🚪 Entrada" },
+  { value: "Balcón", label: "🪴 Balcón" },
+  { value: "Patio", label: "🧺 Patio" },
+  { value: "Jardín", label: "🌳 Jardín" },
+  { value: "Techo", label: "🏠 Techo / Azotea" },
+  { value: "Oficina", label: "💼 Oficina" },
+  { value: "Otros", label: "✨ Otra" },
+];
+
 export const LOG_ACTIONS: LogActionOption[] = [
   { value: "Fertilizante", label: "🧴 Fertilizante", icon: "🧴", inventoryCategory: "fertilizers" },
   { value: "Insecticidas/Medicinas", label: "💊 Insecticidas/Medicinas", icon: "💊", inventoryCategory: "meds" },
@@ -97,7 +113,7 @@ export const LOG_ACTIONS: LogActionOption[] = [
 export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
   Fertilizante: "🧴",
   "Insecticidas/Medicinas": "💊",
-  "Líquidos": "🧪",
+  Líquidos: "🧪",
   Medición: "📏",
   Nota: "📝",
   "Plaga/Enfermedad": "🐛",
@@ -111,7 +127,7 @@ export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
 export const LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE: Record<string, string> = {
   Fertilizante: "fertilizers",
   "Insecticidas/Medicinas": "meds",
-  "Líquidos": "liquids",
+  Líquidos: "liquids",
   "Plaga/Enfermedad": "meds",
   Polvos: "powders",
   Sustrato: "substrates",
@@ -133,5 +149,6 @@ export default {
   SEASON_TASK_TYPES,
   INVENTORY_CATEGORIES,
   INVENTORY_UNITS,
+  PLANT_LOCATIONS,
   LOG_ACTIONS,
 };

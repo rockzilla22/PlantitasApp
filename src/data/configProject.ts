@@ -84,6 +84,20 @@ export interface ConfigProject {
     ES: NavigationLocale;
     EN: NavigationLocale;
   };
+
+  // Catálogo de Planes (Monetización)
+  plans: {
+    [key: string]: {
+      id: string;
+      label: string;
+      icon: string;
+      color: string;
+      description: string;
+      maxSlots: number;      // Límite de items (plantas + notas + etc)
+      hasCloud: boolean;     // Sincronización en la nube activa
+      billingType: 'free' | 'one-time' | 'subscription' | 'system';
+    };
+  };
 }
 
 const configProject: ConfigProject = {
@@ -91,12 +105,12 @@ const configProject: ConfigProject = {
   // 🧩 PROYECTO (metadata / web)
   // ======================================================
   appName: "PlantitasApp",
-  tabname: "PlantitasApp PRO - Gestión Botánica",
+  tabname: "PlantitasApp - Gestión Botánica",
   appDescription: "Gestión botánica profesional con sincronización en la nube, integridad referencial y reportes avanzados.",
-  ogTitle: "PlantitasApp PRO",
+  ogTitle: "PlantitasApp",
   ogDescription: "Tu laboratorio botánico profesional en la nube.",
-  domainName: "plantitasapp.com",
-  siteUrl: "http://localhost:3000",
+  domainName: "plantitas-app.vercel.app/",
+  siteUrl: "https://plantitas-app.vercel.app/",
   copyright_es: `© ${new Date().getFullYear()} — PlantitasApp — Todos los derechos reservados.`,
   copyright_en: `© ${new Date().getFullYear()} — PlantitasApp — All rights reserved.`,
 
@@ -115,17 +129,16 @@ const configProject: ConfigProject = {
   twitter: "@JFEspanolito",
 
   // Rutas hacia imagenes base
-  // se recomienda que las imagenes sean de 1200x630px para OG y 1024x512px para Twitter
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
-    favicon: "/favicon.svg",
-    icon16: "/favicon.svg",
-    icon32: "/favicon.svg",
-    icon192: "/favicon.svg",
-    icon512: "/favicon.svg",
-    appleTouch: "/favicon.svg",
-    safariMask: "/favicon.svg",
+    favicon: "/PageCover/favicon.svg",
+    icon16: "/PageCover/favicon.svg",
+    icon32: "/PageCover/favicon.svg",
+    icon192: "/PageCover/favicon.svg",
+    icon512: "/PageCover/favicon.svg",
+    appleTouch: "/PageCover/favicon.svg",
+    safariMask: "/PageCover/favicon.svg",
   },
 
   // ======================================================
@@ -172,10 +185,11 @@ const configProject: ConfigProject = {
     ES: {
       plants: { label: "🌿 Mis Plantas", href: "/plants" },
       nursery: { label: "🧪 Propagación", href: "/nursery" },
+      inventory: { label: "📦 Inventario", href: "/inventory" },
       season: { label: "📅 Temporada", href: "/season" },
       wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
-      inventory: { label: "📦 Inventario", href: "/inventory" },
       notes: { label: "📝 Notas", href: "/notes" },
+      garden: { label: "🏡 Jardín", href: "/garden" },
     },
     EN: {
       plants: { label: "🌿 My Plants", href: "/plants" },
@@ -184,6 +198,63 @@ const configProject: ConfigProject = {
       wishlist: { label: "✨ Wishlist", href: "/wishlist" },
       inventory: { label: "📦 Inventory", href: "/inventory" },
       notes: { label: "📝 Notes", href: "/notes" },
+      garden: { label: "🏡 Garden", href: "/garden" },
+    },
+  },
+
+  // ======================================================
+  // 💎 CATÁLOGO DE PLANES (niveles de acceso)
+  // ======================================================
+  plans: {
+    NONE: {
+      id: "Sin cuenta",
+      label: "Sin cuenta",
+      icon: "👤",
+      color: "var(--text-gray)",
+      description: "Modo invitado. Tus datos se guardan solo en este navegador.",
+      maxSlots: 25,
+      hasCloud: false,
+      billingType: 'free',
+    },
+    FREE: {
+      id: "Usuario",
+      label: "Usuario",
+      icon: "🌱",
+      color: "var(--primary-light)",
+      description: "Cuenta básica. Acceso a gestión botánica local.",
+      maxSlots: 50,
+      hasCloud: false,
+      billingType: 'free',
+    },
+    PRO: {
+      id: "Pro",
+      label: "Pro",
+      icon: "💎",
+      color: "var(--secondary)",
+      description: "Pago único. Ampliá tu capacidad local permanentemente.",
+      maxSlots: 200,
+      hasCloud: true,
+      billingType: 'one-time',
+    },
+    PREMIUM: {
+      id: "Premium",
+      label: "Premium",
+      icon: "✨",
+      color: "var(--primary)",
+      description: "Acceso total. Sincronización en la nube e ilimitados.",
+      maxSlots: 999999,
+      hasCloud: true,
+      billingType: 'subscription',
+    },
+    MASTER: {
+      id: "Master Admin",
+      label: "Master",
+      icon: "🛡️",
+      color: "var(--gold)",
+      description: "Nivel de sistema. Control total e integridad suprema.",
+      maxSlots: 999999,
+      hasCloud: true,
+      billingType: 'system',
     },
   },
 };
