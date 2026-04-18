@@ -273,19 +273,20 @@ export const updateInventoryItem = (category: InventoryCategory, name: string, q
   setDirty(true);
 };
 
-export const updateItemQty = (category: InventoryCategory, index: number, delta: number) => {
+export const updateItemQty = (category: InventoryCategory, name: string, delta: number) => {
   const data = $store.get();
   const catItems = [...data.inventory[category]];
-  if (catItems[index]) {
+  const index = catItems.findIndex(i => i.name === name);
+  if (index >= 0) {
     catItems[index] = { ...catItems[index], qty: Math.max(0, catItems[index].qty + delta) };
     $store.setKey("inventory", { ...data.inventory, [category]: catItems });
     setDirty(true);
   }
 };
 
-export const removeInventoryItem = (category: InventoryCategory, index: number) => {
+export const removeInventoryItem = (category: InventoryCategory, name: string) => {
   const data = $store.get();
-  const catItems = data.inventory[category].filter((_, i) => i !== index);
+  const catItems = data.inventory[category].filter(i => i.name !== name);
   $store.setKey("inventory", { ...data.inventory, [category]: catItems });
   setDirty(true);
 };
