@@ -137,10 +137,6 @@ export default function AdminPanel() {
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalUsers}</span>
                 <span className="text-xs text-[var(--info-dark)]  uppercase tracking-wider">Usuarios</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
-                <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
-                <span className="text-xs text-[var(--warning-dark)]  uppercase tracking-wider">Masters</span>
-              </div>
               <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--primary)]">{totalPro}</span>
                 <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Pro</span>
@@ -148,6 +144,10 @@ export default function AdminPanel() {
               <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalPremium}</span>
                 <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Premium</span>
+              </div>
+              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
+                <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
+                <span className="text-xs text-[var(--warning-dark)]  uppercase tracking-wider">Masters</span>
               </div>
             </div>
           </div>

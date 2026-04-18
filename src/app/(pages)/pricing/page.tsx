@@ -31,7 +31,7 @@ export default function PricingPage() {
           
           {/* MODO INVITADO (SIN CUENTA) */}
           <div className="plan-card guest">
-            <h3>{p.NONE.label} {p.NONE.icon}</h3>
+            <h3> {p.NONE.icon} {p.NONE.label}</h3>
             <p className="plan-subtitle">Uso Efímero</p>
             <ul>
               <li>❌ Sin registro / perfil</li>
@@ -50,7 +50,7 @@ export default function PricingPage() {
 
           {/* PLAN GRATUITO (CON CUENTA) */}
           <div className="plan-card">
-            <h3>{p.FREE.label} {p.FREE.icon}</h3>
+            <h3> {p.FREE.icon} {p.FREE.label}</h3>
             <p className="plan-subtitle">Identidad Botánica</p>
             <ul>
               <li>✅ Tu perfil guardado</li>
@@ -70,7 +70,7 @@ export default function PricingPage() {
           {/* PLAN PREMIUM */}
           <div className="plan-card premium">
             <div className="premium-badge">RECOMENDADO</div>
-            <h3>{p.PREMIUM.label} {p.PREMIUM.icon}</h3>
+            <h3> {p.PREMIUM.icon} {p.PREMIUM.label}</h3>
             <p className="plan-subtitle">Sincronización en la Nube</p>
             <ul>
               <li>✅ Todo lo del plan gratuito</li>
@@ -89,7 +89,7 @@ export default function PricingPage() {
 
           {/* PLAN PRO */}
           <div className="plan-card pro">
-            <h3>{p.PRO.label} {p.PRO.icon}</h3>
+            <h3> {p.PRO.icon} {p.PRO.label}</h3>
             <p className="plan-subtitle">Expansión Permanente</p>
             <ul>
               <li>✅ Pago único vitalicio</li>
