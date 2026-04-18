@@ -19,7 +19,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
   const sortedPlants = [...plants].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div id="plants-list" className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-8 gap-y-14 w-full px-1 min-w-0">
+    <div id="plants-list" className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-8 gap-y-8 w-full px-1 min-w-0">
       {sortedPlants.length === 0 ? (
         <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border)] rounded-[2rem]">
           No hay plantas registradas. ¡Añadí tu primera planta!

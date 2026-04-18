@@ -23,27 +23,27 @@ export default function WishlistPage() {
   return (
     <section id="tab-wishlist" className="tab-content active">
       <div className="view-header">
-        <div className="flex items-center gap-3 flex-wrap">
-          <h2 className="text-xl font-bold m-0 text-[var(--primary)]">✨ Lista de Deseos</h2>
-          <div className="group flex bg-[var(--black-soft)] p-1.5 rounded-2xl gap-1.5 shadow-sm">
-            {["Todas", "Alta", "Media", "Baja"].map((p) => (
-              <button
-                key={p}
-                className={`px-4 py-2 text-[0.8rem] font-bold rounded-xl min-w-[50px] min-h-[32px] transition-all ${
-                  priorityFilter === p
-                    ? "bg-[var(--white)] text-[var(--primary)] shadow-sm"
-                    : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-[var(--white-soft)]"
-                }`}
-                onClick={() => setPriorityFilter(p)}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
+        <h2 className="text-[var(--primary)] font-bold">Lista de Deseos</h2>
         <button className="btn-primary h-9 min-h-[36px] px-4 text-xs font-bold" onClick={handleAddWish}>
-          + Añadir Deseo
+          + Añadir
         </button>
+      </div>
+      <div className="flex items-center gap-3 flex-wrap mb-6">
+        <div className="group flex bg-[var(--black-soft)] p-1.5 rounded-2xl gap-1.5 shadow-sm">
+          {["Todas", "Alta", "Media", "Baja"].map((p) => (
+            <button
+              key={p}
+              className={`px-4 py-2 text-[0.8rem] font-bold rounded-xl min-w-[50px] min-h-[32px] transition-all ${
+                priorityFilter === p
+                  ? "bg-[var(--white)] text-[var(--primary)] shadow-sm"
+                  : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-[var(--white-soft)]"
+              }`}
+              onClick={() => setPriorityFilter(p)}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div id="wishlist-container" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 w-full px-1">
@@ -75,7 +75,7 @@ export default function WishlistPage() {
 
                 {/* BODY: Notas con borde superior sutil */}
                 <div className="flex-1 border-t border-[var(--border-light)] pt-8">
-                  <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
+                  <p className="m-0 text-sm text-[var(--text)] bg-[var(--input-bg)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
                     📝 {notes || "Sin notas adicionales."}
                   </p>
                 </div>
