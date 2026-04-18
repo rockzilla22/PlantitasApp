@@ -370,11 +370,6 @@ body {
     width: 100%;
 }
 
-#plants-list {
-    width: 100%;
-    margin-top: 1rem;
-}
-
 .resizer { display: none; }
 
 .detail-panel {
@@ -457,11 +452,11 @@ body {
         display: block;
         animation: none;
         width: 50%;
-        min-width: 300px;
-        max-width: 800px;
+        min-width: 0; /* Remove rigid constraints */
+        max-width: none;
         height: auto;
         margin-top: 0;
-        border-radius: 12px;
+        border-radius: var(--radius);
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         padding: 1.5rem;
     }
@@ -744,11 +739,11 @@ input:focus, select:focus, textarea:focus {
     border: none;
     padding: 0.7rem 1.25rem;
     border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 500;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: background 0.2s;
-    min-height: 44px;
+    min-height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;

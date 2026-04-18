@@ -73,7 +73,7 @@ export default function InventoryPage() {
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', textAlign: 'center' }}>Vacío.</p>
               )}
               {getSortedItems(cat.id).map((item, index) => (
-                <li key={`${item.name}-${index}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all py-3 px-3 mb-2 last:mb-0 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                <li key={`${item.name}-${index}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all py-3 px-3 mb-2 last:mb-0 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap !p-1">
                    {/* Izquierda: Info Principal */}
                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <button className="text-xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>

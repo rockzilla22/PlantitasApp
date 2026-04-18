@@ -82,7 +82,7 @@ export default function SeasonPage() {
                   <p className="text-[0.8rem] text-zinc-400 text-center py-4 italic">Sin planes activos.</p>
                 )}
                 {getSortedTasks(s.name).map((t, idx) => (
-                  <li key={`${t.type}-${idx}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all py-3 px-3 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3">
+                  <li key={`${t.type}-${idx}`} className="inventory-item bg-[var(--primary)]/5 hover:bg-[var(--primary)]/10 border border-[var(--primary)]/10 transition-all rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex items-center justify-between gap-3 !p-1">
                     {/* Info Tarea */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <span className="text-xl shrink-0" title={t.type}>{getTaskIcon(t.type)}</span>

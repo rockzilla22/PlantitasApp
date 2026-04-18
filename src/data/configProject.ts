@@ -84,6 +84,17 @@ export interface ConfigProject {
     ES: NavigationLocale;
     EN: NavigationLocale;
   };
+
+  // Catálogo de Planes
+  plans: {
+    [key: string]: {
+      id: string;
+      label: string;
+      icon: string;
+      color: string;
+      description: string;
+    };
+  };
 }
 
 const configProject: ConfigProject = {
@@ -91,12 +102,12 @@ const configProject: ConfigProject = {
   // 🧩 PROYECTO (metadata / web)
   // ======================================================
   appName: "PlantitasApp",
-  tabname: "PlantitasApp PRO - Gestión Botánica",
+  tabname: "PlantitasApp - Gestión Botánica",
   appDescription: "Gestión botánica profesional con sincronización en la nube, integridad referencial y reportes avanzados.",
-  ogTitle: "PlantitasApp PRO",
+  ogTitle: "PlantitasApp",
   ogDescription: "Tu laboratorio botánico profesional en la nube.",
-  domainName: "plantitasapp.com",
-  siteUrl: "http://localhost:3000",
+  domainName: "plantitas-app.vercel.app/",
+  siteUrl: "https://plantitas-app.vercel.app/",
   copyright_es: `© ${new Date().getFullYear()} — PlantitasApp — Todos los derechos reservados.`,
   copyright_en: `© ${new Date().getFullYear()} — PlantitasApp — All rights reserved.`,
 
@@ -172,9 +183,9 @@ const configProject: ConfigProject = {
     ES: {
       plants: { label: "🌿 Mis Plantas", href: "/plants" },
       nursery: { label: "🧪 Propagación", href: "/nursery" },
+      inventory: { label: "📦 Inventario", href: "/inventory" },
       season: { label: "📅 Temporada", href: "/season" },
       wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
-      inventory: { label: "📦 Inventario", href: "/inventory" },
       notes: { label: "📝 Notas", href: "/notes" },
       garden: { label: "🏡 Jardín", href: "/garden" },
     },
@@ -186,6 +197,47 @@ const configProject: ConfigProject = {
       inventory: { label: "📦 Inventory", href: "/inventory" },
       notes: { label: "📝 Notes", href: "/notes" },
       garden: { label: "🏡 Garden", href: "/garden" },
+    },
+  },
+
+  // ======================================================
+  // 💎 CATÁLOGO DE PLANES (niveles de acceso)
+  // ======================================================
+  plans: {
+    NONE: {
+      id: "Sin cuenta",
+      label: "Sin cuenta",
+      icon: "👤",
+      color: "var(--text-gray)",
+      description: "Modo invitado. Tus datos se guardan solo en este navegador.",
+    },
+    FREE: {
+      id: "Usuario",
+      label: "Usuario",
+      icon: "🌱",
+      color: "var(--primary-light)",
+      description: "Cuenta básica. Acceso a gestión botánica local.",
+    },
+    PRO: {
+      id: "Pro",
+      label: "Pro",
+      icon: "🌱",
+      color: "var(--primary-light)",
+      description: "Cuenta PRO. Acceso a gestión botánica avanzada.",
+    },
+    PREMIUM: {
+      id: "Premium",
+      label: "Premium",
+      icon: "✨",
+      color: "var(--primary)",
+      description: "Acceso total. Sincronización automática en la nube y soporte prioritario.",
+    },
+    MASTER: {
+      id: "Master Admin",
+      label: "Master",
+      icon: "🛡️",
+      color: "var(--gold)",
+      description: "Nivel de sistema. Control total administrativo e integridad suprema.",
     },
   },
 };
