@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
 import { openModal } from "@/store/modalStore";
+import { translateError } from "@/libs/utils";
 import Link from "next/link";
 
 const ROOT_MASTER_ID = "b6e25459-0e4a-42d2-a9bc-a2ca51653ce7";
 
-type AdminTab = "users" | "data"; // Preparado para el futuro
+type AdminTab = "users" | "data";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState<any[]>([]);
@@ -21,7 +22,6 @@ export default function AdminPanel() {
 
   const [activeTab, setActiveTab] = useState<AdminTab>("users");
 
-  // Estados de filtrado para Usuarios
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [planFilter, setPlanFilter] = useState("all");
@@ -50,9 +50,9 @@ export default function AdminPanel() {
     try {
       await updateUserStatus(userId, updates);
       await loadUsers();
-      openModal("info", { title: "Éxito", message: "Sistema actualizado correctamente." });
-    } catch (err) {
-      openModal("info", { title: "Error", message: "No se pudo actualizar el registro." });
+      openModal("info", { title: "¡Operación Exitosa!", message: "El sistema ha sido actualizado correctamente." });
+    } catch (err: any) {
+      openModal("info", { title: "Error de Sistema", message: translateError(err.message || String(err)) });
     } finally {
       setBusyId(null);
     }
@@ -79,125 +79,126 @@ export default function AdminPanel() {
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const matchesSearch =
-        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.id.toLowerCase().includes(searchTerm.toLowerCase());
+      const nameMatch = (u.name || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const emailMatch = (u.email || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const idMatch = (u.id || "").toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesSearch = nameMatch || emailMatch || idMatch;
       const matchesRole = roleFilter === "all" || (roleFilter === "master" ? u.role === "master_admin" : u.role !== "master_admin");
       const matchesPlan = planFilter === "all" || (planFilter === "premium" ? u.hasPremium : !u.hasPremium);
       return matchesSearch && matchesRole && matchesPlan;
     });
   }, [users, searchTerm, roleFilter, planFilter]);
 
-  if (loading) return <div className="p-10 text-center">Infiltrandose...</div>;
+  if (loading && users.length === 0) return <div className="p-20 text-center text-[var(--primary)] font-black animate-pulse uppercase tracking-[0.3em]">Accediendo al Sistema...</div>;
 
   return (
-    <div className="admin-page" style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <header style={{ marginBottom: "2rem" }}>
-        <Link href="/profile" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem" }}>
+    <div className="admin-page animate-in fade-in duration-700" style={{ padding: "3rem 2rem", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
+      <header style={{ marginBottom: "3rem" }}>
+         <Link href="/profile" className="no-underline text-[var(--primary)] font-black text-xs uppercase tracking-widest hover:opacity-70 transition-opacity">
           ← Volver al Perfil
         </Link>
-        <h1 style={{ marginTop: "0.5rem", color: "var(--primary)", fontSize: "1.8rem" }}>Estación de Mando</h1>
+        <h1 style={{ marginTop: "1rem", color: "var(--primary)", fontSize: "2.5rem", fontWeight: 900, letterSpacing: "-0.05em" }}>Estación de Mando</h1>
       </header>
 
       {/* TABS SELECTOR */}
-      <div className="flex gap-2 mb-6 border-b border-[var(--border)]">
+      <div className="flex gap-4 mb-8 border-b border-[var(--border-light)]">
         <button 
           onClick={() => setActiveTab("users")}
-          className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${activeTab === 'users' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-[var(--text-gray)] hover:text-[var(--primary)]'}`}
+          className={`px-8 py-4 font-black text-xs uppercase tracking-widest transition-all border-b-4 ${activeTab === 'users' ? 'border-[var(--primary)] text-[var(--primary)]' : 'border-transparent text-[var(--text-gray)] opacity-50 hover:opacity-100'}`}
         >
           Gestión de Usuarios
         </button>
-        {/* Futuros tabs aquí */}
       </div>
 
       {activeTab === "users" && (
-        <div className="animate-in fade-in duration-300">
-          <div className="admin-filters">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="admin-filters bg-[var(--muted-bg)] border border-[var(--border-light)] shadow-sm p-6 rounded-2xl flex items-center gap-4 flex-wrap mb-8">
             <input
               type="text"
-              className="admin-search-input"
+              className="admin-search-input bg-[var(--card-bg)] text-[var(--text)] border-[var(--border)] focus:border-[var(--primary)] outline-none flex-1 min-w-[300px] p-3 rounded-xl shadow-inner text-sm"
               placeholder="Buscar por nombre, email o ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <select className="admin-select" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <select className="admin-select bg-[var(--card-bg)] border-[var(--border)] p-3 rounded-xl text-sm font-bold min-w-[160px]" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
               <option value="all">Todos los roles</option>
               <option value="master">Maestro</option>
               <option value="user">Usuario</option>
             </select>
-            <select className="admin-select" value={planFilter} onChange={(e) => setPlanFilter(e.target.value)}>
+            <select className="admin-select bg-[var(--card-bg)] border-[var(--border)] p-3 rounded-xl text-sm font-bold min-w-[160px]" value={planFilter} onChange={(e) => setPlanFilter(e.target.value)}>
               <option value="all">Todos los planes</option>
               <option value="premium">Premium</option>
               <option value="free">Gratis</option>
             </select>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: 'auto' }}>
-              <span style={{ fontSize: "0.8rem", color: "var(--text-gray)", whiteSpace: "nowrap" }}>{filteredUsers.length} registros</span>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginLeft: 'auto' }}>
+              <span className="text-[var(--text-gray)] text-[0.7rem] font-black uppercase tracking-widest opacity-60">{filteredUsers.length} Registros</span>
               <button 
                 title="Refrescar lista"
                 onClick={loadUsers} 
                 disabled={loading}
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[var(--border)] text-[var(--primary)] hover:bg-[var(--background)] transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[var(--card-bg)] border border-[var(--border)] text-[var(--primary)] hover:border-[var(--primary)] transition-all active:scale-90 disabled:opacity-50 shadow-md group"
               >
-                <span className={loading ? "animate-spin" : ""}>⟳</span>
+                <span className={`text-xl ${loading ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"}`}>⟳</span>
               </button>
             </div>
           </div>
 
-          <div className="admin-table-card">
+          <div className="admin-table-card bg-[var(--card-bg)] border border-[var(--border-light)] shadow-2xl rounded-[2rem] overflow-hidden">
             <div style={{ overflowX: "auto" }}>
-              <div className="max-h-[460px] overflow-y-auto">
-                <table className="admin-table" style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead className="sticky top-0 z-10 bg-[var(--background)]">
+              <div className="max-h-[700px] overflow-y-auto custom-scrollbar">
+                <table className="admin-table w-full border-collapse">
+                  <thead className="sticky top-0 z-10 bg-[var(--muted-bg)] shadow-sm">
                     <tr>
-                      <th style={{ padding: "1rem", textAlign: "left" }}>Usuario / ID</th>
-                      <th style={{ textAlign: "left" }}>Estado Actual</th>
-                      <th style={{ textAlign: "left" }}>Cronología Premium</th>
-                      <th style={{ textAlign: "right", paddingRight: "1rem" }}>Acciones</th>
+                      <th className="p-6 text-left text-[0.65rem] font-black text-[var(--text-gray)] uppercase tracking-widest border-b border-[var(--border-light)]">USUARIO / IDENTIFICADOR</th>
+                      <th className="p-6 text-left text-[0.65rem] font-black text-[var(--text-gray)] uppercase tracking-widest border-b border-[var(--border-light)]">ESTADO ACTUAL</th>
+                      <th className="p-6 text-left text-[0.65rem] font-black text-[var(--text-gray)] uppercase tracking-widest border-b border-[var(--border-light)]">CRONOLOGÍA PREMIUM</th>
+                      <th className="p-6 text-right text-[0.65rem] font-black text-[var(--text-gray)] uppercase tracking-widest border-b border-[var(--border-light)] pr-10">ACCIONES MAESTRAS</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredUsers.map((u) => (
-                      <tr key={u.id} style={{ borderTop: "1px solid var(--border)", opacity: busyId === u.id ? 0.5 : 1 }}>
-                        <td style={{ padding: "1rem" }}>
-                          <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{u.name}</div>
-                          <div style={{ fontSize: "0.8rem", color: "var(--text-gray)" }}>{u.email}</div>
-                          <div style={{ fontSize: "0.7rem", color: "#999", fontFamily: "monospace", marginTop: "4px" }}>{u.id}</div>
+                      <tr key={u.id} style={{ opacity: busyId === u.id ? 0.5 : 1 }} className="border-b border-[var(--border-light)] hover:bg-[var(--muted-bg)]/30 transition-colors group">
+                        <td className="p-6">
+                          <div className="font-black text-[var(--text)] text-base leading-tight group-hover:text-[var(--primary)] transition-colors">{u.name || "Invitado"}</div>
+                          <div className="text-xs text-[var(--text-gray)] mt-1 font-bold opacity-60">{u.email}</div>
+                          <div className="text-[0.6rem] text-[var(--text-gray)] font-mono mt-2 opacity-30 tracking-tighter uppercase">ID: {u.id}</div>
                         </td>
-                        <td>
+                        <td className="p-6">
                           <span
-                            className={`badge ${u.role === "master_admin" ? "badge-danger" : u.hasPremium ? "badge-success" : "badge-warning"}`}
+                            className={`badge !px-3 !py-1 !rounded-full !text-[0.65rem] !font-black ${u.role === "master_admin" ? "badge-danger" : u.hasPremium ? "badge-success" : "badge-warning"}`}
                           >
                             {u.role === "master_admin" ? "MASTER" : u.hasPremium ? "PREMIUM" : "USUARIO"}
                           </span>
                         </td>
-                        <td style={{ fontSize: "0.8rem", color: "var(--text-gray)" }}>
+                        <td className="p-6 text-xs text-[var(--text-gray)] font-medium">
                           {u.hasPremium ? (
-                            <>
-                              <div>Inicio: {u.premiumStartedAt ? new Date(u.premiumStartedAt).toLocaleDateString() : '---'}</div>
-                              <div style={{ fontWeight: 600, color: 'var(--primary)', marginTop: '2px' }}>
-                                Vence: {u.premiumExpiresAt ? new Date(u.premiumExpiresAt).toLocaleDateString() : 'Nunca'}
+                            <div className="flex flex-col gap-1.5">
+                              <div className="flex items-center gap-2"><span className="opacity-40 uppercase font-black text-[0.6rem]">Inicio:</span> <span className="font-bold text-[var(--text)]">{u.premiumStartedAt ? new Date(u.premiumStartedAt).toLocaleDateString() : '---'}</span></div>
+                              <div className="flex items-center gap-2 text-[var(--primary)] font-black">
+                                <span className="opacity-40 uppercase font-black text-[0.6rem]">Vence:</span> <span className="bg-[var(--success-bg)] px-2 py-0.5 rounded-lg">{u.premiumExpiresAt ? new Date(u.premiumExpiresAt).toLocaleDateString() : 'Nunca'}</span>
                               </div>
-                            </>
+                            </div>
                           ) : (
-                            <span style={{ opacity: 0.5 }}>Sin suscripción activa</span>
+                            <span className="opacity-30 italic text-[0.7rem]">Sin suscripción activa</span>
                           )}
                         </td>
-                        <td style={{ textAlign: "right", paddingRight: "1rem" }}>
-                          <div className="admin-actions">
+                        <td className="p-6 text-right pr-10">
+                          <div className="admin-actions flex justify-end gap-3">
                               <button
-                                className={`admin-action admin-action-master ${u.role === "master_admin" ? "is-active" : ""}`}
+                                className={`admin-action px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-wider transition-all shadow-sm ${u.role === "master_admin" ? "bg-[var(--gold)] text-[var(--brown-dark)]" : "bg-[var(--muted-bg)] text-[var(--text-gray)] hover:bg-[var(--gold)] hover:text-[var(--brown-dark)]"}`}
                                 disabled={busyId === u.id || u.id === ROOT_MASTER_ID}
                                 onClick={() => handleManageMaster(u)}
                               >
-                                Gestionar Master
+                                {u.role === "master_admin" ? "★ Rango Master" : "Subir a Master"}
                               </button>
                               <button
-                                className={`admin-action admin-action-premium ${u.hasPremium ? "is-active" : ""}`}
+                                className={`admin-action px-4 py-2 rounded-xl text-[0.65rem] font-black uppercase tracking-wider transition-all shadow-sm ${u.hasPremium ? "bg-[var(--primary)] text-white" : "bg-[var(--muted-bg)] text-[var(--text-gray)] hover:bg-[var(--primary)] hover:text-white"}`}
                                 disabled={busyId === u.id}
                                 onClick={() => handleManagePremium(u)}
                               >
-                                Gestionar Premium
+                                {u.hasPremium ? "⚡ Gestionar Tiempo" : "Activar Premium"}
                               </button>
                           </div>
                         </td>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/libs/db";
+import { translateError } from "@/libs/utils";
 
 type Props = {
   redirectTo?: string;
@@ -35,7 +36,7 @@ export function SignInForm({ redirectTo = "/" }: Props) {
         },
       },
     });
-    if (error) setError(error.message);
+    if (error) setError(translateError(error.message));
     setBusy(false);
   };
 
@@ -50,7 +51,7 @@ export function SignInForm({ redirectTo = "/" }: Props) {
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        setError(error.message);
+        setError(translateError(error.message));
       } else {
         router.push(redirectTo);
         router.refresh();
@@ -65,7 +66,7 @@ export function SignInForm({ redirectTo = "/" }: Props) {
         },
       });
       if (error) {
-        setError(error.message);
+        setError(translateError(error.message));
       } else {
         setInfo("Revisá tu correo para confirmar el registro.");
         setTimeout(() => router.push("/login"), 3000);
@@ -82,7 +83,7 @@ export function SignInForm({ redirectTo = "/" }: Props) {
         ← Volver al inicio
       </Link>
 
-      <div className="signin-header" style={{ opacity: 0.5 }}>
+      <div className="signin-header">
         <span className="signin-logo">🌿</span>
         <h2>PlantitasApp</h2>
         <p>Tu jardín personal, en cualquier dispositivo</p>

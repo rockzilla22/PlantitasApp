@@ -56,8 +56,8 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               type="button"
               className={`flex-1 py-2 text-[0.7rem] font-bold rounded-lg transition-all ${
                 action === a 
-                  ? (a === 'add' ? 'bg-[var(--primary)] text-white' : a === 'clear' ? 'bg-[var(--danger)] text-white' : 'bg-[var(--secondary)] text-white') 
-                  : 'text-[var(--text-gray)] hover:bg-white/50'
+                  ? (a === 'add' ? 'bg-[var(--primary)] text-[var(--text-white)]' : a === 'clear' ? 'bg-[var(--danger)] text-[var(--text-white)]' : 'bg-[var(--secondary)] text-[var(--text-white)]') 
+                  : 'text-[var(--text-gray)] hover:bg-[var(--card-bg)]/50'
               }`}
               onClick={() => setAction(a)}
             >

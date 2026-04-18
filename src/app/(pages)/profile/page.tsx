@@ -8,6 +8,7 @@ import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
 import { loadData } from "@/store/plantStore";
+import { translateError } from "@/libs/utils";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
@@ -42,8 +43,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      // Priorizamos custom_name (el que el usuario eligió en la app)
-      // sobre full_name (el que viene de Discord/Google)
       setFullName(user.user_metadata?.custom_name ?? user.user_metadata?.full_name ?? "");
     }
   }, [user]);
@@ -60,9 +59,14 @@ export default function ProfilePage() {
 
   const handleRestore = async (item: TrashItem) => {
     setRestoringId(item.id);
-    await restoreTrashItem(item.table, item.id, user!.id);
-    setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
-    setRestoringId(null);
+    try {
+      await restoreTrashItem(item.table, item.id, user!.id);
+      setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setRestoringId(null);
+    }
   };
 
   const handleLink = async (provider: "google" | "discord") => {
@@ -74,10 +78,9 @@ export default function ProfilePage() {
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/profile` },
     });
     if (error) {
-      setUnlinkError(error.message);
+      setUnlinkError(translateError(error.message));
       setLinkingProvider(null);
     }
-    // On success Supabase redirects to provider → no setState needed
   };
 
   const handleUnlink = async (provider: "google" | "discord") => {
@@ -87,7 +90,7 @@ export default function ProfilePage() {
     const sb = supabaseBrowser();
     const { error } = await sb.auth.unlinkIdentity(identity);
     if (error) {
-      setUnlinkError(error.message);
+      setUnlinkError(translateError(error.message));
     } else {
       const { data } = await sb.auth.getUser();
       if (data.user) $user.set(data.user);
@@ -106,25 +109,25 @@ export default function ProfilePage() {
     const { error } = await supabase.auth.updateUser({
       data: { 
         custom_name: fullName.trim(),
-        full_name: fullName.trim() // Lo guardamos en ambos para compatibilidad
+        full_name: fullName.trim()
       }
     });
 
     if (error) {
-      setError(error.message);
+      setError(translateError(error.message));
     } else {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
         $user.set(data.user);
       }
-      setSuccess("Perfil actualizado correctamente.");
+      setSuccess("¡Perfil actualizado con éxito!");
     }
 
     setBusy(false);
     submitting.current = false;
   };
 
-  if (authLoading || !user) return null;
+  if (authLoading || !user) return <div className="p-20 text-center animate-pulse text-[var(--primary)] font-black uppercase tracking-widest">Cargando Identidad...</div>;
 
   const isMasterAdmin = user.app_metadata?.role === "master_admin";
   const planLevel = getPlanLevel(user);
@@ -137,152 +140,172 @@ export default function ProfilePage() {
   const canUnlink = (user.identities ?? []).length > 1;
 
   const oauthProviders = [
-    { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid #dadce0" },
+    { id: "google"   as const, label: "Google",   iconBg: "#fff",     iconColor: "#4285F4", iconText: "G",  border: "1px solid var(--border)" },
     { id: "discord"  as const, label: "Discord",  iconBg: "#5865F2",  iconColor: "#fff",    iconText: "D",  border: "none" },
   ];
 
   return (
-    <div className="profile-page">
-      <div className="profile-card">
-        <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontSize: "0.9rem", fontWeight: 600, display: "inline-block", marginBottom: "1.5rem" }}>
-          ← Volver al inicio
+    <div className="profile-page animate-in fade-in duration-700">
+      <div className="profile-card shadow-2xl rounded-[2.5rem] border border-[var(--border-light)] overflow-hidden">
+        <Link href="/" className="no-underline text-[var(--primary)] font-black text-xs uppercase tracking-widest hover:opacity-70 transition-opacity mb-8 inline-block px-8">
+          ← Volver al Laboratorio
         </Link>
-        <div className="profile-header">
-          <div className="profile-avatar-lg">
+        
+        <div className="profile-header bg-[var(--muted-bg)] p-10 mb-8 border-b border-[var(--border-light)] flex items-center gap-6">
+          <div className="profile-avatar-lg shadow-xl ring-4 ring-white">
             {getInitials(currentName, user.email)}
           </div>
-          <div>
-            <h2>{currentName || "Sin nombre"}</h2>
-            <p className="profile-email">{user.email}</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-black text-2xl text-[var(--text)] truncate leading-tight">{currentName || "Invitado"}</h2>
+            <p className="profile-email text-[var(--text-gray)] font-medium opacity-60 truncate">{user.email}</p>
             {isMasterAdmin && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span className="badge-admin">⭐ Maestro</span>
-                <Link href="/admin" style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>[ Abrir Panel Maestro ]</Link>
+              <div className="flex items-center gap-4 mt-3">
+                <span className="badge-admin">★ MAESTRO</span>
+                <Link href="/admin" className="text-[0.65rem] font-black text-[var(--primary)] uppercase tracking-widest no-underline hover:underline">
+                  [ Estación de Mando ]
+                </Link>
               </div>
             )}
           </div>
         </div>
 
-        <form onSubmit={handleSave} className="profile-form">
+        <form onSubmit={handleSave} className="profile-form px-10 pb-10">
           <div className="form-group">
-            <label>Nombre/Apodo</label>
+            <label className="uppercase text-[0.65rem] font-black tracking-widest text-[var(--text-gray)] opacity-60 mb-2 block">Identidad Botánica</label>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Tu nombre"
+              placeholder="Tu nombre o apodo"
+              className="bg-[var(--card-bg)] border-[var(--border)] p-3 rounded-xl font-bold focus:border-[var(--primary)] outline-none transition-all w-full"
               disabled={busy}
             />
           </div>
 
-          <div className="form-group">
-            <label>Email</label>
+          <div className="form-group mt-6">
+            <label className="uppercase text-[0.65rem] font-black tracking-widest text-[var(--text-gray)] opacity-60 mb-2 block">Correo Electrónico</label>
             <input
               type="email"
               value={user.email ?? ""}
               disabled
-              className="input-disabled"
+              className="bg-[var(--muted-bg)] border-[var(--border-light)] p-3 rounded-xl font-bold opacity-50 cursor-not-allowed w-full"
             />
-            <span className="input-hint">El email no se puede cambiar desde aquí.</span>
+            <span className="text-[0.65rem] text-[var(--text-gray)] italic mt-2 block opacity-50">El email está vinculado a tu cuenta y no puede cambiarse.</span>
           </div>
 
-          {error && <p className="signin-error">{error}</p>}
-          {success && <p className="signin-info">{success}</p>}
+          {error && <p className="signin-error mt-4">{error}</p>}
+          {success && <p className="signin-info mt-4">{success}</p>}
 
-          <div className="profile-actions">
+          <div className="profile-actions mt-10">
             <button
               type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
+              className="btn-primary w-full py-4 text-xs font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
               disabled={busy || !hasChanges}
             >
-              {busy ? "Guardando..." : "Guardar cambios"}
+              {busy ? "Procesando..." : "Sincronizar Perfil"}
             </button>
           </div>
         </form>
 
-        <div className="profile-section">
-          <h3>Plan actual</h3>
-          {isPremium ? (
-            <>
-              <div className="plan-badge plan-premium">
-                ☁ {planLevel} — Cloud sync activo
+        <div className="profile-section px-10 pb-10 border-t border-[var(--border-light)] pt-10">
+          <h3 className="font-black text-sm uppercase tracking-widest text-[var(--text)] mb-6 text-center">Nivel de Acceso</h3>
+          <div className="flex justify-center">
+            {isPremium ? (
+              <div className="flex flex-col items-center gap-4">
+                <div className="plan-badge plan-premium !px-8 !py-4 shadow-xl !text-lg">
+                  ☁ {planLevel}
+                </div>
+                <p className="profile-hint text-center font-bold text-[var(--primary)]">Sincronización Cloud Activa ✨</p>
               </div>
-              <p className="profile-hint">Tus datos se sincronizan automáticamente con la nube.</p>
-            </>
-          ) : (
-            <>
-              <div className="plan-badge plan-free">
-                🌱 {planLevel} — Solo local
+            ) : (
+              <div className="flex flex-col items-center gap-4 w-full">
+                <div className="plan-badge plan-free !px-8 !py-4 shadow-md !text-lg">
+                  🌱 {planLevel}
+                </div>
+                <p className="profile-hint text-center max-w-sm mx-auto italic">
+                  Tus datos residen localmente en este dispositivo.
+                </p>
+                <Link href="/pricing" className="text-xs font-black text-[var(--primary)] uppercase tracking-widest no-underline border-b-2 border-[var(--primary)] pb-1 hover:opacity-70 transition-all">
+                  Mejorar Plan ahora
+                </Link>
               </div>
-              <p className="profile-hint">
-                Tus datos se guardan en este navegador. Sin sincronización en la nube.{" "}
-                <span style={{ color: "var(--primary)", fontWeight: 600 }}>Próximamente: Plan Premium.</span>
-              </p>
-            </>
-          )}
+            )}
+          </div>
         </div>
 
-        <div className="linked-accounts-section">
-          <h3>Cuentas vinculadas</h3>
-          <p className="profile-hint" style={{ marginBottom: "0.75rem" }}>
-            Vinculá tu cuenta con Google o Discord para iniciar sesión con cualquiera de ellos.
+        <div className="linked-accounts-section px-10 pb-10 border-t border-[var(--border-light)] pt-10">
+          <h3 className="font-black text-sm uppercase tracking-widest text-[var(--text)] mb-2">Métodos de Acceso</h3>
+          <p className="profile-hint text-xs mb-8 opacity-60">
+            Gestioná tus conexiones con Google o Discord para mayor seguridad.
           </p>
-          {unlinkError && <p className="signin-error" style={{ marginBottom: "0.75rem" }}>{unlinkError}</p>}
-          {oauthProviders.map((p) => {
-            const isLinked = linkedProviders.has(p.id);
-            return (
-              <div key={p.id} className="identity-row">
-                <div
-                  className="identity-provider-icon"
-                  style={{ background: p.iconBg, color: p.iconColor, border: p.border }}
-                >
-                  {p.iconText}
-                </div>
-                <span className="identity-provider-name">{p.label}</span>
-                {isLinked ? (
-                  <>
-                    <span className="badge-linked">✓ Vinculado</span>
-                    <button
-                      className="btn-unlink-provider"
-                      disabled={!canUnlink}
-                      title={!canUnlink ? "Necesitás al menos 2 métodos de acceso para desvincular" : `Desvincular ${p.label}`}
-                      onClick={() => handleUnlink(p.id)}
+          {unlinkError && <p className="signin-error mb-6">{unlinkError}</p>}
+          <div className="flex flex-col gap-4">
+            {oauthProviders.map((p) => {
+              const isLinked = linkedProviders.has(p.id);
+              return (
+                <div key={p.id} className="identity-row flex items-center justify-between bg-[var(--muted-bg)] p-4 rounded-2xl border border-[var(--border-light)]">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center font-black shadow-inner border border-white/20"
+                      style={{ background: p.iconBg, color: p.iconColor }}
                     >
-                      Desvincular
+                      {p.iconText}
+                    </div>
+                    <span className="font-black text-sm text-[var(--text)]">{p.label}</span>
+                  </div>
+                  {isLinked ? (
+                    <div className="flex items-center gap-4">
+                      <span className="text-[var(--success)] text-xs font-black uppercase tracking-widest opacity-80">✓ Vinculado</span>
+                      <button
+                        className="btn-text !p-2 !min-h-0 text-[var(--danger)] text-[0.65rem] font-black uppercase tracking-widest hover:bg-[var(--danger-bg)] rounded-lg transition-all"
+                        disabled={!canUnlink}
+                        title={!canUnlink ? "Necesitás al menos 2 métodos para desvincular" : `Desvincular ${p.label}`}
+                        onClick={() => handleUnlink(p.id)}
+                      >
+                        [ Desvincular ]
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="btn-primary !py-2 !px-4 !min-h-0 text-[0.65rem] font-black uppercase tracking-widest shadow-md hover:scale-105 transition-all"
+                      disabled={linkingProvider !== null}
+                      onClick={() => handleLink(p.id)}
+                    >
+                      {linkingProvider === p.id ? "Conectando..." : `Vincular`}
                     </button>
-                  </>
-                ) : (
-                  <button
-                    className="btn-link-provider"
-                    disabled={linkingProvider !== null}
-                    onClick={() => handleLink(p.id)}
-                  >
-                    {linkingProvider === p.id ? "Redirigiendo..." : `Vincular con ${p.label}`}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {isPremium && (
-          <div className="trash-section">
-            <button className="trash-toggle" onClick={handleToggleTrash}>
-              🗑 {showTrash ? "Ocultar papelera" : "Ver papelera"}
-              {trashItems.length > 0 && !showTrash && (
-                <span style={{ background: "#ef5350", color: "#fff", borderRadius: "10px", padding: "0 6px", fontSize: "0.72rem" }}>
-                  {trashItems.length}
-                </span>
-              )}
+          <div className="trash-section px-10 pb-10 border-t-4 border-dashed border-[var(--muted-bg)] pt-10">
+            <button 
+              className="w-full flex items-center justify-between bg-zinc-900 text-white p-6 rounded-3xl shadow-xl hover:bg-black transition-all group"
+              onClick={handleToggleTrash}
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-2xl group-hover:rotate-12 transition-transform">🗑️</span>
+                <span className="font-black uppercase tracking-[0.2em] text-sm">Caja de Recuperación</span>
+              </div>
+              <div className="flex items-center gap-3">
+                {trashItems.length > 0 && !showTrash && (
+                  <span className="bg-[var(--danger)] text-white text-[0.65rem] font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
+                    {trashItems.length} ITEMS
+                  </span>
+                )}
+                <span className="text-xl opacity-40">{showTrash ? "▲" : "▼"}</span>
+              </div>
             </button>
 
             {showTrash && (
-              <div className="trash-list">
+              <div className="trash-list animate-in slide-in-from-top-4 duration-500 mt-6 bg-[var(--muted-bg)] rounded-3xl p-6 border border-[var(--border-light)] shadow-inner">
                 {trashLoading ? (
-                  <p className="trash-empty">Cargando...</p>
+                  <p className="trash-empty text-center py-10 font-black animate-pulse uppercase tracking-widest text-[var(--text-gray)]">Escaneando Papelera...</p>
                 ) : trashItems.length === 0 ? (
-                  <p className="trash-empty">La papelera está vacía.</p>
+                  <p className="trash-empty text-center py-10 italic text-[var(--text-gray)]">La papelera está vacía.</p>
                 ) : (
                   (() => {
                     const groups: Record<string, { label: string; items: TrashItem[] }> = {
@@ -294,23 +317,28 @@ export default function ProfilePage() {
                     trashItems.forEach((item) => groups[item.table]?.items.push(item));
                     return Object.entries(groups).map(([key, group]) =>
                       group.items.length === 0 ? null : (
-                        <div key={key}>
-                          <p className="trash-group-title">{group.label}</p>
-                          {group.items.map((item) => (
-                            <div key={item.id} className="trash-item">
-                              <div className="trash-item-info">
-                                <span className="trash-item-name">{item.label}</span>
-                                {item.meta && <span className="trash-item-meta">{item.meta}</span>}
+                        <div key={key} className="mb-8 last:mb-0">
+                          <p className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[var(--primary)] mb-4 opacity-70 flex items-center gap-2">
+                            <span className="w-8 h-px bg-[var(--primary)] opacity-30"></span>
+                            {group.label}
+                          </p>
+                          <div className="flex flex-col gap-2">
+                            {group.items.map((item) => (
+                              <div key={item.id} className="trash-item flex items-center justify-between bg-[var(--card-bg)] p-4 rounded-2xl border border-[var(--border-light)] shadow-sm hover:shadow-md transition-all">
+                                <div className="trash-item-info flex flex-col min-w-0">
+                                  <span className="trash-item-name font-black text-sm text-[var(--text)] truncate">{item.label}</span>
+                                  {item.meta && <span className="trash-item-meta text-[0.65rem] font-bold text-[var(--text-gray)] opacity-40 uppercase tracking-tighter mt-0.5">{item.meta}</span>}
+                                </div>
+                                <button
+                                  className="btn-primary !min-h-0 !py-2 !px-5 !text-[0.65rem] !font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all"
+                                  disabled={restoringId === item.id}
+                                  onClick={() => handleRestore(item)}
+                                >
+                                  {restoringId === item.id ? "..." : "Restaurar"}
+                                </button>
                               </div>
-                              <button
-                                className="btn-restore"
-                                disabled={restoringId === item.id}
-                                onClick={() => handleRestore(item)}
-                              >
-                                {restoringId === item.id ? "..." : "Restaurar"}
-                              </button>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       )
                     );

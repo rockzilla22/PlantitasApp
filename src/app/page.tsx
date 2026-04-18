@@ -51,7 +51,7 @@ export default function LandingPage() {
           <h1>
             La app más completa <br /> que todo Plant Lover necesita.
           </h1>
-          <p>
+          <p className="!text-[var(--text-brown)]">
             En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
             compañera ideal en tu camino como coleccionista, brindándote el control total sobre los cuidados, riegos y necesidades
             específicas de cada una de tus joyas verdes. Organiza tu colección, registra su progreso y asegúrate de que siempre tengan
@@ -86,9 +86,9 @@ export default function LandingPage() {
 
       {/* How it Works / Plans */}
       <section className="info-section bg-soft">
-        <div className="section-title">
+        <div className="section-title ">
           <h2>Privacidad por diseño</h2>
-          <p>Tus datos son tuyos. Elige cómo guardarlos.</p>
+          <p className="!text-[var(--text-brown)]">Tus datos son tuyos. Elige cómo guardarlos.</p>
         </div>
 
         <div className="plans-grid">
@@ -136,12 +136,16 @@ export default function LandingPage() {
       </section>
 
       {/* About Section */}
-      <section className="info-section bg-soft" style={{ textAlign: "center", maxWidth: "900px", margin: "2rem auto", padding: "4rem 4rem" }}>
+      <section
+        className="info-section bg-soft"
+        style={{ textAlign: "center", maxWidth: "900px", margin: "2rem auto", padding: "4rem 4rem" }}
+      >
         <div className="section-title">
           <h2>Historia del Proyecto</h2>
         </div>
-        <p style={{ fontSize: "1.15rem", lineHeight: "1.8", color: "var(--text-gray)", fontStyle: "italic" }}>
-          Esta app germinó como una visión de <strong className="text-[var(--primary)]">Erzu</strong> por simplificar el cuidado botánico. Fue cultivada tecla a tecla por{" "}
+        <p style={{ fontSize: "1.15rem", lineHeight: "1.8", color: "var(--text-brown)", fontStyle: "italic" }}>
+          Esta app germinó como una visión de <strong className="text-[var(--primary)]">Erzu</strong> por simplificar el cuidado botánico.
+          Fue cultivada tecla a tecla por{" "}
           <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
             <strong className="text-[var(--primary)]">JFEspanolito</strong>
           </a>{" "}
@@ -199,7 +203,7 @@ export default function LandingPage() {
 
         .hero-content p {
           font-size: 1.25rem;
-          color: var(--text-gray);
+          color: var(--text-brown);
         }
 
         .hero-actions-row {
@@ -281,7 +285,7 @@ export default function LandingPage() {
 
         .mock-body p {
           font-size: 0.9rem;
-          color: var(--text-gray);
+          color: var(--text-brown);
         }
 
         .mock-status {
@@ -317,7 +321,7 @@ export default function LandingPage() {
 
         .section-title p {
           font-size: 1.1rem;
-          color: var(--text-gray);
+          color: var(--text-brown);
         }
 
         .plans-grid {
@@ -366,7 +370,7 @@ export default function LandingPage() {
         }
 
         .plan-subtitle {
-          color: var(--text-gray);
+          color: var(--text-brown);
           margin-bottom: 2rem;
           font-size: 0.9rem;
         }
@@ -409,7 +413,7 @@ export default function LandingPage() {
         }
 
         .feature-item p {
-          color: var(--text-gray);
+          color: var(--text-brown);
           font-size: 0.95rem;
         }
       `}</style>

@@ -77,7 +77,7 @@ export default function InventoryPage() {
                    {/* Izquierda: Info Principal */}
                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <button className="text-xl p-0 hover:scale-125 transition-transform shrink-0" title="Reponer" onClick={() => openModal('calendar', { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })}>📅</button>
-                      <strong className="text-zinc-800 text-sm font-black truncate" title={item.name}>📦 {item.name}</strong>
+                      <strong className="text-[var(--text)] text-sm font-black truncate" title={item.name}>📦 {item.name}</strong>
                    </div>
 
                    {/* Centro/Derecha: Controles y Cantidad */}
@@ -90,9 +90,9 @@ export default function InventoryPage() {
                           <button className="w-8 h-8 flex items-center justify-center font-black hover:text-[var(--primary)] transition-colors active:scale-75" onClick={() => updateItemQty(cat.id, item.name, 1)}>+</button>
                       </div>
 
-                      <div className="flex gap-1 ml-2 border-l border-zinc-200 pl-3">
-                        <button className="p-1.5 hover:bg-white rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
-                        <button className="p-1.5 text-[var(--danger)] hover:bg-red-50 rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => handleRemove(cat.id, item.name)}>🗑️</button>
+                      <div className="flex gap-1 ml-2 border-l border-[var(--border)] pl-3">
+                        <button className="p-1.5 hover:bg-[var(--card-bg)] rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => openModal('edit-item', { ...item, cat: cat.id, index })}>✏️</button>
+                        <button className="p-1.5 text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded-lg transition-all active:scale-90 opacity-60 hover:opacity-100" onClick={() => handleRemove(cat.id, item.name)}>🗑️</button>
                       </div>
                   </div>
                 </li>
