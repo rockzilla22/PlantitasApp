@@ -25,12 +25,14 @@ export default function WishlistPage() {
       <div className="view-header">
         <div className="flex items-center gap-3 flex-wrap">
           <h2 className="text-xl font-bold m-0">✨ Lista de Deseos</h2>
-          <div className="sort-group flex bg-black/5 p-1 rounded-xl gap-1">
+          <div className="group flex bg-black/5 p-1.5 rounded-2xl gap-1.5 shadow-sm">
             {["Todas", "Alta", "Media", "Baja"].map((p) => (
               <button
                 key={p}
-                className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${
-                  priorityFilter === p ? "bg-white text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"
+                className={`px-4 py-2 text-[0.8rem] font-bold rounded-xl min-w-[50px] min-h-[32px] transition-all ${
+                  priorityFilter === p
+                    ? "bg-white text-[var(--primary)] shadow-sm"
+                    : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-white/50"
                 }`}
                 onClick={() => setPriorityFilter(p)}
               >

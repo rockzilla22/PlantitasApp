@@ -132,13 +132,13 @@ const configProject: ConfigProject = {
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
-    favicon: "/favicon.svg",
-    icon16: "/favicon.svg",
-    icon32: "/favicon.svg",
-    icon192: "/favicon.svg",
-    icon512: "/favicon.svg",
-    appleTouch: "/favicon.svg",
-    safariMask: "/favicon.svg",
+    favicon: "/PageCover/favicon.svg",
+    icon16: "/PageCover/favicon.svg",
+    icon32: "/PageCover/favicon.svg",
+    icon192: "/PageCover/favicon.svg",
+    icon512: "/PageCover/favicon.svg",
+    appleTouch: "/PageCover/favicon.svg",
+    safariMask: "/PageCover/favicon.svg",
   },
 
   // ======================================================
