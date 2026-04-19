@@ -55,12 +55,12 @@ export function PlantGrid({ plants }: PlantGridProps) {
                     <span className="truncate">{plant.name}</span>
                   </h3>
                   <small className="text-[0.8rem] font-bold text-[var(--text-gray)] uppercase tracking-widest truncate block opacity-70">
-                    📍 {plant.location}
+                    {plant.location}
                   </small>
                 </div>
                 <div className="flex flex-col items-end gap-y-2 shrink-0">
                   <span className="badge badge-success text-[0.7rem] px-3 py-1">{plant.type}</span>
-                  <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">💡 {plant.light}</small>
+                  <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">{plant.light}</small>
                 </div>
               </div>
 
@@ -72,7 +72,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
                   </div>
                   <div className="text-right">
                     <span className="text-[0.8rem] text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
-                      💧 {formatDate(plant.lastWateredDate)}
+                      <Image src="/icons/environment/inventory/water_drops.svg" alt="" width={14} height={14} className="inline mr-1" />{formatDate(plant.lastWateredDate)}
                     </span>
                   </div>
                 </div>

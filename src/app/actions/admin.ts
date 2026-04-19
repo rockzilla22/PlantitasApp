@@ -159,3 +159,16 @@ export async function updateFeedbackStatus(id: string, updates: {
   if (error) throw error;
   return { success: true };
 }
+
+export async function deleteFeedback(id: string) {
+  if (!(await checkIsMaster())) throw new Error("No autorizado");
+  const sb = adminClient;
+
+  const { error } = await sb
+    .from("feedback")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+  return { success: true };
+}

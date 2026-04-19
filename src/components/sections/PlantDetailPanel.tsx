@@ -112,30 +112,30 @@ export function PlantDetailPanel() {
         <div className="flex gap-1">
           {!isWideLayout && (
             <button className="icon-btn" onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">
-              ✕
+              <img src="/icons/common/fail.svg" width={14} height={14} alt="Cerrar" className="object-contain" />
             </button>
           )}
           <button
             className="icon-btn"
             onClick={() => openModal("calendar", { title: `Cuidar: ${plant.name}`, desc: `Ubicación: ${plant.location}` })}
           >
-            📅
+            <Image src="/icons/common/calendar.svg" alt="Calendario" width={18} height={18} />
           </button>
           <button className="icon-btn" onClick={() => openModal("edit-plant", plant)}>
-            ✏️
+            <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
           </button>
           <button className="icon-btn icon-btn--danger" onClick={handleDeletePlant}>
-            🗑️
+            <Image src="/icons/common/trash.svg" alt="Eliminar" width={18} height={18} />
           </button>
         </div>
       </div>
 
       {/* --- Badge --- */}
       <div className="microclima-info py-2">
-        <span className="microclima-tag">📍 {plant.location}</span>
-        <span className="microclima-tag">☀️ {plant.light}</span>
-        <span className="microclima-tag">🍲 {plant.potType}</span>
-        <span className="microclima-tag">💤 {plant.dormancy}</span>
+        <span className="microclima-tag">{plant.location}</span>
+        <span className="microclima-tag"><Image src="/icons/environment/sun.svg" alt="" width={14} height={14} className="inline mr-1" />{plant.light}</span>
+        <span className="microclima-tag">{plant.potType}</span>
+        <span className="microclima-tag"><Image src="/icons/common/sleep.svg" alt="" width={14} height={14} className="inline mr-1" />{plant.dormancy}</span>
       </div>
 
       {/* --- Registro --- */}
@@ -143,7 +143,7 @@ export function PlantDetailPanel() {
         className="log-section"
         style={{ background: "var(--bg-faint)", padding: "1rem", borderRadius: "var(--radius)", marginTop: "1rem" }}
       >
-        <h3 className="text-[var(--text-brown)] text-xl font-bold mb-3">📜 Registro</h3>
+        <h3 className="text-[var(--text-brown)] text-xl font-bold mb-3">Registro</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
           <select
             value={logAction}
@@ -189,7 +189,7 @@ export function PlantDetailPanel() {
       {/* --- Historial de Logs --- */}
       <div className="log-list" style={{ marginTop: "1.5rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-          <h3 className="text-[var(--text-brown)] text-xl font-bold">📜 Historial</h3>
+          <h3 className="text-[var(--text-brown)] text-xl font-bold">Historial</h3>
           <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
             <small style={{ fontSize: "0.7rem", color: "var(--text-gray)", marginRight: "0.25rem" }}>Ordenar:</small>
             <button
@@ -198,7 +198,7 @@ export function PlantDetailPanel() {
               onClick={() => setLogSortOrder("desc")}
               title="Más reciente primero"
             >
-              📅🔽
+              <Image src="/icons/common/sort-down.svg" alt="Reciente" width={16} height={16} />
             </button>
             <button
               className="btn-text"
@@ -206,7 +206,7 @@ export function PlantDetailPanel() {
               onClick={() => setLogSortOrder("asc")}
               title="Más antiguo primero"
             >
-              📅🔼
+              <Image src="/icons/common/sort-up.svg" alt="Antiguo" width={16} height={16} />
             </button>
           </div>
         </div>
@@ -243,13 +243,13 @@ export function PlantDetailPanel() {
                       {actionCfg?.img ? (
                         <Image src={actionCfg.img} alt={log.actionType} width={18} height={18} className="object-contain" />
                       ) : (
-                        <span>{LOG_ACTION_ICON_BY_VALUE[log.actionType] || "📝"}</span>
+                        <Image src={LOG_ACTION_ICON_BY_VALUE[log.actionType] || "/icons/common/notes.svg"} alt={log.actionType} width={18} height={18} className="object-contain" />
                       )}
                     </div>
                     <strong className="text-[var(--primary)]">{log.actionType}</strong>
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                    <small>📅 {formatDate(log.date)}</small>
+                    <small><Image src="/icons/common/calendar.svg" alt="" width={12} height={12} className="inline mr-1" />{formatDate(log.date)}</small>
                     <button
                       className="btn-text"
                       style={{ color: "var(--danger)", padding: 0 }}
@@ -261,7 +261,7 @@ export function PlantDetailPanel() {
                         });
                       }}
                     >
-                      🗑️
+                      <Image src="/icons/common/trash.svg" alt="Eliminar" width={14} height={14} />
                     </button>
                   </div>
                 </div>

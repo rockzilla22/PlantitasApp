@@ -22,7 +22,7 @@ import {
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { PotLabel } from "@/components/ui/PotLabel";
 import configProject from "@/data/configProject";
-import Image from "next/image";
+import NextImage from "next/image";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -85,11 +85,7 @@ function CustomSelect({
       >
         {selectedOption?.img && (
           <div className="w-8 h-8 flex items-center justify-center shrink-0">
-            {selected === "CUSTOM" ? (
-              <span className="text-xl">✨</span>
-            ) : (
-              <Image src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
-            )}
+            <NextImage src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
           </div>
         )}
         <span className="flex-1 text-sm font-bold text-[var(--text)]">{selectedOption?.label}</span>
@@ -106,11 +102,7 @@ function CustomSelect({
             >
               {option.img && (
                 <div className="w-7 h-7 flex items-center justify-center shrink-0">
-                  {option.value === "CUSTOM" ? (
-                    <span className="text-lg">✨</span>
-                  ) : (
-                    <Image src={option.img} alt="" width={28} height={28} className="object-contain" />
-                  )}
+                  <NextImage src={option.img} alt="" width={28} height={28} className="object-contain" />
                 </div>
               )}
               <span className="text-sm font-medium text-[var(--text)]">{option.label}</span>
@@ -172,7 +164,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
             }}
           >
             <div className="bg-[var(--info-bg)]/30 p-6 rounded-3xl border border-[var(--info)]/10">
-              <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">🎁 REGALAR MEMBRESÍA PREMIUM</p>
+              <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">REGALAR MEMBRESÍA PREMIUM</p>
               {expiresAt && !isExpired && (
                 <p className="text-[0.6rem] text-[var(--info-dark)] mb-3 opacity-70">
                   Premium activo hasta: {new Date(expiresAt).toLocaleDateString()} — el tiempo se acumula.
@@ -255,7 +247,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
         {activePlanTab === p.FREE.id && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="bg-[var(--warning-bg)]/50 p-6 rounded-3xl border border-[var(--secondary)]/10">
-              <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">🌱 RESETEAR A NIVEL USUARIO</p>
+              <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">RESETEAR A NIVEL USUARIO</p>
               <p className="text-[0.65rem] text-[var(--text-gray)] leading-relaxed">
                 Elimina Premium, Pro, y todos los gift slots. El usuario vuelve al límite base de {p.FREE.maxSlots} slots sin nube.
               </p>
@@ -323,21 +315,18 @@ export function Modals() {
   // --- Handlers ---
   const handlePlantSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const fd = new FormData(e.currentTarget);
-    let icon = "🌿",
+    let icon = "/icons/environment/plants/generic.svg",
       typeLabel = "Planta";
     const typeSelect = fd.get("p-type") as string;
 
     if (typeSelect === "CUSTOM") {
-      const custom = (fd.get("p-custom-type") as string) || "🌿|Planta";
-      const parts = custom.includes("|") ? custom.split("|") : ["🌿", custom];
-      icon = parts[0];
-      typeLabel = parts[1];
+      const custom = (fd.get("p-custom-type") as string) || "Planta";
+      typeLabel = custom;
     } else {
       const catalogType = PLANT_TYPES.find((t) => t.value === typeSelect);
       if (catalogType) {
         typeLabel = catalogType.value;
-        // Extraemos el emoji del label si existe (ej: "🍃 Alocasia" -> "🍃")
-        icon = catalogType.label.split(" ")[0] || "🌿";
+        icon = catalogType.img || "/icons/environment/plants/generic.svg";
       } else {
         typeLabel = typeSelect;
       }
@@ -460,12 +449,12 @@ export function Modals() {
             <h3 className="flex items-center gap-2">
               {type === "edit-plant" ? (
                 <>
-                  <Image src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
+                  <NextImage src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
                   <span>Modificar Planta</span>
                 </>
               ) : (
                 <>
-                  <Image src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
+                  <NextImage src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
                   <span>Nueva Planta</span>
                 </>
               )}
@@ -512,7 +501,7 @@ export function Modals() {
             <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {/* --- Ubicación --- */}
               <div className="form-group mb-0">
-                <label>📍 Ubicación</label>
+                <label>Ubicación</label>
                 <CustomSelect
                   name="p-location"
                   options={PLANT_LOCATIONS}
@@ -536,7 +525,7 @@ export function Modals() {
               </div>
               {/* --- Luz --- */}
               <div className="form-group mb-0">
-                <label>☀️ Luz</label>
+                <label>Luz</label>
                 <CustomSelect name="p-light" options={LIGHT_LEVELS} defaultValue={props?.light || "Media"} />
               </div>
             </div>
@@ -549,7 +538,7 @@ export function Modals() {
               </div>
               {/* --- Dormancia --- */}
               <div className="form-group mb-0">
-                <label>💤 Dormancia</label>
+                <label><img src="/icons/common/sleep.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Dormancia</label>
                 <CustomSelect name="p-dormancy" options={DORMANCIES} defaultValue={props?.dormancy || "Ninguna"} />
               </div>
             </div>
@@ -571,19 +560,26 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR PROPAGACIÓN --- */}
         {(type === "add-prop" || type === "edit-prop") && (
           <form method="dialog" onSubmit={handlePropSubmit}>
-            <h3>{type === "edit-prop" ? "✏️ Editar Propagación" : "🧪 Nueva Propagación"}</h3>
+            <h3>{type === "edit-prop" ? "Editar Propagación" : "Nueva Propagación"}</h3>
             <div className="form-group">
               <label>Planta Madre (Opcional)</label>
-              <select name="prop-parent" defaultValue={props?.parentId || ""}>
-                <option value="">-- Sin madre (Independiente) --</option>
-                {plants
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.icon} {p.name}
-                    </option>
-                  ))}
-              </select>
+              <CustomSelect
+                name="prop-parent"
+                options={[
+                  { value: "", label: "-- Sin madre (Independiente) --" },
+                  ...plants
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((p) => {
+                      const typeInfo = PLANT_TYPES.find((t) => t.value === p.type);
+                      return {
+                        value: String(p.id),
+                        label: p.name,
+                        img: typeInfo?.img,
+                      };
+                    }),
+                ]}
+                defaultValue={props?.parentId ? String(props.parentId) : ""}
+              />
             </div>
             <div className="form-group">
               <label>Nombre Identificador*</label>
@@ -595,7 +591,7 @@ export function Modals() {
                 <CustomSelect name="prop-method" options={PROP_METHODS} defaultValue={props?.method || "Agua"} />
               </div>
               <div className="form-group mb-0">
-                <label>📅 Fecha Inicio*</label>
+                <label><img src="/icons/common/calendar.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Fecha Inicio*</label>
                 <input
                   type="date"
                   name="prop-start"
@@ -606,7 +602,7 @@ export function Modals() {
               </div>
             </div>
             <div className="form-group mt-3 sm:mt-4">
-              <label>📝 Notas</label>
+              <label><img src="/icons/common/notes.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Notas</label>
               <textarea
                 name="prop-notes"
                 className="p-2 text-sm sm:text-base"
@@ -629,7 +625,7 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR DESEO --- */}
         {(type === "add-wish" || type === "edit-wish") && (
           <form method="dialog" onSubmit={handleWishSubmit}>
-            <h3>{type === "edit-wish" ? "✏️ Editar Deseo" : "✨ Nuevo Deseo"}</h3>
+            <h3>{type === "edit-wish" ? "Editar Deseo" : "Nuevo Deseo"}</h3>
             <div className="form-group">
               <label>¿Qué deseamos?*</label>
               <input
@@ -646,7 +642,7 @@ export function Modals() {
               <CustomSelect name="w-priority" options={WISH_PRIORITIES} defaultValue={props?.priority || "Media"} />
             </div>
             <div className="form-group">
-              <label>📝 Notas</label>
+              <label>Notas</label>
               <textarea
                 name="w-notes"
                 className="p-2 text-sm sm:text-base"
@@ -668,7 +664,7 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR PLAN DE TEMPORADA --- */}
         {(type === "add-season-task" || type === "edit-season-task") && (
           <form method="dialog" onSubmit={handleSeasonTaskSubmit}>
-            <h3>{type === "edit-season-task" ? "✏️ Editar Plan de Temporada" : "📅 Planear Acción"}</h3>
+            <h3>{type === "edit-season-task" ? "Editar Plan de Temporada" : "Planear Acción"}</h3>
             <div className="form-group">
               <label>Tipo de Tarea</label>
               <CustomSelect name="st-type" options={SEASON_TASK_TYPES} defaultValue={props?.type || "Otro"} />
@@ -697,7 +693,7 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR NOTA GLOBAL --- */}
         {(type === "add-note" || type === "edit-note") && (
           <form method="dialog" onSubmit={handleNoteSubmit}>
-            <h3>{type === "edit-note" ? "✏️ Editar Nota Global" : "📝 Nueva Nota Global"}</h3>
+            <h3>{type === "edit-note" ? "Editar Nota Global" : "Nueva Nota Global"}</h3>
             <div className="form-group">
               <label>Contenido de la nota*</label>
               <textarea
@@ -723,7 +719,7 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR INSUMO --- */}
         {(type === "add-item" || type === "edit-item") && (
           <form method="dialog" onSubmit={handleItemSubmit}>
-            <h3>{type === "edit-item" ? "✏️ Editar Insumo" : "📦 Nuevo Insumo"}</h3>
+            <h3>{type === "edit-item" ? "Editar Insumo" : "Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>
               <CustomSelect name="i-type" options={INVENTORY_CATEGORIES} defaultValue={props?.cat || "substrates"} />
@@ -770,16 +766,15 @@ export function Modals() {
         {/* --- MODAL DE CONFIRMACIÓN --- */}
         {type === "confirm" && (
           <div style={{ textAlign: "center" }}>
-            <h3>{props?.title || "¿Estás seguro?"}</h3>
-            <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
+            <h3 className="text-2xl font-bold text-[var(--text)]">{props?.title || "¿Estás seguro?"}</h3>
+            <p className="my-4 text-base font-medium leading-relaxed text-[var(--text)]">{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
-              <button type="button" className="btn-text" onClick={handleClose}>
+              <button type="button" className="btn-secondary" onClick={handleClose}>
                 Cancelar
               </button>
               <button
                 type="button"
-                className="btn-primary"
-                style={{ background: props?.confirmClass === "secondary" ? "var(--secondary)" : "var(--danger)" }}
+                className={props?.confirmClass === "secondary" ? "btn-warning" : "btn-danger"}
                 onClick={() => {
                   props?.onConfirm();
                   handleClose();
@@ -793,7 +788,7 @@ export function Modals() {
 
         {type === "import-choice" && (
           <div style={{ textAlign: "center" }}>
-            <h3>⚠️ Resolución de Conflicto</h3>
+            <h3><img src="/icons/common/warning.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />Resolución de Conflicto</h3>
             <p style={{ margin: "1rem 0", color: "var(--text-gray)", textAlign: "left", fontSize: "0.9rem", lineHeight: "1.4" }}>
               {props?.message}
             </p>
@@ -879,7 +874,7 @@ export function Modals() {
 
         {type === "calendar" && (
           <form method="dialog" onSubmit={handleCalendarSubmit}>
-            <h3>📅 Recordatorio Google</h3>
+            <h3><img src="/icons/common/calendar.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />Recordatorio Google</h3>
             <div className="form-group">
               <label>Título*</label>
               <input type="text" name="cal-title" required defaultValue={props?.title || ""} />

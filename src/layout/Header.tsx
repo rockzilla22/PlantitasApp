@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
 import { $store, loadData, setStoreData, $selectedPlantId, mergeData } from "@/store/plantStore";
@@ -12,19 +12,6 @@ import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 import Link from "next/link";
 import Image from "next/image";
-
-function getInitials(name?: string | null, fallback?: string | null): string {
-  if (name?.trim()) {
-    return name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase();
-  }
-  return (fallback?.[0] ?? "U").toUpperCase();
-}
 
 export function Header() {
   const pathname = usePathname();
@@ -42,19 +29,27 @@ export function Header() {
   const [isNotifyMenuOpen, setIsNotifyMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notifyMenuRef = useRef<HTMLDivElement>(null);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
 
   // --- Plan & Storage Logic ---
   const planLevel = getPlanLevel(user);
   const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
   const isMasterAdmin = planConfig.id === configProject.plans.MASTER.id;
 
-  const expirationDate = user?.app_metadata?.premium_expires_at
-    ? new Date(user.app_metadata.premium_expires_at).toLocaleDateString()
-    : "Ilimitada";
+  const premiumExpiresAt = user?.app_metadata?.premium_expires_at;
+  const daysLeft = useMemo(() => {
+    if (!premiumExpiresAt) return null;
+    const expires = new Date(premiumExpiresAt);
+    const today = new Date();
+    const diffTime = expires.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }, [premiumExpiresAt]);
+
+  const expirationDate = premiumExpiresAt ? new Date(premiumExpiresAt).toLocaleDateString() : "Ilimitada";
 
   const maxSlots = isMasterAdmin ? Infinity : getEffectiveMaxSlots(user);
   const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
-  
+
   const usedSlots = useMemo(() => {
     const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
     const seasonCount = Object.values(data.seasonalTasks).reduce((sum, arr) => sum + arr.length, 0);
@@ -62,6 +57,25 @@ export function Header() {
   }, [data]);
 
   // --- Handlers & Effects ---
+  useEffect(() => {
+    // Lógica para mostrar el badge de notificación (1 vez por día)
+    if (daysLeft !== null && daysLeft <= 7 && daysLeft >= 0) {
+      const lastSeen = localStorage.getItem("last_expiration_notif_date");
+      const todayStr = new Date().toISOString().split("T")[0];
+      if (lastSeen !== todayStr) {
+        setHasNewNotification(true);
+      }
+    }
+  }, [daysLeft]);
+
+  const handleOpenNotify = () => {
+    setIsNotifyMenuOpen(!isNotifyMenuOpen);
+    if (!isNotifyMenuOpen && hasNewNotification) {
+      setHasNewNotification(false);
+      localStorage.setItem("last_expiration_notif_date", new Date().toISOString().split("T")[0]);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
@@ -141,7 +155,7 @@ export function Header() {
     });
     data.propagations.forEach((p) => {
       if (p.name.toLowerCase().includes(q) || p.method.toLowerCase().includes(q)) {
-        matches.push({ type: "Propagación", name: p.name, icon: "🧪", id: p.id, href: "/nursery" });
+        matches.push({ type: "Propagación", name: p.name, icon: "/icons/environment/log/lab.svg", id: p.id, href: "/nursery" });
       }
     });
     setSearchResults(matches);
@@ -156,7 +170,16 @@ export function Header() {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="no-underline text-[var(--text-white)] whitespace-nowrap">
-            <h1 style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)", margin: 0, fontWeight: 700 }}>🌿 PlantitasApp</h1>
+            <h1 className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold" style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
+              <Image
+                src="/icons/environment/location/greenhouse.svg"
+                alt="Greenhouse"
+                width={32}
+                height={32}
+                className="shrink-0 object-contain"
+              />
+              <span>PlantitasApp</span>
+            </h1>
           </Link>
         </div>
 
@@ -177,7 +200,14 @@ export function Header() {
               triggerExportFlash();
             }}
           >
-            {isDirty ? "⚠ Exportar" : "Exportar"}
+            {isDirty ? (
+              <>
+                <Image src="/icons/common/warning.svg" alt="" width={14} height={14} className="inline mr-1" />
+                Exportar
+              </>
+            ) : (
+              "Exportar"
+            )}
           </button>
 
           {/* Buscador */}
@@ -191,7 +221,9 @@ export function Header() {
               autoComplete="off"
               className="bg-[var(--input-bg)] text-[var(--text)] border-[var(--border)] rounded-full"
             />
-            <span className="search-icon">🔍</span>
+            <span className="search-icon">
+              <Image src="/icons/common/search.svg" alt="Buscar" width={16} height={16} />
+            </span>
           </div>
           {searchQuery && searchResults.length > 0 && (
             <div className="search-results-panel active bg-[var(--input-bg)] rounded-[var(--radius)] shadow-2xl">
@@ -207,8 +239,9 @@ export function Header() {
                   }}
                 >
                   <span className="res-type text-[var(--primary)]">{m.type}</span>
-                  <span className="res-title text-[var(--text)]">
-                    {m.icon} {m.name}
+                  <span className="res-title text-[var(--text)] flex items-center gap-1">
+                    {m.icon?.startsWith("/") ? <Image src={m.icon} alt="" width={16} height={16} className="object-contain" /> : m.icon}{" "}
+                    {m.name}
                   </span>
                 </a>
               ))}
@@ -250,26 +283,71 @@ export function Header() {
             <button
               type="button"
               className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isNotifyMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
-              onClick={() => setIsNotifyMenuOpen(!isNotifyMenuOpen)}
+              onClick={handleOpenNotify}
             >
               <Image src="/icons/common/ringbell.svg" alt="Notificaciones" width={28} height={28} className="brightness-0 invert" />
+              {hasNewNotification && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--danger)] text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)]">
+                  1
+                </span>
+              )}
             </button>
 
             {isNotifyMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                <h3 className="p-4 text-center text-sm font-bold text-[var(--text)]">Notificaciones</h3>
-                {user?.app_metadata?.premium_expires_at && (
-                  <>
-                    <div className="p-4 text-center text-sm text-[var(--text)]">Tu membresía vence el {expirationDate}</div>
-                    <p className="p-4 text-center text-sm text-[var(--text)]">
-                      Almacenamiento: {usedSlots} <span className="text-center text-sm text-[var(--text)]">/ {maxSlotsLabel}</span>
-                    </p>
-                  </>
-                )}
-                {!user?.app_metadata?.premium_expires_at && (
-                   <p className="p-4 text-center text-sm text-[var(--text)]">
-                    Almacenamiento: {usedSlots} <span className="text-center text-sm text-[var(--text)]">/ {maxSlotsLabel}</span>
-                  </p>
+                <h3 className="p-4 text-center text-sm font-bold text-[var(--text)] border-b border-[var(--border-light)]">
+                  Notificaciones
+                </h3>
+
+                <div className="max-h-80 overflow-y-auto">
+                  {/* Alerta de Vencimiento */}
+                  {daysLeft !== null && daysLeft <= 7 && (
+                    <div className="p-4 bg-[var(--danger-bg-light)]/20 border-b border-[var(--border-light)]">
+                      <div className="flex items-start gap-3">
+                        <span className="text-lg">⚠️</span>
+                        <div>
+                          <p className="text-xs font-bold text-[var(--danger)] m-0">¡Membresía por vencer!</p>
+                          <p className="text-[0.7rem] text-[var(--text)] mt-1 leading-relaxed">
+                            Tu suscripción {planConfig.label} termina en{" "}
+                            <strong>
+                              {daysLeft} {daysLeft === 1 ? "día" : "días"}
+                            </strong>
+                            . Renová para no perder tus beneficios.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Info de Membresía (Siempre visible) */}
+                  {user?.app_metadata?.premium_expires_at && (
+                    <div className="p-4 border-b border-[var(--border-light)] opacity-80">
+                      <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Plan Actual</p>
+                      <p className="text-sm font-bold text-[var(--text)] mt-1">{planConfig.label}</p>
+                      <p className="text-[0.7rem] text-[var(--text-gray)] mt-0.5 italic">Vence el {expirationDate}</p>
+                    </div>
+                  )}
+
+                  {/* Info de Almacenamiento */}
+                  <div className="p-4 bg-[var(--bg-faint)]/50">
+                    <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Almacenamiento</p>
+                    <div className="mt-2 flex items-baseline gap-1">
+                      <span className="text-xl font-bold text-[var(--text)]">{usedSlots}</span>
+                      <span className="text-sm text-[var(--text-gray)] opacity-60">/ {maxSlotsLabel} items</span>
+                    </div>
+                    <div className="w-full bg-[var(--border-light)] h-1.5 rounded-full mt-2 overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-700 ${usedSlots >= maxSlots ? "bg-[var(--danger)]" : "bg-[var(--primary)]"}`}
+                        style={{ width: `${isMasterAdmin ? 100 : Math.min(100, (usedSlots / maxSlots) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {!user && (
+                  <div className="p-6 text-center italic text-xs text-[var(--text-gray)] opacity-60">
+                    Iniciá sesión para ver tus alertas personalizadas.
+                  </div>
                 )}
               </div>
             )}
@@ -284,11 +362,9 @@ export function Header() {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
-                  {getInitials(displayName, user.email)}
+                  <Image src="/icons/environment/animals/turtle.svg" alt="Turtle" width={24} height={24} className="object-contain" />
                 </div>
-                <span className="hidden md:block uppercase text-[0.7rem] tracking-wide" style={{ color: planConfig.color }}>
-                  {planConfig.label}
-                </span>
+                <span className="hidden md:block uppercase text-[0.7rem] tracking-wide text-[var(--text-white)] font-bold">Perfil</span>
                 <span
                   className={`text-[0.5rem] transition-transform duration-200 text-[var(--text-white)] ${isProfileMenuOpen ? "rotate-180" : ""}`}
                 >

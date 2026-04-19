@@ -36,17 +36,17 @@ export default function LandingPage() {
         </div>
         <div className="hero-visual">
           <div className="plant-card-mockup">
-            <div className="mock-header">🌿 Monstera Deliciosa</div>
+            <div className="mock-header"><img src="/icons/environment/plants/monstera.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />Monstera Deliciosa</div>
             <div className="mock-body">
-              <p>📍 Sala · ☀️ Media</p>
-              <div className="mock-status">💧 Último riego: Hoy</div>
+              <p><img src="/icons/environment/sun.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Sala · Media</p>
+              <div className="mock-status"><img src="/icons/environment/inventory/water_drops.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Último riego: Hoy</div>
             </div>
           </div>
           <div className="plant-card-mockup secondary">
-            <div className="mock-header">🧪 Esqueje de Pothos</div>
+            <div className="mock-header"><img src="/icons/environment/log/lab.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />Esqueje de Pothos</div>
             <div className="mock-body">
-              <p>💧 Método: Agua</p>
-              <div className="mock-status">✨ Raíces visibles</div>
+              <p><img src="/icons/environment/inventory/water_drops.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Método: Agua</p>
+              <div className="mock-status"><img src="/icons/common/stars.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Raíces visibles</div>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function LandingPage() {
         <div className="features-grid">
           {features.map((f, i) => (
             <div key={i} className="feature-item">
-              <div className="feature-icon">{f.icon}</div>
+              <div className="feature-icon"><img src={f.icon} width={28} height={28} alt="" className="object-contain" /></div>
               <h4>{f.title}</h4>
               <p>{f.description}</p>
             </div>

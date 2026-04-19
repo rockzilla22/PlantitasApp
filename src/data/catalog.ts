@@ -122,17 +122,17 @@ export const LOG_ACTIONS: LogActionOption[] = [
 ];
 
 export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
-  Fertilizante: "",
-  "Insecticidas/Medicinas": "",
-  Líquidos: "",
-  Medición: "",
-  Nota: "",
-  "Plaga/Enfermedad": "",
-  Polvos: "",
-  Riego: "",
-  Sustrato: "",
-  Trasplante: "",
-  "Registro Nuevo": "",
+  Fertilizante: "/icons/environment/inventory/fertilizer.svg",
+  "Insecticidas/Medicinas": "/icons/environment/inventory/medicine.svg",
+  Líquidos: "/icons/environment/log/lab.svg",
+  Medición: "/icons/environment/log/rule.svg",
+  Nota: "/icons/common/notes.svg",
+  "Plaga/Enfermedad": "/icons/environment/animals/ant.svg",
+  Polvos: "/icons/environment/log/powder.svg",
+  Riego: "/icons/environment/log/watering_can.svg",
+  Sustrato: "/icons/environment/log/substrates.svg",
+  Trasplante: "/icons/environment/pots/plant_pot.svg",
+  "Registro Nuevo": "/icons/environment/plants/generic.svg",
 };
 
 export const LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE: Record<string, string> = {

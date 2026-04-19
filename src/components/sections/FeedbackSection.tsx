@@ -3,11 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useStore } from "@nanostores/react";
 import { $store } from "@/store/plantStore";
+import { $user } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 
 export function FeedbackSection() {
+  const user = useStore($user);
   const [isOpen, setIsOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const storeData = useStore($store);
@@ -28,6 +30,8 @@ export function FeedbackSection() {
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
+
+  if (!user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +89,7 @@ export function FeedbackSection() {
               Tu Feedback
             </h3>
             <button onClick={() => setIsOpen(false)} className="text-[var(--text-gray)] hover:text-[var(--danger)]">
-              ✕
+              <img src="/icons/common/fail.svg" width={14} height={14} alt="Cerrar" className="object-contain" />
             </button>
           </div>
 

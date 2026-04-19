@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { getAllUsers, updateUserStatus, getAllFeedback, updateFeedbackStatus } from "@/app/actions/admin";
+import { getAllUsers, updateUserStatus, getAllFeedback, updateFeedbackStatus, deleteFeedback } from "@/app/actions/admin";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
 import { openModal } from "@/store/modalStore";
 import { translateError } from "@/libs/utils";
 import Link from "next/link";
+import NextImage from "next/image";
 import toast from "react-hot-toast";
 import configProject from "@/data/configProject";
 
@@ -95,6 +96,26 @@ export default function AdminPanel() {
     } finally {
       setBusyId(null);
     }
+  };
+
+  const handleRemoveFeedback = (id: string) => {
+    openModal("confirm", {
+      title: "¿Eliminar reporte?",
+      message: "Esta acción borrará el feedback de forma permanente. No se puede deshacer.",
+      onConfirm: async () => {
+        setBusyId(id);
+        try {
+          await deleteFeedback(id);
+          const updated = await getAllFeedback();
+          setFeedback(updated);
+          toast.success("Feedback eliminado");
+        } catch (err: any) {
+          openModal("info", { title: "Error", message: err.message });
+        } finally {
+          setBusyId(null);
+        }
+      },
+    });
   };
 
   const handleManageMaster = (u: any) => {
@@ -485,8 +506,11 @@ export default function AdminPanel() {
                         <th className="px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Estado y Prioridad
                         </th>
-                        <th className="px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
+                        <th className="w-[260px] max-w-[260px] px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Notas Admin
+                        </th>
+                        <th className="w-[44px] max-w-[44px] px-0 py-4 text-center text-[0.65rem] text-[var(--text)] uppercase font-semibold align-middle whitespace-nowrap overflow-hidden">
+                          Acc.
                         </th>
                       </tr>
                     </thead>
@@ -506,10 +530,11 @@ export default function AdminPanel() {
                                   configProject.feedback.types.Comentario;
                                 return (
                                   <span
-                                    className="text-[10px] font-black uppercase tracking-tighter w-fit px-2 py-0.5 rounded"
+                                    className="text-[10px] font-black uppercase tracking-tighter w-fit px-2 py-1 rounded flex items-center gap-1.5"
                                     style={{ backgroundColor: typeCfg.bgColor, color: typeCfg.color }}
                                   >
-                                    {typeCfg.icon} {typeCfg.label}
+                                    <NextImage src={typeCfg.icon} alt={typeCfg.label} width={12} height={12} className="object-contain" />
+                                    {typeCfg.label}
                                   </span>
                                 );
                               })()}
@@ -518,7 +543,7 @@ export default function AdminPanel() {
                               <div className="text-[10px]">
                                 👤 {f.user_name} ({f.user_email})
                               </div>
-                              <div className="text-[10px] italic">📅 {new Date(f.created_at).toLocaleString()}</div>
+                              <div className="text-[10px] italic"><img src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain inline mr-1" />{new Date(f.created_at).toLocaleString()}</div>
                             </div>
                           </td>
 
@@ -537,7 +562,7 @@ export default function AdminPanel() {
                                 }
                                 className="btn-text p-0 text-[10px] text-left hover:text-[var(--primary)]"
                               >
-                                🔍 Ver Metadata JSON
+                                <img src="/icons/common/search.svg" width={11} height={11} alt="" className="object-contain inline mr-1" />Ver Metadata JSON
                               </button>
                               {f.metadata?.browser && (
                                 <div className="text-[9px] bg-[var(--bg-faint)] p-2 rounded-lg border border-[var(--border-light)]">
@@ -588,9 +613,9 @@ export default function AdminPanel() {
                             </div>
                           </td>
 
-                          <td className="px-6 py-4 align-top">
+                          <td className="w-[260px] max-w-[260px] px-6 py-4 align-top">
                             <textarea
-                              className="w-full bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-xl p-3 text-xs outline-none min-h-[100px] focus:border-[var(--primary)]"
+                              className="block w-full max-w-[260px] bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-xl p-3 text-xs outline-none min-h-[100px] focus:border-[var(--primary)]"
                               placeholder="Escribir notas internas..."
                               defaultValue={f.admin_notes || ""}
                               onBlur={(e) => {
@@ -599,6 +624,20 @@ export default function AdminPanel() {
                                 }
                               }}
                             />
+                          </td>
+
+                          {/* Acciones Feedback */}
+                          <td className="w-[44px] max-w-[44px] px-0 py-4 text-center align-middle">
+                            <button
+                              onClick={() => handleRemoveFeedback(f.id)}
+                              disabled={busyId === f.id}
+                              className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--danger-border)] bg-[var(--danger-bg)] text-[var(--danger)] shadow-sm transition-all hover:bg-[var(--danger)] hover:text-white disabled:opacity-40"
+                              title="Eliminar permanentemente"
+                            >
+                              <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                <NextImage src="/icons/common/trash.svg" alt="Eliminar" width={20} height={20} className="object-contain" />
+                              </div>
+                            </button>
                           </td>
                         </tr>
                       ))}

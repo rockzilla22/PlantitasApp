@@ -28,10 +28,10 @@ export function PricingSection() {
             <h3>{p.NONE.label}</h3>
             <p className="plan-subtitle">Uso Efímero</p>
             <ul>
-              <li>❌ Sin registro / perfil</li>
-              <li>❌ Sin respaldo real</li>
-              <li>⚠️ Límite: {p.NONE.maxSlots} items</li>
-              <li>⚠️ Riesgo de pérdida al borrar cache</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin registro / perfil</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin respaldo real</li>
+              <li><img src="/icons/common/warning.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Límite: {p.NONE.maxSlots} items</li>
+              <li><img src="/icons/common/warning.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Riesgo de pérdida al borrar cache</li>
             </ul>
             <button
               className="btn-primary-large"
@@ -48,10 +48,10 @@ export function PricingSection() {
             <h3>{p.FREE.label}</h3>
             <p className="plan-subtitle">Identidad Botánica</p>
             <ul>
-              <li>✅ Tu perfil guardado</li>
-              <li>✅ Límite: {p.FREE.maxSlots} items</li>
-              <li>✅ Historial de acciones</li>
-              <li>❌ Sin sincronización nube</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Tu perfil guardado</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Límite: {p.FREE.maxSlots} items</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Historial de acciones</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin sincronización nube</li>
             </ul>
             <button
               className="btn-primary-large"
@@ -69,10 +69,10 @@ export function PricingSection() {
             <h3>{p.PREMIUM.label}</h3>
             <p className="plan-subtitle">Sincronización en la Nube</p>
             <ul>
-              <li>✅ Todo lo del plan gratuito</li>
-              <li>✅ Items ILIMITADOS</li>
-              <li>✅ Respaldo automático Cloud</li>
-              <li>✅ Acceso multi-dispositivo</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Todo lo del plan gratuito</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Items ILIMITADOS</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Respaldo automático Cloud</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Acceso multi-dispositivo</li>
             </ul>
             <button className="btn-secondary-large" disabled style={{ marginTop: "2rem", width: "100%", opacity: 0.6 }}>
               Próximamente
@@ -85,10 +85,10 @@ export function PricingSection() {
             <h3>{p.PRO.label}</h3>
             <p className="plan-subtitle">Expansión Permanente</p>
             <ul>
-              <li>✅ Pago único vitalicio</li>
-              <li>✅ +{p.PRO.maxSlots} slots adicionales</li>
-              <li>✅ Sin suscripciones</li>
-              <li>✅ Sincronización Cloud</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Pago único vitalicio</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> +{p.PRO.maxSlots} slots adicionales</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin suscripciones</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sincronización Cloud</li>
             </ul>
             <button
               className="btn-secondary-large"

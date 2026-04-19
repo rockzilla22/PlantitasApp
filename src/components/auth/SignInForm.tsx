@@ -84,7 +84,7 @@ export function SignInForm({ redirectTo = "/" }: Props) {
       </Link>
 
       <div className="signin-header">
-        <span className="signin-logo">🌿</span>
+        <span className="signin-logo"><img src="/icons/environment/plants/generic.svg" width={32} height={32} alt="PlantitasApp" className="object-contain" /></span>
         <h2>PlantitasApp</h2>
         <p>Tu jardín personal, en cualquier dispositivo</p>
       </div>

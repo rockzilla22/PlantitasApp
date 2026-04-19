@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import NextImage from "next/image";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
@@ -288,7 +288,6 @@ export default function ProfilePage() {
               {/* Plan badge */}
               <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{planConfig.icon}</span>
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
                 {isPremium && (
@@ -328,7 +327,7 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                    <Image src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
+                    <NextImage src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
                   </div>
                   <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
                   {trashItems.length > 0 && !showTrash && (
@@ -357,7 +356,13 @@ export default function ProfilePage() {
                         g.items.length === 0 ? null : (
                           <div key={k} className="flex flex-col gap-2">
                             <div className="flex items-center gap-2 opacity-50">
-                              <Image src={g.img} alt={g.label} width={14} height={14} className="object-contain" />
+                              <NextImage 
+  src={g.img} 
+  alt={g.label} 
+  width={14} 
+  height={14} 
+  className="object-contain" 
+/>
                               <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] m-0 font-semibold">{g.label}</p>
                             </div>
                             {g.items.map((i) => (

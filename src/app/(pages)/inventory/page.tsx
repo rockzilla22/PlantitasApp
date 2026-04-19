@@ -5,19 +5,14 @@ import { $store, updateItemQty, removeInventoryItem } from "@/store/plantStore";
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { openModal } from "@/store/modalStore";
 import { useState } from "react";
+import Image from "next/image";
+import { INVENTORY_CATEGORIES } from "@/data/catalog";
 
 export default function InventoryPage() {
   const { inventory } = useStore($store);
   const [sortBy, setSortBy] = useState<"name" | "qty">("name");
 
-  const categories: { id: InventoryCategory; label: string; icon: string }[] = [
-    { id: "substrates", label: "Sustratos", icon: "🟤" },
-    { id: "fertilizers", label: "Fertilizantes", icon: "🧴" },
-    { id: "powders", label: "Polvos", icon: "⚪" },
-    { id: "liquids", label: "Líquidos", icon: "🧪" },
-    { id: "meds", label: "Insecticidas/Medicinas", icon: "💊" },
-    { id: "others", label: "Otros", icon: "📦" },
-  ];
+  const categories = INVENTORY_CATEGORIES;
 
   const handleAddItem = () => {
     openModal("add-item");
@@ -54,30 +49,35 @@ export default function InventoryPage() {
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === "name" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
             onClick={() => setSortBy("name")}
           >
-            🏷️ Nombre
+            Nombre
           </button>
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === "qty" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
             onClick={() => setSortBy("qty")}
           >
-            🔢 Cantidad
+            Cantidad
           </button>
         </div>
       </div>
       <div className="inventory-sections grid grid-cols-1 md:grid-cols-2 gap-8">
         {categories.map((cat) => (
           <div
-            key={cat.id}
+            key={cat.value}
             className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)]"
           >
             <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
-              <span className="text-2xl">{cat.icon}</span> {cat.label}
+              {cat.img ? (
+                <Image src={cat.img} alt={cat.label} width={32} height={32} className="object-contain" />
+              ) : (
+                <Image src="/icons/environment/inventory/box.svg" alt="" width={32} height={32} className="object-contain" />
+              )}
+              {cat.label}
             </h3>
             <ul className="flex flex-col gap-3 p-0 m-0 list-none">
-              {inventory[cat.id]?.length === 0 && (
+              {inventory[cat.value as InventoryCategory]?.length === 0 && (
                 <p className="text-[0.9rem] text-[var(--text-gray)] text-center py-8 italic opacity-50">Vacío.</p>
               )}
-              {getSortedItems(cat.id).map((item, index) => (
+              {getSortedItems(cat.value as InventoryCategory).map((item, index) => (
                 <li
                   key={`${item.name}-${index}`}
                   className="inventory-item bg-[var(--input-bg)] hover:bg-[var(--primary)]/[0.08] border border-[var(--primary)]/10 transition-all py-3 px-4 rounded-[1.5rem] shadow-sm flex items-center justify-between gap-4"
@@ -91,7 +91,7 @@ export default function InventoryPage() {
                         openModal("calendar", { title: `Reponer: ${item.name}`, desc: `Cantidad actual: ${item.qty} ${item.unit}` })
                       }
                     >
-                      📅
+                      <Image src="/icons/common/calendar.svg" alt="Reponer" width={22} height={22} />
                     </button>
                     <strong className="text-[var(--text-brown)] font-semibold text-[0.95rem] truncate" title={item.name}>
                       {item.name}
@@ -103,7 +103,7 @@ export default function InventoryPage() {
                     <div className="flex items-center p-1">
                       <button
                         className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75"
-                        onClick={() => updateItemQty(cat.id, item.name, -1)}
+                        onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, -1)}
                       >
                         -
                       </button>
@@ -112,7 +112,7 @@ export default function InventoryPage() {
                       </span>
                       <button
                         className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75"
-                        onClick={() => updateItemQty(cat.id, item.name, 1)}
+                        onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, 1)}
                       >
                         +
                       </button>
@@ -121,15 +121,15 @@ export default function InventoryPage() {
                     <div className="flex items-center gap-1 pl-4">
                       <button
                         className="p-2 hover:bg-[var(--input-bg)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100 "
-                        onClick={() => openModal("edit-item", { ...item, cat: cat.id, index })}
+                        onClick={() => openModal("edit-item", { ...item, cat: cat.value as InventoryCategory, index })}
                       >
-                        ✏️
+                        <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                       </button>
                       <button
-                        className="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg-light)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100 "
-                        onClick={() => handleRemove(cat.id, item.name)}
+                        className="p-2 hover:bg-[var(--danger-bg-light)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100"
+                        onClick={() => handleRemove(cat.value as InventoryCategory, item.name)}
                       >
-                        🗑️
+                        <Image src="/icons/common/trash.svg" alt="Eliminar" width={18} height={18} />
                       </button>
                     </div>
                   </div>
