@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <style>
+    .stem { fill: none; stroke: #000000; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .soil { fill: #A05A45; stroke: #000000; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .leaf { fill: #FFCC70; stroke: #000000; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .leaf-patch { fill: #FFB732; stroke: #000000; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .accent { fill: #000000; }
+  </style>
+
+  <path class="soil" d="M 30,220 C 40,200 60,195 80,195 C 100,170 156,170 176,195 C 196,195 216,200 226,220 Z" />
+  <circle cx="128" cy="205" r="4" class="accent" />
+
+  <path class="leaf-patch" d="M 60,205 C 70,185 100,185 105,200 C 95,210 65,215 55,205 Z" />
+  <path class="leaf-patch" d="M 196,205 C 186,185 156,185 151,200 C 161,210 191,215 201,205 Z" />
+
+  <path class="stem" d="M 128,140 C 150,110 170,110 190,120" />
+  <path class="stem" d="M 128,110 C 105,95 85,100 70,120" />
+  <path class="stem" d="M 128,185 L 128,70 C 128,40 105,30 85,40" />
+
+  <path class="leaf" d="M 85,40 C 65,30 45,60 55,80 C 70,100 105,75 100,50 Z" />
+  <path class="leaf" d="M 70,120 C 45,115 35,160 55,170 C 75,180 105,145 85,130 Z" />
+  <path class="leaf" d="M 190,120 C 215,115 225,160 205,170 C 185,180 155,145 175,130 Z" />
+</svg>
