@@ -713,7 +713,7 @@
     color: var(--text-white);
   }
   .badge-info {
-    background: var(--brand-dark);
+    background: var(--primary);
     color: var(--text-white);
   }
 

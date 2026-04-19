@@ -40,7 +40,7 @@ export default function WishlistPage() {
               className={`px-4 py-2 text-[0.8rem] font-bold rounded-xl min-w-[50px] min-h-[32px] transition-all ${
                 priorityFilter === p
                   ? "bg-[var(--white)] text-[var(--primary)] shadow-sm"
-                  : "text-[var(--text-gray)] hover:text-[var(--primary)] hover:bg-[var(--white-soft)]"
+                  : "text-[var(--text-brown)] hover:text-[var(--primary)] hover:bg-[var(--white-soft)]"
               }`}
               onClick={() => setPriorityFilter(p)}
             >
@@ -53,7 +53,7 @@ export default function WishlistPage() {
       {/* Contenedor de deseos: Grid responsive con estados vacíos */}
       <div id="wishlist-container" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 w-full px-1">
         {filteredWishlist.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2.5rem]">
+          <div className="col-span-full py-20 text-center text-[var(--text-brown)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2.5rem]">
             {wishlist.length === 0 ? "No hay deseos registrados." : "No hay coincidencias."}
           </div>
         ) : (
@@ -78,7 +78,12 @@ export default function WishlistPage() {
                     <span
                       className={`badge shrink-0 inline-flex items-center gap-1 ${priority === "Alta" ? "badge-danger" : priority === "Media" ? "badge-warning" : "badge-primary"}`}
                     >
-                      <Image src={`/icons/common/prio_${priority === "Alta" ? 1 : priority === "Media" ? 2 : 3}.svg`} alt="" width={10} height={10} />
+                      <Image
+                        src={`/icons/common/prio_${priority === "Alta" ? 1 : priority === "Media" ? 2 : 3}.svg`}
+                        alt=""
+                        width={10}
+                        height={10}
+                      />
                       {priority}
                     </span>
                   </div>
@@ -86,13 +91,13 @@ export default function WishlistPage() {
 
                 {/* BODY: Notas con borde superior sutil */}
                 <div className="flex-1 border-t border-[var(--border-light)]">
-                  <p className="m-0 text-sm text-[var(--text)] bg-[var(--input-bg)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
+                  <p className="text-sm text-[var(--text-brown)] leading-relaxed italic break-words whitespace-pre-wrap">
                     {notes || "Sin notas adicionales."}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones con separador */}
-                <div className="flex items-center justify-between border-t border-[var(--border-light)] pt-8 mt-auto text-[var(--footer-bg)]">
+                <div className="flex items-center justify-between border-t border-[var(--border-light)] mt-auto text-[var(--footer-bg)]">
                   <button className="btn-primary h-8 min-h-[32px] px-4 text-[0.7rem] font-black" onClick={() => removeWish(id)}>
                     ¡Comprado!
                   </button>

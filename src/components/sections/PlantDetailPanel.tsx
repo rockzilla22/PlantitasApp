@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { $resizerWidth } from "@/store/uiStore";
-import { $store, $selectedPlantId, addPlantLog, removePlantLog, removePlant } from "@/store/plantStore";
+import { $store, $selectedPlantId, addPlantLog, removePlantLog, removePlant, updatePlantLog } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import Image from "next/image";
@@ -20,6 +20,11 @@ export function PlantDetailPanel() {
   const [inventoryItem, setInventoryItem] = useState("");
   const [logFilter, setLogFilter] = useState("Todos");
   const [logSortOrder, setLogSortOrder] = useState<"desc" | "asc">("desc");
+
+  const [editingLogId, setEditingLogId] = useState<number | null>(null);
+  const [editLogDate, setEditLogDate] = useState("");
+  const [editLogAction, setEditLogAction] = useState("");
+  const [editLogDetail, setEditLogDetail] = useState("");
 
   const plant = plants.find((p) => p.id === selectedId);
 
@@ -83,6 +88,23 @@ export function PlantDetailPanel() {
     });
     setLogDetail("");
     setInventoryItem("");
+  };
+
+  const handleStartEdit = (log: any) => {
+    setEditingLogId(log.id);
+    setEditLogDate(log.date);
+    setEditLogAction(log.actionType);
+    setEditLogDetail(log.detail);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingLogId === null) return;
+    updatePlantLog(plant.id, editingLogId, {
+      date: editLogDate,
+      actionType: editLogAction as any,
+      detail: editLogDetail,
+    });
+    setEditingLogId(null);
   };
 
   const handleDeletePlant = () => {
@@ -235,37 +257,84 @@ export function PlantDetailPanel() {
           })
           .map((log) => {
             const actionCfg = LOG_ACTIONS.find((a) => a.value === log.actionType);
+            const isEditing = editingLogId === log.id;
+
             return (
               <div key={log.id} className="log-item">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                      {actionCfg?.img ? (
-                        <Image src={actionCfg.img} alt={log.actionType} width={18} height={18} className="object-contain" />
-                      ) : (
-                        <Image src={LOG_ACTION_ICON_BY_VALUE[log.actionType] || "/icons/common/notes.svg"} alt={log.actionType} width={18} height={18} className="object-contain" />
-                      )}
+                {isEditing ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <select 
+                        value={editLogAction} 
+                        onChange={(e) => setEditLogAction(e.target.value)}
+                        className="flex-1 text-sm py-1 px-2 rounded border border-[var(--border)]"
+                      >
+                        {LOG_ACTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                      <input 
+                        type="date" 
+                        value={editLogDate} 
+                        onChange={(e) => setEditLogDate(e.target.value)}
+                        className="text-sm py-1 px-2 rounded border border-[var(--border)]"
+                      />
                     </div>
-                    <strong className="text-[var(--primary)]">{log.actionType}</strong>
+                    <input 
+                      type="text" 
+                      value={editLogDetail} 
+                      onChange={(e) => setEditLogDetail(e.target.value)}
+                      className="text-sm py-1 px-2 rounded border border-[var(--border)] w-full"
+                      placeholder="Detalle..."
+                    />
+                    <div className="flex justify-end gap-2 mt-1">
+                      <button className="btn-text text-xs uppercase font-bold text-[var(--text-gray)]" onClick={() => setEditingLogId(null)}>Cancelar</button>
+                      <button className="btn-primary text-xs py-1 px-3" onClick={handleSaveEdit}>Guardar</button>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                    <small><Image src="/icons/common/calendar.svg" alt="" width={12} height={12} className="inline mr-1" />{formatDate(log.date)}</small>
-                    <button
-                      className="btn-text"
-                      style={{ color: "var(--danger)", padding: 0 }}
-                      onClick={() => {
-                        openModal("confirm", {
-                          title: "¿Eliminar registro?",
-                          message: "Esta acción quitará el evento del historial.",
-                          onConfirm: () => removePlantLog(plant.id, log.id),
-                        });
-                      }}
-                    >
-                      <Image src="/icons/common/trash.svg" alt="Eliminar" width={14} height={14} />
-                    </button>
-                  </div>
-                </div>
-                <p className="text-[var(--text-brown)] text-[0.9rem]">{log.detail}</p>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                          {actionCfg?.img ? (
+                            <Image src={actionCfg.img} alt={log.actionType} width={18} height={18} className="object-contain" />
+                          ) : (
+                            <Image src={LOG_ACTION_ICON_BY_VALUE[log.actionType] || "/icons/common/notes.svg"} alt={log.actionType} width={18} height={18} className="object-contain" />
+                          )}
+                        </div>
+                        <strong className="text-[var(--primary)]">{log.actionType}</strong>
+                      </div>
+                      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                        <small><Image src="/icons/common/calendar.svg" alt="" width={12} height={12} className="inline mr-1" />{formatDate(log.date)}</small>
+                        <div className="flex gap-1">
+                          <button
+                            className="btn-text"
+                            style={{ padding: 0 }}
+                            onClick={() => handleStartEdit(log)}
+                            title="Editar registro"
+                          >
+                            <Image src="/icons/common/pencil.svg" alt="Editar" width={14} height={14} />
+                          </button>
+                          <button
+                            className="btn-text"
+                            style={{ color: "var(--danger)", padding: 0 }}
+                            onClick={() => {
+                              openModal("confirm", {
+                                title: "¿Eliminar registro?",
+                                message: "Esta acción quitará el evento del historial.",
+                                onConfirm: () => removePlantLog(plant.id, log.id),
+                              });
+                            }}
+                          >
+                            <Image src="/icons/common/trash.svg" alt="Eliminar" width={14} height={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-[var(--text-brown)] text-[0.9rem]">{log.detail}</p>
+                  </>
+                )}
               </div>
             );
           })}
