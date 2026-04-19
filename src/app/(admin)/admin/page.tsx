@@ -18,7 +18,8 @@ function getPlanConfig(u: any) {
   const plans = configProject.plans;
   if (u.role === plans.MASTER.id) return plans.MASTER;
   if (u.role === plans.PREMIUM.id) {
-    if (u.premiumExpiresAt && new Date() > new Date(u.premiumExpiresAt)) return plans.FREE;
+    const expires = u.premium_expires_at;
+    if (expires && new Date() > new Date(expires)) return plans.FREE;
     return plans.PREMIUM;
   }
   if (u.role === plans.PRO.id) return plans.PRO;
@@ -380,20 +381,50 @@ export default function AdminPanel() {
                               const plan = getPlanConfig(u);
                               const gSlots = u.gift_slots || 0;
                               const eSlots = u.extra_slots || 0;
+                              const exp = u.premium_expires_at;
+                              const start = u.premium_started_at;
+                              
                               return (
-                                <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-semibold text-[var(--text)]">{plan.label}</span>
-                                  </div>
-                                  {u.role === configProject.plans.PREMIUM.id && u.premiumExpiresAt && (
-                                    <span className="text-[0.7rem] text-[var(--text)]">
-                                      Vence {new Date(u.premiumExpiresAt).toLocaleDateString()}
+                                <div className="flex flex-col gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                                      plan.id === configProject.plans.MASTER.id ? "bg-[var(--danger)] text-white" :
+                                      plan.id === configProject.plans.PREMIUM.id ? "bg-[var(--primary)] text-white" :
+                                      plan.id === configProject.plans.PRO.id ? "bg-[var(--secondary)] text-white" :
+                                      "bg-[var(--border)] text-[var(--text)]"
+                                    }`}>
+                                      {plan.label}
                                     </span>
-                                  )}
-                                  {(gSlots > 0 || eSlots > 0) && (
+                                  </div>
+
+                                  {/* INFO EXTRA */}
+                                  <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                                     <div className="flex flex-col">
-                                      {gSlots > 0 && <span className="text-[10px] text-[var(--primary)] font-bold">+{gSlots} Regalo</span>}
-                                      {eSlots > 0 && <span className="text-[10px] text-[var(--secondary)] font-bold">+{eSlots} Extra</span>}
+                                      <span className="text-[9px] uppercase font-bold text-[var(--text-gray)] opacity-60">Regalo</span>
+                                      <span className="text-xs font-bold text-[var(--text)]">+{gSlots} slots</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <span className="text-[9px] uppercase font-bold text-[var(--text-gray)] opacity-60">Extra</span>
+                                      <span className="text-xs font-bold text-[var(--text)]">+{eSlots} slots</span>
+                                    </div>
+                                  </div>
+
+                                  {exp && (
+                                    <div className="flex flex-col border-t border-[var(--border-light)] pt-1">
+                                      {(() => {
+                                        const isExpired = new Date() > new Date(exp);
+                                        return (
+                                          <>
+                                            <span className={`text-[9px] uppercase font-bold opacity-80 ${isExpired ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
+                                              {isExpired ? "Membresía Vencida" : "Membresía Premium"}
+                                            </span>
+                                            <span className={`text-xs font-bold ${isExpired ? "text-[var(--danger)]" : "text-[var(--text)]"}`}>
+                                              {isExpired ? "Venció: " : "Vence: "} {new Date(exp).toLocaleDateString()}
+                                            </span>
+                                          </>
+                                        );
+                                      })()}
+                                      {start && <span className="text-[8px] text-[var(--text-gray)]">Inicio: {new Date(start).toLocaleDateString()}</span>}
                                     </div>
                                   )}
                                 </div>

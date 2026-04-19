@@ -78,10 +78,17 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
             onSubmit={(e) => {
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
+              const val = parseInt((fd.get("amount") as string) || "0");
+              const unit = fd.get("unit") as string;
+              const base = expiresAt && !isExpired ? new Date(expiresAt) : new Date();
+              if (unit === "months") base.setMonth(base.getMonth() + val);
+              else base.setDate(base.getDate() + val);
+
               props?.onConfirm({
-                action: "gift_premium",
-                amount: fd.get("amount"),
-                unit: fd.get("unit"),
+                role: p.PREMIUM.id,
+                gift_slots: props.giftSlots,
+                extra_slots: props.extraSlots,
+                premium_expires_at: base.toISOString()
               });
               handleClose();
             }}
@@ -131,8 +138,10 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
               props?.onConfirm({
-                action: "gift_pro",
-                slotsToGift: parseInt((fd.get("slots") as string) || "0"),
+                role: p.PRO.id,
+                gift_slots: props.giftSlots + parseInt((fd.get("slots") as string) || "0"),
+                extra_slots: props.extraSlots,
+                premium_expires_at: props.premiumExpiresAt
               });
               handleClose();
             }}
@@ -173,7 +182,12 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               type="button"
               className="w-full rounded-2xl border border-[var(--text)] bg-[var(--text)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--text-white)] transition-all hover:bg-[var(--brand-dark)]"
               onClick={() => {
-                props?.onConfirm({ action: "reset_free" });
+                props?.onConfirm({ 
+                  role: p.FREE.id,
+                  gift_slots: 0,
+                  extra_slots: 0,
+                  premium_expires_at: null
+                });
                 handleClose();
               }}
             >

@@ -252,10 +252,26 @@ export function Header() {
                         <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Plan Actual</p>
                         <div className="flex items-center justify-between mt-1">
                           <p className="text-sm font-bold text-[var(--text)] m-0">{planConfig.label}</p>
-                          <span className="text-[0.6rem] px-2 py-0.5 rounded-full bg-[var(--primary)] text-white font-bold uppercase tracking-tighter">Activo</span>
+                          {(() => {
+                            const isExpired = premiumExpiresAt && new Date() > new Date(premiumExpiresAt);
+                            return (
+                              <span className={`text-[0.6rem] px-2 py-0.5 rounded-full text-white font-bold uppercase tracking-tighter ${isExpired ? "bg-red-500" : "bg-[var(--primary)]"}`}>
+                                {isExpired ? "Vencido" : "Activo"}
+                              </span>
+                            );
+                          })()}
                         </div>
                         <p className="text-[0.7rem] text-[var(--text-gray)] mt-1 italic font-medium">
-                          {premiumExpiresAt ? `Vence el ${expirationDate}` : "Vigencia: Ilimitada"}
+                          {premiumExpiresAt ? (
+                            (() => {
+                              const isExpired = new Date() > new Date(premiumExpiresAt);
+                              return (
+                                <span className={isExpired ? "text-red-500 font-bold" : ""}>
+                                  {isExpired ? "Venció el " : "Vence el "} {expirationDate}
+                                </span>
+                              );
+                            })()
+                          ) : "Vigencia: Ilimitada"}
                         </p>
                       </div>
 

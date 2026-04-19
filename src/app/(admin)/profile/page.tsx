@@ -305,7 +305,11 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
-                {isPremium && <span className="text-xs text-[var(--text-brown)]">Vence {expirationDate}</span>}
+                {user.app_metadata?.premium_expires_at && (
+                  <span className={`text-xs font-bold ${new Date() > new Date(user.app_metadata.premium_expires_at) ? "text-[var(--danger)]" : "text-[var(--text-brown)]"}`}>
+                    {new Date() > new Date(user.app_metadata.premium_expires_at) ? "Venció: " : "Vence: "} {expirationDate}
+                  </span>
+                )}
               </div>
 
               {/* Slots */}
