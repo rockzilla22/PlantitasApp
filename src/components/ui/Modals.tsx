@@ -566,15 +566,17 @@ export function Modals() {
               </div>
             </div>
             {/* --- Guardar o Cancelar --- */}
-            <div className="modal-actions col-span-2 flex flex-col-reverse sm:flex-row sm:gap-4 mt-20">
-              <button type="button" className="btn-text text-[var(--danger)] w-full sm:w-auto py-2" onClick={handleClose}>
+            <div className="mt-8 space-y-3">
+              <div className="modal-actions col-span-2 flex flex-col-reverse items-center justify-center sm:flex-row sm:gap-4">
+                <button type="button" className="btn-text text-[var(--danger)] w-full max-w-[220px] sm:w-auto py-2" onClick={handleClose}>
                 Cancelar
-              </button>
-              <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full sm:w-auto py-2">
-                {type === "edit-plant" ? "Actualizar" : "Guardar Planta"}
-              </button>
+                </button>
+                <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full max-w-[220px] sm:w-auto py-2">
+                  {type === "edit-plant" ? "Actualizar" : "Guardar Planta"}
+                </button>
+              </div>
+              <p className="text-center text-sm text-[var(--text-gray)]">Todos los campos con * son obligatorios.</p>
             </div>
-              <span className="items-center justify-center text-center text-sm">Todos los campos con * son Obligatorios.</span>              
           </form>
         )}
 

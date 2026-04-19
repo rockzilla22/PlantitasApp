@@ -8,7 +8,7 @@ import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { getPlanLevel } from "@/libs/syncService";
+import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 import Link from "next/link";
 import Image from "next/image";
@@ -52,7 +52,7 @@ export function Header() {
     ? new Date(user.app_metadata.premium_expires_at).toLocaleDateString()
     : "Ilimitada";
 
-  const maxSlots = isMasterAdmin ? Infinity : planConfig.maxSlots + (user?.app_metadata?.purchased_slots || 0);
+  const maxSlots = isMasterAdmin ? Infinity : getEffectiveMaxSlots(user);
   const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
   
   const usedSlots = useMemo(() => {

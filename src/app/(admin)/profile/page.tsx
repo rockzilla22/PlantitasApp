@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
+import { getPlanLevel, hasPremium, getEffectiveMaxSlots, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
 import { $store } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
@@ -135,7 +135,7 @@ export default function ProfilePage() {
     return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
   }, [data]);
 
-  const maxSlots = isMasterAdmin ? Infinity : planConfig.maxSlots + (user.app_metadata?.purchased_slots || 0);
+  const maxSlots = isMasterAdmin ? Infinity : getEffectiveMaxSlots(user);
   const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
   const usagePercent = isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots as number)) * 100);
 
