@@ -6,6 +6,7 @@ import { $user } from "@/store/authStore";
 import configProject from "@/data/configProject";
 import { PricingSection } from "@/components/sections/PricingSection";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 type FeatureItem = {
   title: string;
@@ -119,11 +120,11 @@ export default function LandingPage() {
           Esta app germinó como una visión de <strong className="text-[var(--primary)]">Erzu</strong> por simplificar el cuidado botánico.
           Fue cultivada tecla a tecla por{" "}
           <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
-            <strong className="text-[var(--primary)]">JFEspanolito</strong>
+            <strong className="text-[var(--primary)]">JFEspanolito </strong>
           </a>
           y
           <a href="https://github.com/rockzilla22" target="_blank" rel="noopener noreferrer">
-            <strong className="text-[var(--primary)]">Alex</strong>
+            <strong className="text-[var(--primary)]"> Alex</strong>
           </a>
           , en medio de estrategias, ataques coordinados y partidas de Dota. Mientras defendíamos el ancestro, también construíamos el
           refugio digital perfecto para tus plantas. Porque sabemos que cuidar de una selva personal requiere la misma precisión que ganar
@@ -319,7 +320,9 @@ export default function LandingPage() {
           border: 1px solid var(--border);
           border-radius: 2rem;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
         }
 
         .feature-item:hover {

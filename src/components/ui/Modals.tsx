@@ -2,7 +2,7 @@
 
 import { useStore } from "@nanostores/react";
 import { $activeModal, closeModal, openModal } from "@/store/modalStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   addPlant,
   $store,
@@ -19,10 +19,11 @@ import {
   mergeData,
   setStoreData,
 } from "@/store/plantStore";
-import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { PotLabel } from "@/components/ui/PotLabel";
+import { CustomSelect } from "@/components/ui/CustomSelect";
+import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import configProject from "@/data/configProject";
-import NextImage from "next/image";
+import Image from "next/image";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -34,85 +35,7 @@ import {
   PROP_METHODS,
   SEASON_TASK_TYPES,
   WISH_PRIORITIES,
-  type Option,
 } from "@/data/catalog";
-
-function CustomSelect({
-  options,
-  defaultValue,
-  onChange,
-  name,
-  className = "",
-}: {
-  options: Option[];
-  defaultValue: string;
-  onChange?: (val: string) => void;
-  name: string;
-  className?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(defaultValue);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const selectedOption = options.find((o) => o.value === selected) || options[0];
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    setSelected(defaultValue);
-  }, [defaultValue]);
-
-  const handleSelect = (val: string) => {
-    setSelected(val);
-    if (onChange) onChange(val);
-    setIsOpen(false);
-  };
-
-  return (
-    <div className={`relative w-full ${className}`} ref={containerRef}>
-      <input type="hidden" name={name} value={selected} />
-      <div
-        className="flex items-center gap-3 p-3 bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all h-[52px]"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {selectedOption?.img && (
-          <div className="w-8 h-8 flex items-center justify-center shrink-0">
-            <NextImage src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
-          </div>
-        )}
-        <span className="flex-1 text-sm font-bold text-[var(--text)]">{selectedOption?.label}</span>
-        <span className={`text-[var(--text-gray)] transition-transform ${isOpen ? "rotate-180" : ""}`}>▼</span>
-      </div>
-
-      {isOpen && (
-        <div className="absolute z-[100] w-full mt-2 bg-[var(--white)] border border-[var(--border-light)] rounded-2xl shadow-xl max-h-60 overflow-y-auto animate-in fade-in zoom-in duration-200">
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`flex items-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
-              onClick={() => handleSelect(option.value)}
-            >
-              {option.img && (
-                <div className="w-7 h-7 flex items-center justify-center shrink-0">
-                  <NextImage src={option.img} alt="" width={28} height={28} className="object-contain" />
-                </div>
-              )}
-              <span className="text-sm font-medium text-[var(--text)]">{option.label}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: () => void }) {
   const p = configProject.plans;
@@ -136,7 +59,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
           <button
             key={plan.id}
             type="button"
-            className={`flex-1 py-3 text-[0.65rem] font-black uppercase tracking-widest rounded-xl transition-all ${
+            className={`flex-1 py-3 text-[0.9rem] font-black uppercase tracking-widest rounded-xl transition-all ${
               activePlanTab === plan.id
                 ? "bg-[var(--white)] text-[var(--primary)] shadow-md ring-1 ring-[var(--border)]"
                 : "text-[var(--text-gray)] opacity-80 hover:bg-[var(--white)]/70 hover:text-[var(--text)]"
@@ -155,10 +78,17 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
             onSubmit={(e) => {
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
+              const val = parseInt((fd.get("amount") as string) || "0");
+              const unit = fd.get("unit") as string;
+              const base = expiresAt && !isExpired ? new Date(expiresAt) : new Date();
+              if (unit === "months") base.setMonth(base.getMonth() + val);
+              else base.setDate(base.getDate() + val);
+
               props?.onConfirm({
-                action: "gift_premium",
-                amount: fd.get("amount"),
-                unit: fd.get("unit"),
+                role: p.PREMIUM.id,
+                gift_slots: props.giftSlots,
+                extra_slots: props.extraSlots,
+                premium_expires_at: base.toISOString()
               });
               handleClose();
             }}
@@ -208,8 +138,10 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
               props?.onConfirm({
-                action: "gift_pro",
-                slotsToGift: parseInt((fd.get("slots") as string) || "0"),
+                role: p.PRO.id,
+                gift_slots: props.giftSlots + parseInt((fd.get("slots") as string) || "0"),
+                extra_slots: props.extraSlots,
+                premium_expires_at: props.premiumExpiresAt
               });
               handleClose();
             }}
@@ -230,9 +162,6 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
                   min="0"
                   className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
                 />
-                <span className="mt-2 block text-[0.55rem] italic text-[var(--text-gray)] opacity-80">
-                  Base Pro: {p.PRO.maxSlots} slots. Gift slots se acumulan encima.
-                </span>
               </div>
             </div>
             <button type="submit" className="btn-warning w-full rounded-2xl py-4 text-xs font-black uppercase tracking-[0.2em]">
@@ -245,7 +174,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="rounded-3xl border border-[var(--secondary)]/25 bg-[var(--warning-bg)]/75 p-6">
               <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">RESETEAR A NIVEL USUARIO</p>
-              <p className="text-[0.65rem] leading-relaxed text-[var(--text)]">
+              <p className="text-[0.9rem] leading-relaxed text-[var(--text)]">
                 Elimina Premium, Pro, y todos los gift slots. El usuario vuelve al límite base de {p.FREE.maxSlots} slots sin nube.
               </p>
             </div>
@@ -253,7 +182,12 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               type="button"
               className="w-full rounded-2xl border border-[var(--text)] bg-[var(--text)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--text-white)] transition-all hover:bg-[var(--brand-dark)]"
               onClick={() => {
-                props?.onConfirm({ action: "reset_free" });
+                props?.onConfirm({ 
+                  role: p.FREE.id,
+                  gift_slots: 0,
+                  extra_slots: 0,
+                  premium_expires_at: null
+                });
                 handleClose();
               }}
             >
@@ -438,7 +372,13 @@ export function Modals() {
         ref={dialogRef}
         onCancel={handleClose}
         id={`modal-${type}`}
-        className={type === "add-plant" || type === "edit-plant" ? "plant-form-modal" : undefined}
+        className={
+          type === "add-plant" || type === "edit-plant"
+            ? "plant-form-modal"
+            : type === "add-season-task" || type === "edit-season-task"
+              ? "season-task-modal"
+              : undefined
+        }
       >
         {/* --- MODAL DE AGREGAR/EDITAR PLANTA --- */}
         {(type === "add-plant" || type === "edit-plant") && (
@@ -446,12 +386,12 @@ export function Modals() {
             <h3 className="flex items-center gap-2">
               {type === "edit-plant" ? (
                 <>
-                  <NextImage src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
+                  <Image src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
                   <span>Modificar Planta</span>
                 </>
               ) : (
                 <>
-                  <NextImage src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
+                  <Image src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
                   <span>Nueva Planta</span>
                 </>
               )}
@@ -488,7 +428,6 @@ export function Modals() {
                 <input
                   type="text"
                   name="p-subtype"
-                  required
                   placeholder="Ej: Epífita"
                   defaultValue={props?.subtype || props?.initialSubtype || ""}
                 />
@@ -565,6 +504,7 @@ export function Modals() {
               <label>Planta Madre (Opcional)</label>
               <CustomSelect
                 name="prop-parent"
+                searchable={true}
                 options={[
                   { value: "", label: "-- Sin madre (Independiente) --" },
                   ...plants

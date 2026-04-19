@@ -54,34 +54,35 @@ export default function NurseryPage() {
         </button>
       </div>
 
+      {/* FILTROS: Estilo Nursery Pro con botones tipo "badge" y estado activo resaltado */}
       <div className="flex items-center gap-3 flex-wrap mb-6">
         <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
           <button
-            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "TODOS" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
+            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "TODOS" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
             onClick={() => setFilter("TODOS")}
           >
             Todos
           </button>
           <button
-            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "Activo" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
+            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "Activo" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
             onClick={() => setFilter("Activo")}
           >
             Activos
           </button>
           <button
-            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all  ${filter === "Éxito" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
+            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all  ${filter === "Éxito" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
             onClick={() => setFilter("Éxito")}
           >
             Éxito
           </button>
           <button
-            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "Trasplantada" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
+            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "Trasplantada" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
             onClick={() => setFilter("Trasplantada")}
           >
             Trasplantadas
           </button>
           <button
-            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all  ${filter === "Fracaso" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
+            className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all  ${filter === "Fracaso" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
             onClick={() => setFilter("Fracaso")}
           >
             Fallos
@@ -89,9 +90,10 @@ export default function NurseryPage() {
         </div>
       </div>
 
+      {/* LISTADO: Tarjetas con borde superior de color según estado y acciones contextuales */}
       <div id="nursery-list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full px-1">
         {filteredList.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2rem]">
+          <div className="col-span-full py-20 text-center text-[var(--text-brown)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2rem]">
             No hay propagaciones registradas.
           </div>
         ) : (
@@ -122,30 +124,33 @@ export default function NurseryPage() {
                 {/* HEADER: Estilo Nursery Pro */}
                 <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
                   <div>
-                    <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
-                      <Image src="/icons/environment/log/lab.svg" alt="" width={24} height={24} /> {prop.name}
+                    <h3 className="text-[var(--primary)] mb-4 flex items-center gap-3 text-lg font-bold">
+                      <Image src="/icons/environment/methods/layering.svg" alt="" width={24} height={24} /> {prop.name}
                     </h3>
-                    <small className="text-[0.65rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60 flex items-center gap-1">
-                      <Image src={getMethodIcon(prop.method)} alt="" width={16} height={16} /> {prop.method}
-                    </small>
+                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                      <Image src={getMethodIcon(prop.method)} alt="" width={16} height={16} className="shrink-0 object-contain" />
+                      <span>{prop.method}</span>
+                    </p>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className={`badge ${badgeClass} !text-[0.6rem] !px-2 flex items-center gap-1`}>
+                    <span className={`badge ${badgeClass} !text-[0.7rem] !px-2 flex items-center gap-1 mb-4`}>
                       <Image src={iconSrc} alt="" width={12} height={12} /> {prop.status}
                     </span>
-                    <small className="text-[0.6rem] font-bold text-[var(--text-gray)] opacity-40 flex items-center gap-1"><Image src="/icons/common/calendar.svg" alt="" width={10} height={10} /> {formatDate(prop.startDate)}</small>
+                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                      <Image src="/icons/common/calendar.svg" alt="" width={10} height={10} /> {formatDate(prop.startDate)}
+                    </p>
                   </div>
                 </div>
 
                 {/* BODY: Notas con borde superior sutil */}
-                <div className="flex-1 mb-6 border-t border-[var(--border-light)] pt-3">
-                  <p className="m-0 text-sm text-[var(--text-gray)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
+                <div className="flex-1 mb-4 border-t border-[var(--border-light)]">
+                  <p className="m-0 text-base text-[var(--text-brown)] leading-relaxed italic  break-words whitespace-pre-wrap">
                     {prop.notes || "Sin notas del proceso."}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-gray)]">
+                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-brown)]">
                   <div className="flex gap-2">
                     {prop.status === "Activo" ? (
                       <>
@@ -171,7 +176,7 @@ export default function NurseryPage() {
                       </button>
                     ) : null}
                   </div>
-                  <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 group-hover:opacity-100 transition-opacity">
                     <button
                       className="p-2 hover:scale-110 transition-transform"
                       title="Recordatorio"

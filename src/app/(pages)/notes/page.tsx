@@ -49,8 +49,8 @@ export default function NotesPage() {
 
                 {/* BODY: El contenido de la nota con el diseño de quote */}
                 <div className="flex-1 border-t border-[var(--border-light)] pt-4">
-                  <div className="bg-[var(--input-bg)] rounded-2xl p-4 border border-[var(--border-light)] italic text-[var(--text)] text-sm leading-relaxed break-words whitespace-pre-wrap">
-                    " {note.content} "
+                  <div className="rounded-2xl p-4 border border-[var(--border-light)] italic text-[var(--text)] text-sm leading-relaxed break-words whitespace-pre-wrap">
+                    {note.content}
                   </div>
                 </div>
 

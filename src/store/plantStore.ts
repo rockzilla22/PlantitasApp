@@ -220,6 +220,24 @@ export const addPlantLog = (plantId: number, log: Omit<PlantLog, "id">) => {
   setDirty(true);
 };
 
+export const updatePlantLog = (plantId: number, logId: number, log: Partial<PlantLog>) => {
+  const data = $store.get();
+  const plants = data.plants.map(p => {
+    if (p.id === plantId) {
+      const updatedLogs = p.logs.map(l => l.id === logId ? { ...l, ...log } : l);
+      // Recalculamos el último riego por si cambió la fecha o el tipo del log editado
+      const riegos = updatedLogs
+        .filter(l => l.actionType === "Riego")
+        .sort((a, b) => b.date.localeCompare(a.date));
+      const lastWateredDate = riegos.length > 0 ? riegos[0].date : "";
+      return { ...p, logs: updatedLogs, lastWateredDate };
+    }
+    return p;
+  });
+  $store.setKey("plants", plants);
+  setDirty(true);
+};
+
 export const removePlantLog = (plantId: number, logId: number) => {
   const data = $store.get();
   const plants = data.plants.map(p => {

@@ -23,7 +23,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
   return (
     <div id="plants-list" className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-8 gap-y-8 w-full px-1 min-w-0">
       {sortedPlants.length === 0 ? (
-        <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border)] rounded-[2rem]">
+        <div className="col-span-full py-20 text-center text-[var(--text-brown)] italic border-2 border-dashed border-[var(--border)] rounded-[2rem]">
           No hay plantas registradas. ¡Añadí tu primera planta!
         </div>
       ) : (
@@ -44,48 +44,49 @@ export function PlantGrid({ plants }: PlantGridProps) {
               {/* ROW 1: HEADER (Identidad) */}
               <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                 <div className="flex flex-col gap-y-2 min-w-0">
-                  <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
-                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                  <h3 className="text-[var(--primary)] mb-2 flex items-center gap-3 text-lg font-bold">
+                    <div className="flex items-center justify-center shrink-0">
                       {isCustom ? (
                         <span className="text-2xl">{plant.icon}</span>
                       ) : (
-                        <Image src={plantImg} alt={plant.type} width={40} height={40} className="object-contain" />
+                        <Image src={plantImg} alt={plant.type} width={26} height={26} className="object-contain" />
                       )}
                     </div>
                     <span className="truncate">{plant.name}</span>
                   </h3>
-                  <small className="text-[0.8rem] font-bold text-[var(--text-gray)] uppercase tracking-widest truncate block opacity-70">
-                    {plant.location}
-                  </small>
+                  <div className="flex items-center gap-1">
+                    <Image src="/icons/common/map.svg" alt="map" width={14} height={14} className="inline" />
+                    <small className="text-xs text-[var(--text-brown)] uppercase tracking-widest truncate block">{plant.location}</small>
+                  </div>
                 </div>
                 <div className="flex flex-col items-end gap-y-2 shrink-0">
-                  <span className="badge badge-success text-[0.7rem] px-3 py-1">{plant.type}</span>
-                  <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">{plant.light}</small>
+                  <span className="badge badge-info text-[0.7rem] px-3 py-1">{plant.type}</span>
                 </div>
               </div>
 
               {/* ROW 2: BODY (Info Técnica) */}
               <div className="pt-1">
-                <div className="flex justify-between items-center rounded-2xl px-5 py-3">
+                <div className="flex justify-between items-center rounded-2xl px-5">
                   <div className="flex flex-col gap-y-2">
-                    <span className="text-[0.8rem] font-bold text-[var(--text-gray)] block mb-1 opacity-60">Último Riego</span>
+                    <span className="text-[0.8rem] font-bold text-[var(--text-brown)] block mb-1">Último Riego</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[0.8rem] text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
-                      <Image src="/icons/environment/inventory/water_drops.svg" alt="" width={14} height={14} className="inline mr-1" />{formatDate(plant.lastWateredDate)}
+                    <span className="text-[0.8rem] text-[var(--text-brown)] bg-[var(--card-bg)] px-3">
+                      <Image src="/icons/environment/inventory/water_drops.svg" alt="" width={14} height={14} className="inline mr-1" />
+                      {formatDate(plant.lastWateredDate)}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* ROW 3: FOOTER (Acciones) */}
-              <div className="flex items-center justify-between pt-2 mt-auto text-[var(--footer-bg)]">
+              <div className="flex items-center justify-between mt-auto text-[var(--footer-bg)]">
                 <div className="flex flex-col gap-y-2">
                   <span className="text-[0.85rem] italic">Perfil Completo</span>
                 </div>
-                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
-                  ➔
-                </button>
+                 <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
+                   Ver más
+                 </button>
               </div>
             </div>
           );
@@ -94,4 +95,3 @@ export function PlantGrid({ plants }: PlantGridProps) {
     </div>
   );
 }
-

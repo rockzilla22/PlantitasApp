@@ -7,14 +7,19 @@ export type PlanLevel = string;
 
 export function getPlanLevel(user: User | null): PlanLevel {
   if (!user) return configProject.plans.NONE.id;
-  const role = user.app_metadata?.role;
-  if (role === configProject.plans.MASTER.id) return configProject.plans.MASTER.id;
-  if (role === configProject.plans.PREMIUM.id) {
+  const role = String(user.app_metadata?.role || "").toLowerCase();
+  
+  const masterId = configProject.plans.MASTER.id.toLowerCase();
+  const premiumId = configProject.plans.PREMIUM.id.toLowerCase();
+  const proId = configProject.plans.PRO.id.toLowerCase();
+
+  if (role === masterId) return configProject.plans.MASTER.id;
+  if (role === premiumId) {
     const exp = user.app_metadata?.premium_expires_at;
     if (exp && new Date() > new Date(exp)) return configProject.plans.FREE.id;
     return configProject.plans.PREMIUM.id;
   }
-  if (role === configProject.plans.PRO.id) return configProject.plans.PRO.id;
+  if (role === proId) return configProject.plans.PRO.id;
   return configProject.plans.FREE.id;
 }
 

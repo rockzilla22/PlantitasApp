@@ -108,23 +108,23 @@ export default function SeasonPage() {
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex items-center gap-2 shrink-0 ml-2 border-l border-[var(--border)] pl-4">
+                  <div className="flex items-center gap-2 shrink-0 ml-2 pl-4">
                     <button
-                      className="p-2 hover:scale-125 transition-transform"
+                      className="p-2 transition-transform hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl"
                       title="Agendar"
                       onClick={() => openModal("calendar", { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}
                     >
                       <Image src="/icons/common/calendar.svg" alt="Agendar" width={22} height={22} />
                     </button>
                     <button
-                      className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all opacity-60 hover:opacity-100"
+                      className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all opacity-60 hover:opacity-100 hover:text-[var(--primary)] hover:bg-[var(--input-bg)] "
                       title="Editar"
                       onClick={() => openModal("edit-season-task", { ...t, season: s.name, index: idx })}
                     >
                       <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                     </button>
                     <button
-                      className="p-2 hover:bg-[var(--danger-bg-light)] rounded-xl transition-all opacity-60 hover:opacity-100"
+                      className="p-2 hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-all opacity-60 hover:opacity-100"
                       title="Borrar"
                       onClick={() => handleRemove(s.name, idx)}
                     >

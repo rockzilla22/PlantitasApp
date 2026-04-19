@@ -694,24 +694,27 @@
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 0.7rem;
-
     text-transform: uppercase;
   }
   .badge-success {
     background: var(--success-bg);
-    color: var(--primary);
+    color: var(--text-white);
   }
   .badge-warning {
-    background: var(--warning-bg);
-    color: var(--warning-dark);
+    background: var(--secondary);
+    color: var(--text-white);
   }
   .badge-danger {
-    background: var(--danger-bg);
-    color: var(--danger);
+    background: var(--danger);
+    color: var(--text-white);
+  }
+  .badge-primary {
+    background: var(--primary);
+    color: var(--text-white);
   }
   .badge-info {
-    background: var(--info-bg);
-    color: var(--info-dark);
+    background: var(--primary);
+    color: var(--text-white);
   }
 
   /* ── Inventory ─────────────────────────────────────────── */
@@ -901,6 +904,12 @@
     overflow: visible;
   }
 
+  dialog.season-task-modal {
+    max-width: 560px;
+    min-height: 540px;
+    overflow: visible;
+  }
+
   @media (min-width: 600px) {
     dialog {
       padding: 2rem;
@@ -909,6 +918,10 @@
 
     dialog.plant-form-modal {
       width: min(92vw, 620px);
+    }
+
+    dialog.season-task-modal {
+      width: min(92vw, 560px);
     }
   }
 
@@ -1016,7 +1029,7 @@
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--primary);
-    color: var(--text-brown);
+    color: var(--text-white);
   }
   .btn-primary:disabled {
     opacity: 0.6;

@@ -102,16 +102,16 @@ export default function InventoryPage() {
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="flex items-center p-1">
                       <button
-                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75"
+                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
                         onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, -1)}
                       >
                         -
                       </button>
-                      <span className="text-[0.75rem] uppercase px-3 text-[var(--primary)] min-w-[70px] text-center">
+                      <span className="text-[0.8rem] font-semibold uppercase px-3 text-[var(--primary)] min-w-[70px] text-center">
                         {item.qty} {item.unit}
                       </span>
                       <button
-                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] transition-colors active:scale-75"
+                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
                         onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, 1)}
                       >
                         +
@@ -126,7 +126,7 @@ export default function InventoryPage() {
                         <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                       </button>
                       <button
-                        className="p-2 hover:bg-[var(--danger-bg-light)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100"
+                        className="p-2 hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100"
                         onClick={() => handleRemove(cat.value as InventoryCategory, item.name)}
                       >
                         <Image src="/icons/common/trash.svg" alt="Eliminar" width={18} height={18} />

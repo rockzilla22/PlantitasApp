@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 
 export default function PrivacyPage() {
@@ -17,8 +16,8 @@ export default function PrivacyPage() {
           <h2>1. Gestión de Identidad</h2>
           <p>
             PlantitasApp utiliza <strong>Google OAuth 2.0</strong> y <strong>Supabase Auth</strong> como proveedores de identidad. Al
-            iniciar sesión, solo recibimos y almacenamos los metadatos básicos proporcionados por Google (nombre, correo electrónico y
-            foto de perfil) para crear tu perfil de usuario único y garantizar una experiencia personalizada.
+            iniciar sesión, solo recibimos y almacenamos los metadatos básicos proporcionados por Google (nombre, correo electrónico y foto
+            de perfil) para crear tu perfil de usuario único y garantizar una experiencia personalizada.
           </p>
         </section>
 
@@ -27,8 +26,8 @@ export default function PrivacyPage() {
           <p>Nuestra política es estricta y transparente:</p>
           <ul>
             <li>
-              <strong>Validación:</strong> Los datos se utilizan exclusivamente para validar tu identidad y permitir el acceso a tu
-              gestión de plantas, inventario y notas.
+              <strong>Validación:</strong> Los datos se utilizan exclusivamente para validar tu identidad y permitir el acceso a tu gestión
+              de plantas, inventario y notas.
             </li>
             <li>
               <strong>No Spam:</strong> No utilizamos tu correo para campañas de marketing, listas de difusión ni publicidad intrusiva.
@@ -57,16 +56,15 @@ export default function PrivacyPage() {
         <section className="privacy-section">
           <h2>4. Control del Usuario</h2>
           <p>
-            En cumplimiento con los estándares internacionales de privacidad, tenés el control total. Podés solicitar la eliminación
-            total de tu cuenta y todos los datos asociados en cualquier momento desde la configuración de tu perfil o contactándonos
-            directamente.
+            En cumplimiento con los estándares internacionales de privacidad, tenés el control total. Podés solicitar la eliminación total
+            de tu cuenta y todos los datos asociados en cualquier momento desde la configuración de tu perfil o contactándonos directamente.
           </p>
         </section>
 
         <footer className="privacy-footer">
           <p>
             Al utilizar PlantitasApp, aceptas estos términos. <br />
-            Cultivando privacidad, bit a bit. 🌿
+            Cultivando privacidad, bit a bit.
           </p>
         </footer>
       </main>
