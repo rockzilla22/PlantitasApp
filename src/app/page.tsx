@@ -1,46 +1,22 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
+import configProject from "@/data/configProject";
+import { PricingSection } from "@/components/sections/PricingSection";
 
 export default function LandingPage() {
   const router = useRouter();
   const user = useStore($user);
 
-  const features = [
-    {
-      title: "🌱 Mis Plantas",
-      description: "Registra cada ejemplar con su ubicación, luz y sustrato. Lleva el historial completo de riegos y cuidados.",
-      icon: "🌿",
-    },
-    {
-      title: "🧪 Propagación",
-      description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
-      icon: "🧪",
-    },
-    {
-      title: "📅 Temporada",
-      description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
-      icon: "📅",
-    },
-    {
-      title: "📦 Inventario",
-      description: "Control de stock de tus insumos: sustratos, fertilizantes y medicamentos siempre al día.",
-      icon: "📦",
-    },
-    {
-      title: "✨ Lista de Deseos",
-      description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
-      icon: "✨",
-    },
-    {
-      title: "📝 Notas",
-      description: "Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín.",
-      icon: "📝",
-    },
-  ];
+  const features = Object.values(configProject.navigation.ES)
+    .filter((item) => item.href && item.label !== "Jardín")
+    .map((item) => ({
+      title: item.label,
+      description: item.description,
+      icon: item.icon || "🌱",
+    }));
 
   return (
     <div className="landing-container">
@@ -85,37 +61,7 @@ export default function LandingPage() {
       </section>
 
       {/* How it Works / Plans */}
-      <section className="info-section bg-soft">
-        <div className="section-title ">
-          <h2>Privacidad por diseño</h2>
-          <p className="!text-[var(--text-brown)]">Tus datos son tuyos. Elige cómo guardarlos.</p>
-        </div>
-
-        <div className="plans-grid">
-          <div className="plan-card">
-            <h3>Plan Gratuito 🌱</h3>
-            <p className="plan-subtitle">100% Local y Privado</p>
-            <ul>
-              <li>✅ Todas las funciones incluidas</li>
-              <li>✅ Datos en tu navegador (almacenamiento local)</li>
-              <li>✅ Respaldo e Importación manual</li>
-              <li>✅ Sin necesidad de crear cuenta</li>
-            </ul>
-          </div>
-
-          <div className="plan-card premium">
-            <div className="premium-badge">RECOMENDADO</div>
-            <h3>Plan Premium ☁</h3>
-            <p className="plan-subtitle">Sincronización en la Nube</p>
-            <ul>
-              <li>✅ Todo lo del plan gratuito</li>
-              <li>✅ Respaldo automático en la nube</li>
-              <li>✅ Acceso multi-dispositivo</li>
-              <li>✅ Papelera de registros recuperable</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* Features Grid */}
       <section className="info-section">
@@ -162,7 +108,7 @@ export default function LandingPage() {
 
       <style jsx>{`
         .landing-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 2rem 1rem;
         }
@@ -322,66 +268,6 @@ export default function LandingPage() {
         .section-title p {
           font-size: 1.1rem;
           color: var(--text-brown);
-        }
-
-        .plans-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        @media (max-width: 768px) {
-          .plans-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .plan-card {
-          padding: 3rem;
-          background: var(--background);
-          border-radius: var(--radius);
-          border: 1px solid var(--border);
-          position: relative;
-        }
-
-        .plan-card.premium {
-          background: white;
-          border: 2px solid var(--secondary);
-          box-shadow: 0 10px 30px rgba(255, 160, 0, 0.1);
-        }
-
-        .premium-badge {
-          position: absolute;
-          top: -12px;
-          right: 20px;
-          background: var(--secondary);
-          color: white;
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 800;
-        }
-
-        .plan-card h3 {
-          font-size: 1.5rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .plan-subtitle {
-          color: var(--text-brown);
-          margin-bottom: 2rem;
-          font-size: 0.9rem;
-        }
-
-        .plan-card ul {
-          list-style: none;
-        }
-
-        .plan-card li {
-          margin-bottom: 0.75rem;
-          font-size: 0.95rem;
         }
 
         .features-grid {

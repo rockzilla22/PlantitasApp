@@ -151,7 +151,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
             }`}
             onClick={() => setActivePlanTab(plan.id)}
           >
-            {plan.icon} {plan.label}
+            {plan.label}
           </button>
         ))}
       </div>
@@ -517,7 +517,7 @@ export function Modals() {
                   name="p-location"
                   options={PLANT_LOCATIONS}
                   defaultValue={
-                    PLANT_LOCATIONS.some((option) => option.value === props?.location) ? props.location : (props?.location ? "Otros" : "Sala")
+                    PLANT_LOCATIONS.some((option) => option.value === props?.location) ? props.location : props?.location ? "Otros" : "Sala"
                   }
                   onChange={(val) => setPlantLocation(val)}
                 />
@@ -537,11 +537,7 @@ export function Modals() {
               {/* --- Luz --- */}
               <div className="form-group mb-0">
                 <label>☀️ Luz</label>
-                <CustomSelect
-                  name="p-light"
-                  options={LIGHT_LEVELS}
-                  defaultValue={props?.light || "Media"}
-                />
+                <CustomSelect name="p-light" options={LIGHT_LEVELS} defaultValue={props?.light || "Media"} />
               </div>
             </div>
             {/* --- Maceta y Dormancia --- */}
@@ -549,27 +545,19 @@ export function Modals() {
               {/* --- Maceta --- */}
               <div className="form-group mb-0">
                 <PotLabel />
-                <CustomSelect
-                  name="p-pot"
-                  options={POT_TYPES}
-                  defaultValue={props?.potType || "Plástico"}
-                />
+                <CustomSelect name="p-pot" options={POT_TYPES} defaultValue={props?.potType || "Plástico"} />
               </div>
               {/* --- Dormancia --- */}
               <div className="form-group mb-0">
                 <label>💤 Dormancia</label>
-                <CustomSelect
-                  name="p-dormancy"
-                  options={DORMANCIES}
-                  defaultValue={props?.dormancy || "Ninguna"}
-                />
+                <CustomSelect name="p-dormancy" options={DORMANCIES} defaultValue={props?.dormancy || "Ninguna"} />
               </div>
             </div>
             {/* --- Guardar o Cancelar --- */}
             <div className="mt-8 space-y-3">
               <div className="modal-actions col-span-2 flex flex-col-reverse items-center justify-center sm:flex-row sm:gap-4">
                 <button type="button" className="btn-text text-[var(--danger)] w-full max-w-[220px] sm:w-auto py-2" onClick={handleClose}>
-                Cancelar
+                  Cancelar
                 </button>
                 <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full max-w-[220px] sm:w-auto py-2">
                   {type === "edit-plant" ? "Actualizar" : "Guardar Planta"}
@@ -604,11 +592,7 @@ export function Modals() {
             <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="form-group mb-0">
                 <label>Método</label>
-                <CustomSelect
-                  name="prop-method"
-                  options={PROP_METHODS}
-                  defaultValue={props?.method || "Agua"}
-                />
+                <CustomSelect name="prop-method" options={PROP_METHODS} defaultValue={props?.method || "Agua"} />
               </div>
               <div className="form-group mb-0">
                 <label>📅 Fecha Inicio*</label>
@@ -659,11 +643,7 @@ export function Modals() {
             </div>
             <div className="form-group">
               <label>Prioridad</label>
-              <CustomSelect
-                name="w-priority"
-                options={WISH_PRIORITIES}
-                defaultValue={props?.priority || "Media"}
-              />
+              <CustomSelect name="w-priority" options={WISH_PRIORITIES} defaultValue={props?.priority || "Media"} />
             </div>
             <div className="form-group">
               <label>📝 Notas</label>
@@ -691,11 +671,7 @@ export function Modals() {
             <h3>{type === "edit-season-task" ? "✏️ Editar Plan de Temporada" : "📅 Planear Acción"}</h3>
             <div className="form-group">
               <label>Tipo de Tarea</label>
-              <CustomSelect
-                name="st-type"
-                options={SEASON_TASK_TYPES}
-                defaultValue={props?.type || "Otro"}
-              />
+              <CustomSelect name="st-type" options={SEASON_TASK_TYPES} defaultValue={props?.type || "Otro"} />
             </div>
             <div className="form-group">
               <label>Descripción del Plan*</label>
@@ -750,11 +726,7 @@ export function Modals() {
             <h3>{type === "edit-item" ? "✏️ Editar Insumo" : "📦 Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>
-              <CustomSelect
-                name="i-type"
-                options={INVENTORY_CATEGORIES}
-                defaultValue={props?.cat || "substrates"}
-              />
+              <CustomSelect name="i-type" options={INVENTORY_CATEGORIES} defaultValue={props?.cat || "substrates"} />
             </div>
             <div className="form-group">
               <label>Nombre del insumo*</label>
@@ -781,11 +753,7 @@ export function Modals() {
               </div>
               <div className="form-group mb-0">
                 <label>Unidad</label>
-                <CustomSelect
-                  name="i-unit"
-                  options={INVENTORY_UNITS}
-                  defaultValue={props?.unit || "L"}
-                />
+                <CustomSelect name="i-unit" options={INVENTORY_UNITS} defaultValue={props?.unit || "L"} />
               </div>
             </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">

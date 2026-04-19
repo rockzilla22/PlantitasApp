@@ -5,6 +5,8 @@ interface NavSubItem {
 
 interface NavItem {
   label: string;
+  description: string;
+  icon?: string;
   href?: string;
   submenu?: NavSubItem[];
 }
@@ -90,12 +92,11 @@ export interface ConfigProject {
     [key: string]: {
       id: string;
       label: string;
-      icon: string;
       color: string;
       description: string;
-      maxSlots: number;      // Límite de items (plantas + notas + etc)
-      hasCloud: boolean;     // Sincronización en la nube activa
-      billingType: 'free' | 'one-time' | 'subscription' | 'system';
+      maxSlots: number; // Límite de items (plantas + notas + etc)
+      hasCloud: boolean; // Sincronización en la nube activa
+      billingType: "free" | "one-time" | "subscription" | "system";
     };
   };
 
@@ -196,22 +197,77 @@ const configProject: ConfigProject = {
   // ======================================================
   navigation: {
     ES: {
-      plants: { label: "🌿 Mis Plantas", href: "/plants" },
-      nursery: { label: "🧪 Propagación", href: "/nursery" },
-      inventory: { label: "📦 Inventario", href: "/inventory" },
-      season: { label: "📅 Temporada", href: "/season" },
-      wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
-      notes: { label: "📝 Notas", href: "/notes" },
-      garden: { label: "🏡 Jardín", href: "/garden" },
+      plants: {
+        label: "Mis Plantas",
+        description: "Registra cada ejemplar con su ubicación, luz y sustrato. Lleva el historial completo de riegos y cuidados.",
+        icon: "🌿",
+        href: "/plants",
+      },
+      nursery: {
+        label: "Propagación",
+        description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
+        icon: "🧪",
+        href: "/nursery",
+      },
+      inventory: {
+        label: "Inventario",
+        description: "Control de stock de tus insumos: sustratos, fertilizantes y medicamentos siempre al día.",
+        icon: "📦",
+        href: "/inventory",
+      },
+      season: {
+        label: "Temporada",
+        description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
+        icon: "📅",
+        href: "/season",
+      },
+      wishlist: {
+        label: "Lista de Deseos",
+        description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
+        icon: "✨",
+        href: "/wishlist",
+      },
+      notes: {
+        label: "Notas",
+        description: "Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín.",
+        icon: "📝",
+        href: "/notes",
+      },
+      garden: { label: "Jardín", description: "Visualiza y gestiona tu jardín completo.", icon: "🌱", href: "/garden" },
     },
     EN: {
-      plants: { label: "🌿 My Plants", href: "/plants" },
-      nursery: { label: "🧪 Nursery", href: "/nursery" },
-      season: { label: "📅 Season", href: "/season" },
-      wishlist: { label: "✨ Wishlist", href: "/wishlist" },
-      inventory: { label: "📦 Inventory", href: "/inventory" },
-      notes: { label: "📝 Notes", href: "/notes" },
-      garden: { label: "🏡 Garden", href: "/garden" },
+      plants: {
+        label: "My Plants",
+        description: "Register each specimen with its location, light, and substrate. Keep a complete history of watering and care.",
+        icon: "🌿",
+        href: "/plants",
+      },
+      nursery: {
+        label: "Nursery",
+        description: "Track cuttings and seeds. Link propagations with their parent plants and monitor their progress.",
+        icon: "🧪",
+        href: "/nursery",
+      },
+      season: {
+        label: "Season",
+        description: "Organize tasks by season. Watering, pruning, fertilizing, and planting according to the natural cycle.",
+        icon: "📅",
+        href: "/season",
+      },
+      wishlist: {
+        label: "Wishlist",
+        description: "Your botanical Wishlist organized by priority so you don't miss anything.",
+        icon: "✨",
+        href: "/wishlist",
+      },
+      inventory: {
+        label: "Inventory",
+        description: "Keep your supplies stock up to date: substrates, fertilizers, and medications.",
+        icon: "📦",
+        href: "/inventory",
+      },
+      notes: { label: "Notes", description: "Free space for your quick observations, ideas, or garden reminders.", icon: "📝", href: "/notes" },
+      garden: { label: "Garden", description: "Visualize and manage your entire garden.", icon: "🌱", href: "/garden" },
     },
   },
 
@@ -222,52 +278,47 @@ const configProject: ConfigProject = {
     NONE: {
       id: "NoAccount",
       label: "Sin cuenta",
-      icon: "👤",
       color: "var(--text-gray)",
       description: "Modo invitado. Tus datos se guardan solo en este navegador.",
       maxSlots: 25,
       hasCloud: false,
-      billingType: 'free',
+      billingType: "free",
     },
     FREE: {
       id: "Free",
       label: "Usuario",
-      icon: "🌱",
       color: "var(--text-white)",
       description: "Cuenta básica. Acceso a gestión botánica local.",
       maxSlots: 50,
       hasCloud: false,
-      billingType: 'free',
+      billingType: "free",
     },
     PRO: {
       id: "Pro",
       label: "Pro",
-      icon: "💎",
       color: "var(--secondary)",
       description: "Pago único. Ampliá tu capacidad local permanentemente.",
       maxSlots: 200,
       hasCloud: true,
-      billingType: 'one-time',
+      billingType: "one-time",
     },
     PREMIUM: {
       id: "Premium",
       label: "Premium",
-      icon: "✨",
       color: "var(--primary)",
       description: "Acceso total. Sincronización en la nube e ilimitados.",
       maxSlots: 999999,
       hasCloud: true,
-      billingType: 'subscription',
+      billingType: "subscription",
     },
     MASTER: {
       id: "Master",
       label: "Master",
-      icon: "🛡️",
       color: "var(--gold)",
       description: "Nivel de sistema. Control total e integridad suprema.",
       maxSlots: 999999,
       hasCloud: true,
-      billingType: 'system',
+      billingType: "system",
     },
   },
 

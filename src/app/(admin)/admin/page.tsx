@@ -271,7 +271,7 @@ export default function AdminPanel() {
                     <option value="all">Todos</option>
                     {Object.values(configProject.plans).map((p) => (
                       <option key={p.id} value={p.id}>
-                        {p.icon} {p.label}
+                        {p.label}
                       </option>
                     ))}
                   </select>
@@ -344,7 +344,6 @@ export default function AdminPanel() {
                               return (
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-1.5">
-                                    <span className="text-base">{plan.icon}</span>
                                     <span className="text-xs font-semibold text-[var(--text)]">{plan.label}</span>
                                   </div>
                                   {u.role === configProject.plans.PREMIUM.id && u.premiumExpiresAt && (

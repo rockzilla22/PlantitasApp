@@ -7,7 +7,7 @@ import { supabaseBrowser } from "@/libs/db";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 
-export function Feedback() {
+export function FeedbackSection() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const storeData = useStore($store);
