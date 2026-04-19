@@ -69,7 +69,7 @@ export const INVENTORY_CATEGORIES: Option[] = [
   { value: "liquids", label: "Líquidos", img: "/icons/environment/log/lab.svg" },
   { value: "powders", label: "Polvos", img: "/icons/environment/log/powder.svg" },
   { value: "substrates", label: "Sustratos", img: "/icons/environment/log/substrates.svg" },
-  { value: "others", label: "Otros", img: "/icons/common/box.svg" },
+  { value: "others", label: "Otros", img: "/icons/environment/inventory/box.svg" },
 ];
 
 export const INVENTORY_UNITS: Option[] = [

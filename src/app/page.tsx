@@ -6,6 +6,7 @@ import { $user } from "@/store/authStore";
 import configProject from "@/data/configProject";
 import { PricingSection } from "@/components/sections/PricingSection";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 type FeatureItem = {
   title: string;

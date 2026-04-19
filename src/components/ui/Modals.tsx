@@ -2,7 +2,7 @@
 
 import { useStore } from "@nanostores/react";
 import { $activeModal, closeModal, openModal } from "@/store/modalStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   addPlant,
   $store,
@@ -22,7 +22,7 @@ import {
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { PotLabel } from "@/components/ui/PotLabel";
 import configProject from "@/data/configProject";
-import NextImage from "next/image";
+import Image from "next/image";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -43,23 +43,32 @@ function CustomSelect({
   onChange,
   name,
   className = "",
+  searchable = false,
 }: {
   options: Option[];
   defaultValue: string;
   onChange?: (val: string) => void;
   name: string;
   className?: string;
+  searchable?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(defaultValue);
+  const [searchTerm, setSearchTerm] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((o) => o.value === selected) || options[0];
+
+  const filteredOptions = useMemo(() => {
+    if (!searchable || !searchTerm) return options;
+    return options.filter((o) => o.label.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [options, searchTerm, searchable]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setSearchTerm("");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -74,6 +83,7 @@ function CustomSelect({
     setSelected(val);
     if (onChange) onChange(val);
     setIsOpen(false);
+    setSearchTerm("");
   };
 
   return (
@@ -85,7 +95,11 @@ function CustomSelect({
       >
         {selectedOption?.img && (
           <div className="w-8 h-8 flex items-center justify-center shrink-0">
-            <NextImage src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
+            {selected === "CUSTOM" ? (
+              <span className="text-xl">✨</span>
+            ) : (
+              <Image src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
+            )}
           </div>
         )}
         <span className="flex-1 text-sm font-bold text-[var(--text)]">{selectedOption?.label}</span>
@@ -93,21 +107,45 @@ function CustomSelect({
       </div>
 
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-2 bg-[var(--white)] border border-[var(--border-light)] rounded-2xl shadow-xl max-h-60 overflow-y-auto animate-in fade-in zoom-in duration-200">
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`flex items-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
-              onClick={() => handleSelect(option.value)}
-            >
-              {option.img && (
-                <div className="w-7 h-7 flex items-center justify-center shrink-0">
-                  <NextImage src={option.img} alt="" width={28} height={28} className="object-contain" />
-                </div>
-              )}
-              <span className="text-sm font-medium text-[var(--text)]">{option.label}</span>
+        <div className="absolute z-[100] w-full mt-2 bg-[var(--white)] border border-[var(--border-light)] rounded-2xl shadow-xl max-h-80 flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+          {searchable && (
+            <div className="p-2 border-b border-[var(--border-light)] bg-[var(--bg-faint)]">
+              <input
+                type="text"
+                className="w-full p-2 text-xs rounded-xl border border-[var(--border)] outline-none focus:border-[var(--primary)] bg-[var(--white)]"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+              />
             </div>
-          ))}
+          )}
+
+          <div className="overflow-y-auto max-h-60">
+            {filteredOptions.length === 0 ? (
+              <div className="p-4 text-center text-xs text-[var(--text-gray)] opacity-50 italic">Sin resultados.</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={`flex items-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
+                  onClick={() => handleSelect(option.value)}
+                >
+                  {option.img && (
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                      {option.value === "CUSTOM" ? (
+                        <span className="text-lg">✨</span>
+                      ) : (
+                        <Image src={option.img} alt="" width={28} height={28} className="object-contain" />
+                      )}
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-[var(--text)]">{option.label}</span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -438,7 +476,13 @@ export function Modals() {
         ref={dialogRef}
         onCancel={handleClose}
         id={`modal-${type}`}
-        className={type === "add-plant" || type === "edit-plant" ? "plant-form-modal" : undefined}
+        className={
+          type === "add-plant" || type === "edit-plant"
+            ? "plant-form-modal"
+            : type === "add-season-task" || type === "edit-season-task"
+              ? "season-task-modal"
+              : undefined
+        }
       >
         {/* --- MODAL DE AGREGAR/EDITAR PLANTA --- */}
         {(type === "add-plant" || type === "edit-plant") && (
@@ -446,12 +490,12 @@ export function Modals() {
             <h3 className="flex items-center gap-2">
               {type === "edit-plant" ? (
                 <>
-                  <NextImage src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
+                  <Image src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
                   <span>Modificar Planta</span>
                 </>
               ) : (
                 <>
-                  <NextImage src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
+                  <Image src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
                   <span>Nueva Planta</span>
                 </>
               )}
@@ -565,6 +609,7 @@ export function Modals() {
               <label>Planta Madre (Opcional)</label>
               <CustomSelect
                 name="prop-parent"
+                searchable={true}
                 options={[
                   { value: "", label: "-- Sin madre (Independiente) --" },
                   ...plants
@@ -691,6 +736,32 @@ export function Modals() {
               </button>
               <button type="submit" className="btn-primary w-full sm:w-auto py-2">
                 {type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* --- MODAL DE AGREGAR/EDITAR NOTA GLOBAL --- */}
+        {(type === "add-note" || type === "edit-note") && (
+          <form method="dialog" onSubmit={handleNoteSubmit}>
+            <h3>{type === "edit-note" ? "Editar Nota Global" : "Nueva Nota Global"}</h3>
+            <div className="form-group">
+              <label>Contenido de la nota*</label>
+              <textarea
+                name="n-content"
+                rows={4}
+                required
+                className="p-2 text-sm sm:text-base"
+                placeholder="Ej: Comprar fertilizante orgánico..."
+                defaultValue={props?.content || ""}
+              ></textarea>
+            </div>
+            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
+                {type === "edit-note" ? "Actualizar" : "Guardar"}
               </button>
             </div>
           </form>

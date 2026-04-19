@@ -23,12 +23,15 @@ export default function WishlistPage() {
 
   return (
     <section id="tab-wishlist" className="tab-content active">
+      {/* Titular y botón de agregar */}
       <div className="view-header">
         <h2 className="text-[var(--primary)] font-bold">Lista de Deseos</h2>
         <button className="btn-primary h-9 min-h-[36px] px-4 text-xs font-bold" onClick={handleAddWish}>
           + Añadir
         </button>
       </div>
+
+      {/* Filtros de prioridad */}
       <div className="flex items-center gap-3 flex-wrap mb-6">
         <div className="group flex bg-[var(--black-soft)] p-1.5 rounded-2xl gap-1.5 shadow-sm">
           {["Todas", "Alta", "Media", "Baja"].map((p) => (
@@ -47,6 +50,7 @@ export default function WishlistPage() {
         </div>
       </div>
 
+      {/* Contenedor de deseos: Grid responsive con estados vacíos */}
       <div id="wishlist-container" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 w-full px-1">
         {filteredWishlist.length === 0 ? (
           <div className="col-span-full py-20 text-center text-[var(--text-gray)] italic border-2 border-dashed border-[var(--border-light)] rounded-[2.5rem]">
@@ -66,18 +70,22 @@ export default function WishlistPage() {
                 {/* HEADER: Grid 2 columnas estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
-                    <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
+                    <h3 className="text-[var(--primary)] flex items-center gap-3 text-lg font-bold">
                       <Image src="/icons/common/stars.svg" alt="" width={24} height={24} /> {name}
                     </h3>
-                    <small className="text-[0.7rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">Deseo</small>
                   </div>
                   <div className="flex flex-col items-end gap-y-2">
-                    <span className={`badge shrink-0 ${priority === "Alta" ? "badge-danger" : "badge-warning"}`}>{priority}</span>
+                    <span
+                      className={`badge shrink-0 inline-flex items-center gap-1 ${priority === "Alta" ? "badge-danger" : priority === "Media" ? "badge-warning" : "badge-primary"}`}
+                    >
+                      <Image src={`/icons/common/prio_${priority === "Alta" ? 1 : priority === "Media" ? 2 : 3}.svg`} alt="" width={10} height={10} />
+                      {priority}
+                    </span>
                   </div>
                 </div>
 
                 {/* BODY: Notas con borde superior sutil */}
-                <div className="flex-1 border-t border-[var(--border-light)] pt-8">
+                <div className="flex-1 border-t border-[var(--border-light)]">
                   <p className="m-0 text-sm text-[var(--text)] bg-[var(--input-bg)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
                     {notes || "Sin notas adicionales."}
                   </p>

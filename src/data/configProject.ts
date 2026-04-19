@@ -233,7 +233,12 @@ const configProject: ConfigProject = {
         icon: "/icons/common/notes.svg",
         href: "/notes",
       },
-      garden: { label: "Jardín", description: "Visualiza y gestiona tu jardín completo.", icon: "/icons/environment/location/garden.svg", href: "/garden" },
+      garden: {
+        label: "Jardín",
+        description: "Visualiza y gestiona tu jardín completo.",
+        icon: "/icons/environment/location/home.svg",
+        href: "/garden",
+      },
     },
     EN: {
       plants: {
@@ -266,8 +271,18 @@ const configProject: ConfigProject = {
         icon: "/icons/environment/inventory/box.svg",
         href: "/inventory",
       },
-      notes: { label: "Notes", description: "Free space for your quick observations, ideas, or garden reminders.", icon: "/icons/common/notes.svg", href: "/notes" },
-      garden: { label: "Garden", description: "Visualize and manage your entire garden.", icon: "/icons/environment/location/garden.svg", href: "/garden" },
+      notes: {
+        label: "Notes",
+        description: "Free space for your quick observations, ideas, or garden reminders.",
+        icon: "/icons/common/notes.svg",
+        href: "/notes",
+      },
+      garden: {
+        label: "Garden",
+        description: "Visualize and manage your entire garden.",
+        icon: "/icons/environment/location/home.svg",
+        href: "/garden",
+      },
     },
   },
 
