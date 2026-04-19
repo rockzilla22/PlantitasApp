@@ -116,7 +116,7 @@ export interface ConfigProject {
 
 const configProject: ConfigProject = {
   // ======================================================
-  // 🧩 PROYECTO (metadata / web)
+  // PROYECTO (metadata / web)
   // ======================================================
   appName: "PlantitasApp",
   tabname: "PlantitasApp - Gestión Botánica",
@@ -129,7 +129,7 @@ const configProject: ConfigProject = {
   copyright_en: `© ${new Date().getFullYear()} — PlantitasApp — All rights reserved.`,
 
   // ======================================================
-  // 🌐 METADATOS / SEO
+  // METADATOS / SEO
   // ======================================================
   language: "es-AR",
   themeColor: "var(--brand-dark)",
@@ -156,14 +156,14 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 💬 SOPORTE / CONTACTO (publico)
+  // SOPORTE / CONTACTO (publico)
   // ======================================================
   support: {
     email: "hola@plantitasapp.com",
   },
 
   // ======================================================
-  // ✉️ RESEND (client-side references)
+  // RESEND (client-side references)
   // ======================================================
   resend: {
     fromAdmin: "admin@plantitasapp.com",
@@ -171,7 +171,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 🔗 REDES SOCIALES (para SocialDock / JSON-LD)
+  // REDES SOCIALES (para SocialDock / JSON-LD)
   // ======================================================
   socials: {
     github: "https://github.com/JFEspanolito/PlantitasApp",
@@ -181,7 +181,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 📣 MARKETING (placeholders)
+  // MARKETING (placeholders)
   // ======================================================
   marketing: {
     tagline: "Cultivá con precisión profesional.",
@@ -193,7 +193,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 🧭 NAVEGACION (labels y rutas i18n)
+  // NAVEGACION (labels y rutas i18n)
   // ======================================================
   navigation: {
     ES: {
@@ -206,7 +206,7 @@ const configProject: ConfigProject = {
       nursery: {
         label: "Propagación",
         description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
-        icon: "/icons/environment/log/lab.svg",
+        icon: "/icons/environment/plants/flower2.svg",
         href: "/nursery",
       },
       inventory: {
@@ -224,7 +224,7 @@ const configProject: ConfigProject = {
       wishlist: {
         label: "Lista de Deseos",
         description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
-        icon: "/icons/common/stars.svg",
+        icon: "/icons/common/gift.svg",
         href: "/wishlist",
       },
       notes: {
@@ -272,7 +272,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 💎 CATÁLOGO DE PLANES (niveles de acceso)
+  // CATÁLOGO DE PLANES (niveles de acceso)
   // ======================================================
   plans: {
     NONE: {
@@ -323,7 +323,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 💬 CATÁLOGO DE FEEDBACK (gestión de reportes)
+  // CATÁLOGO DE FEEDBACK (gestión de reportes)
   // ======================================================
   feedback: {
     types: {

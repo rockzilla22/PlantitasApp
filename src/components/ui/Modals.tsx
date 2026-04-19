@@ -125,8 +125,8 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
 
   return (
     <div className="admin-manage-modal">
-      <h3 className="text-xl font-black text-[var(--primary)] mb-2">Gestionar Usuario</h3>
-      <p className="mb-6 text-xs font-bold text-[var(--text-gray)] opacity-60 uppercase tracking-widest border-b border-[var(--border-light)] pb-4">
+      <h3 className="mb-2 text-xl font-black text-[var(--primary)]">Gestionar Usuario</h3>
+      <p className="mb-6 border-b border-[var(--border-light)] pb-4 text-xs font-bold uppercase tracking-widest text-[var(--text-gray)]">
         Operador: <span className="text-[var(--text)]">{props?.userName}</span>
       </p>
 
@@ -138,8 +138,8 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
             type="button"
             className={`flex-1 py-3 text-[0.65rem] font-black uppercase tracking-widest rounded-xl transition-all ${
               activePlanTab === plan.id
-                ? "bg-[var(--white)] text-[var(--primary)] shadow-md"
-                : "text-[var(--text-gray)] opacity-40 hover:opacity-100"
+                ? "bg-[var(--white)] text-[var(--primary)] shadow-md ring-1 ring-[var(--border)]"
+                : "text-[var(--text-gray)] opacity-80 hover:bg-[var(--white)]/70 hover:text-[var(--text)]"
             }`}
             onClick={() => setActivePlanTab(plan.id)}
           >
@@ -163,31 +163,31 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               handleClose();
             }}
           >
-            <div className="bg-[var(--info-bg)]/30 p-6 rounded-3xl border border-[var(--info)]/10">
+            <div className="rounded-3xl border border-[var(--info)]/25 bg-[var(--info-bg)]/60 p-6">
               <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">REGALAR MEMBRESÍA PREMIUM</p>
               {expiresAt && !isExpired && (
-                <p className="text-[0.6rem] text-[var(--info-dark)] mb-3 opacity-70">
+                <p className="mb-3 text-[0.6rem] text-[var(--info-dark)] opacity-90">
                   Premium activo hasta: {new Date(expiresAt).toLocaleDateString()} — el tiempo se acumula.
                 </p>
               )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-group mb-0">
-                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Cantidad</label>
+                  <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Cantidad</label>
                   <input
                     type="number"
                     name="amount"
                     defaultValue="1"
                     min="1"
                     required
-                    className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
                   />
                 </div>
                 <div className="form-group mb-0">
-                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Unidad</label>
+                  <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Unidad</label>
                   <select
                     name="unit"
                     defaultValue="months"
-                    className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-xs"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-xs font-black text-[var(--text)]"
                   >
                     <option value="months">Meses</option>
                     <option value="days">Días</option>
@@ -214,31 +214,28 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
               handleClose();
             }}
           >
-            <div className="bg-[var(--success-bg)]/50 p-6 rounded-3xl border border-[var(--primary)]/10">
-              <p className="m-0 text-xs font-bold text-[var(--primary)] mb-4">💎 ASCENDER A PRO + REGALAR SLOTS</p>
+            <div className="rounded-3xl border border-[var(--primary)]/20 bg-[var(--success-bg)]/70 p-6">
+              <p className="m-0 text-xs font-bold text-[var(--primary)] mb-4">ASCENDER A PRO + REGALAR SLOTS</p>
               {currentGiftSlots > 0 && (
-                <p className="text-[0.6rem] text-[var(--primary)] mb-3 opacity-70">
+                <p className="mb-3 text-[0.6rem] text-[var(--primary)] opacity-90">
                   Gift slots actuales: {currentGiftSlots} — los nuevos se acumulan.
                 </p>
               )}
               <div className="form-group mb-0">
-                <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Slots a Regalar</label>
+                <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Slots a Regalar</label>
                 <input
                   type="number"
                   name="slots"
                   defaultValue="0"
                   min="0"
-                  className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm"
+                  className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
                 />
-                <span className="text-[0.55rem] opacity-40 mt-2 block italic">
+                <span className="mt-2 block text-[0.55rem] italic text-[var(--text-gray)] opacity-80">
                   Base Pro: {p.PRO.maxSlots} slots. Gift slots se acumulan encima.
                 </span>
               </div>
             </div>
-            <button
-              type="submit"
-              className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--secondary)]"
-            >
+            <button type="submit" className="btn-warning w-full rounded-2xl py-4 text-xs font-black uppercase tracking-[0.2em]">
               Activar Nivel Pro
             </button>
           </form>
@@ -246,15 +243,15 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
 
         {activePlanTab === p.FREE.id && (
           <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="bg-[var(--warning-bg)]/50 p-6 rounded-3xl border border-[var(--secondary)]/10">
+            <div className="rounded-3xl border border-[var(--secondary)]/25 bg-[var(--warning-bg)]/75 p-6">
               <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">RESETEAR A NIVEL USUARIO</p>
-              <p className="text-[0.65rem] text-[var(--text-gray)] leading-relaxed">
+              <p className="text-[0.65rem] leading-relaxed text-[var(--text)]">
                 Elimina Premium, Pro, y todos los gift slots. El usuario vuelve al límite base de {p.FREE.maxSlots} slots sin nube.
               </p>
             </div>
             <button
               type="button"
-              className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--text-gray)]"
+              className="w-full rounded-2xl border border-[var(--text)] bg-[var(--text)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--text-white)] transition-all hover:bg-[var(--brand-dark)]"
               onClick={() => {
                 props?.onConfirm({ action: "reset_free" });
                 handleClose();
@@ -269,7 +266,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
       <div className="mt-8 flex justify-center">
         <button
           type="button"
-          className="btn-text text-[0.6rem] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-all"
+          className="btn-text text-[0.6rem] font-black uppercase tracking-widest opacity-80 transition-all hover:opacity-100"
           onClick={handleClose}
         >
           Cancelar Operación
@@ -538,7 +535,10 @@ export function Modals() {
               </div>
               {/* --- Dormancia --- */}
               <div className="form-group mb-0">
-                <label><img src="/icons/common/sleep.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Dormancia</label>
+                <label>
+                  <img src="/icons/common/sleep.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                  Dormancia
+                </label>
                 <CustomSelect name="p-dormancy" options={DORMANCIES} defaultValue={props?.dormancy || "Ninguna"} />
               </div>
             </div>
@@ -591,7 +591,10 @@ export function Modals() {
                 <CustomSelect name="prop-method" options={PROP_METHODS} defaultValue={props?.method || "Agua"} />
               </div>
               <div className="form-group mb-0">
-                <label><img src="/icons/common/calendar.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Fecha Inicio*</label>
+                <label>
+                  <img src="/icons/common/calendar.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                  Fecha Inicio*
+                </label>
                 <input
                   type="date"
                   name="prop-start"
@@ -602,7 +605,10 @@ export function Modals() {
               </div>
             </div>
             <div className="form-group mt-3 sm:mt-4">
-              <label><img src="/icons/common/notes.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />Notas</label>
+              <label>
+                <img src="/icons/common/notes.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                Notas
+              </label>
               <textarea
                 name="prop-notes"
                 className="p-2 text-sm sm:text-base"
@@ -788,7 +794,10 @@ export function Modals() {
 
         {type === "import-choice" && (
           <div style={{ textAlign: "center" }}>
-            <h3><img src="/icons/common/warning.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />Resolución de Conflicto</h3>
+            <h3>
+              <img src="/icons/common/warning.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />
+              Resolución de Conflicto
+            </h3>
             <p style={{ margin: "1rem 0", color: "var(--text-gray)", textAlign: "left", fontSize: "0.9rem", lineHeight: "1.4" }}>
               {props?.message}
             </p>
@@ -802,7 +811,7 @@ export function Modals() {
                   handleClose();
                 }}
               >
-                🤝 Unificar Datos (Mezclar ambos)
+                Unificar Datos (Mezclar ambos)
               </button>
               <button
                 type="button"
@@ -813,7 +822,7 @@ export function Modals() {
                   handleClose();
                 }}
               >
-                🔄 Sobreescribir (Usar solo archivo)
+                Sobreescribir (Usar solo archivo)
               </button>
               <button type="button" className="btn-text" onClick={handleClose} style={{ width: "100%" }}>
                 Cancelar
@@ -874,7 +883,10 @@ export function Modals() {
 
         {type === "calendar" && (
           <form method="dialog" onSubmit={handleCalendarSubmit}>
-            <h3><img src="/icons/common/calendar.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />Recordatorio Google</h3>
+            <h3>
+              <img src="/icons/common/calendar.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />
+              Recordatorio Google
+            </h3>
             <div className="form-group">
               <label>Título*</label>
               <input type="text" name="cal-title" required defaultValue={props?.title || ""} />

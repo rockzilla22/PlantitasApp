@@ -8,7 +8,7 @@ import { $user } from "@/store/authStore";
 import { openModal } from "@/store/modalStore";
 import { translateError } from "@/libs/utils";
 import Link from "next/link";
-import NextImage from "next/image";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import configProject from "@/data/configProject";
 
@@ -193,7 +193,8 @@ export default function AdminPanel() {
             href="/profile"
             className="self-start no-underline text-[var(--text)] text-x uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1"
           >
-            ← Perfil
+            <Image src="/icons/common/arrow_up.svg" alt="" width={12} height={12} className="rotate-[-90deg] object-contain" />
+            <span>Perfil</span>
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -304,7 +305,13 @@ export default function AdminPanel() {
                     disabled={loading}
                     className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
-                    <span className={loading ? "inline-block animate-spin" : ""}>⟳</span>
+                    <Image
+                      src="/icons/common/refresh.svg"
+                      alt="Recargar"
+                      width={14}
+                      height={14}
+                      className={`object-contain ${loading ? "animate-spin" : "rotate-45"}`}
+                    />
                   </button>
                 </div>
               </div>
@@ -373,9 +380,7 @@ export default function AdminPanel() {
                                     </span>
                                   )}
                                   {u.giftSlots > 0 && (
-                                    <span className="text-[0.65rem] text-[var(--text-gray)]">
-                                      +{u.giftSlots} gift slots
-                                    </span>
+                                    <span className="text-[0.65rem] text-[var(--text-gray)]">+{u.giftSlots} gift slots</span>
                                   )}
                                 </div>
                               );
@@ -407,7 +412,9 @@ export default function AdminPanel() {
                                     : "bg-[var(--card-bg)] text-[var(--text)] border-[var(--border)] hover:bg-[var(--primary)] hover:text-[var(--text-white)] hover:border-[var(--primary)]"
                                 }`}
                               >
-                                {u.role === configProject.plans.PREMIUM.id || u.role === configProject.plans.PRO.id ? "Gestionar Plan" : "Activar"}
+                                {u.role === configProject.plans.PREMIUM.id || u.role === configProject.plans.PRO.id
+                                  ? "Gestionar Plan"
+                                  : "Activar"}
                               </button>
                             </div>
                           </td>
@@ -484,7 +491,13 @@ export default function AdminPanel() {
                     disabled={loading}
                     className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
-                    <span className={loading ? "inline-block animate-spin" : ""}>⟳</span>
+                    <Image
+                      src="/icons/common/refresh.svg"
+                      alt="Recargar"
+                      width={14}
+                      height={14}
+                      className={`object-contain ${loading ? "animate-spin" : "rotate-45"}`}
+                    />
                   </button>
                 </div>
               </div>
@@ -533,7 +546,7 @@ export default function AdminPanel() {
                                     className="text-[10px] font-black uppercase tracking-tighter w-fit px-2 py-1 rounded flex items-center gap-1.5"
                                     style={{ backgroundColor: typeCfg.bgColor, color: typeCfg.color }}
                                   >
-                                    <NextImage src={typeCfg.icon} alt={typeCfg.label} width={12} height={12} className="object-contain" />
+                                    <Image src={typeCfg.icon} alt={typeCfg.label} width={12} height={12} className="object-contain" />
                                     {typeCfg.label}
                                   </span>
                                 );
@@ -541,9 +554,12 @@ export default function AdminPanel() {
                               <div className="font-bold text-[var(--text)]">{f.title}</div>
                               <p className="text-xs text-[var(--text)] line-clamp-3 mb-2">{f.description}</p>
                               <div className="text-[10px]">
-                                👤 {f.user_name} ({f.user_email})
+                                {f.user_name} ({f.user_email})
                               </div>
-                              <div className="text-[10px] italic"><img src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain inline mr-1" />{new Date(f.created_at).toLocaleString()}</div>
+                              <div className="flex items-center gap-1 text-[10px] italic">
+                                <Image src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain" />
+                                <span>{new Date(f.created_at).toLocaleString()}</span>
+                              </div>
                             </div>
                           </td>
 
@@ -554,7 +570,10 @@ export default function AdminPanel() {
                                 target="_blank"
                                 className="text-[10px] text-[var(--primary)] hover:underline truncate block"
                               >
-                                📍 {f.attachment_url}
+                                <span className="inline-flex items-center gap-1">
+                                  <Image src="/icons/common/map.svg" width={11} height={11} alt="" className="object-contain" />
+                                  <span>{f.attachment_url}</span>
+                                </span>
                               </a>
                               <button
                                 onClick={() =>
@@ -562,7 +581,10 @@ export default function AdminPanel() {
                                 }
                                 className="btn-text p-0 text-[10px] text-left hover:text-[var(--primary)]"
                               >
-                                <img src="/icons/common/search.svg" width={11} height={11} alt="" className="object-contain inline mr-1" />Ver Metadata JSON
+                                <span className="inline-flex items-center gap-1">
+                                  <Image src="/icons/common/search.svg" width={11} height={11} alt="" className="object-contain" />
+                                  <span>Ver Metadata JSON</span>
+                                </span>
                               </button>
                               {f.metadata?.browser && (
                                 <div className="text-[9px] bg-[var(--bg-faint)] p-2 rounded-lg border border-[var(--border-light)]">
@@ -635,7 +657,7 @@ export default function AdminPanel() {
                               title="Eliminar permanentemente"
                             >
                               <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                <NextImage src="/icons/common/trash.svg" alt="Eliminar" width={20} height={20} className="object-contain" />
+                                <Image src="/icons/common/trash.svg" alt="Eliminar" width={20} height={20} className="object-contain" />
                               </div>
                             </button>
                           </td>

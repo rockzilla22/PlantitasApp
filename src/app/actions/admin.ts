@@ -84,19 +84,16 @@ export async function updateUserStatus(userId: string, updates: {
     role = updates.role;
   }
 
+  const { has_access, is_pro, purchased_slots, ...oldMetadata } = (user.app_metadata || {}) as any;
+
   const newAppMetadata = {
-    ...user.app_metadata,
+    ...oldMetadata,
     role,
     gift_slots: Math.max(0, giftSlots),
     extra_slots: Math.max(0, extraSlots),
     premium_started_at: premiumStartedAt,
     premium_expires_at: premiumExpiresAt,
   };
-
-  // Limpiar campos legacy
-  delete newAppMetadata.has_access;
-  delete newAppMetadata.is_pro;
-  delete newAppMetadata.purchased_slots;
 
   const { error: updateError } = await adminClient.auth.admin.updateUserById(userId, {
     app_metadata: newAppMetadata

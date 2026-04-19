@@ -5,17 +5,24 @@ import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
 import configProject from "@/data/configProject";
 import { PricingSection } from "@/components/sections/PricingSection";
+import Image from "next/image";
+
+type FeatureItem = {
+  title: string;
+  description: string;
+  icon: string;
+};
 
 export default function LandingPage() {
   const router = useRouter();
   const user = useStore($user);
 
-  const features = Object.values(configProject.navigation.ES)
-    .filter((item) => item.href && item.label !== "Jardín")
+  const features: FeatureItem[] = Object.values(configProject.navigation.ES)
+    .filter((item): item is typeof item & { href: string; icon: string } => Boolean(item.href && item.icon && item.label !== "Jardín"))
     .map((item) => ({
       title: item.label,
       description: item.description,
-      icon: item.icon || "🌱",
+      icon: item.icon,
     }));
 
   return (
@@ -23,11 +30,11 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
-          <span className="hero-badge">Versión 1.0 — Beta 🌿</span>
+          <span className="hero-badge">Versión 1.0 — Beta</span>
           <h1>
             La app más completa <br /> que todo Plant Lover necesita.
           </h1>
-          <p className="!text-[var(--text-brown)]">
+          <p className="text-[var(--text-brown)]">
             En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
             compañera ideal en tu camino como coleccionista, brindándote el control total sobre los cuidados, riegos y necesidades
             específicas de cada una de tus joyas verdes. Organiza tu colección, registra su progreso y asegúrate de que siempre tengan
@@ -36,27 +43,44 @@ export default function LandingPage() {
         </div>
         <div className="hero-visual">
           <div className="plant-card-mockup">
-            <div className="mock-header"><img src="/icons/environment/plants/monstera.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />Monstera Deliciosa</div>
+            <div className="mock-header">
+              <Image src="/icons/environment/plants/monstera.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />
+              Monstera Deliciosa
+            </div>
             <div className="mock-body">
-              <p><img src="/icons/environment/sun.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Sala · Media</p>
-              <div className="mock-status"><img src="/icons/environment/inventory/water_drops.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Último riego: Hoy</div>
+              <p className="text-[var(--text-brown)]">
+                <Image src="/icons/common/map.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Sala · Media
+              </p>
+              <div className="mock-status">
+                <Image
+                  src="/icons/environment/inventory/water_drops.svg"
+                  width={13}
+                  height={13}
+                  alt=""
+                  className="object-contain inline mr-1"
+                />
+                Último riego: Hoy
+              </div>
             </div>
           </div>
           <div className="plant-card-mockup secondary">
-            <div className="mock-header"><img src="/icons/environment/log/lab.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />Esqueje de Pothos</div>
+            <div className="mock-header">
+              <Image src="/icons/environment/log/lab.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />
+              Esqueje de Pothos
+            </div>
             <div className="mock-body">
-              <p><img src="/icons/environment/inventory/water_drops.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Método: Agua</p>
-              <div className="mock-status"><img src="/icons/common/stars.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />Raíces visibles</div>
+              <p className="text-[var(--text-brown)]"></p>
+              <p>
+                <Image src="/icons/common/map.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Sala · Media
+              </p>
+              <div className="mock-status">
+                <Image src="/icons/common/notes.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Raíces visibles
+              </div>
             </div>
           </div>
-        </div>
-        <div className="hero-actions-row">
-          <button className="btn-primary-large" onClick={() => router.push(user ? "/plants" : "/login")}>
-            Empezar mi jardín — Gratis
-          </button>
-          <button className="btn-secondary-large" disabled title="Próximamente">
-            Ir a Premium ☁ (Próximamente)
-          </button>
         </div>
       </section>
 
@@ -67,15 +91,17 @@ export default function LandingPage() {
       <section className="info-section">
         <div className="section-title">
           <h2>Todo lo que necesitas</h2>
-          <p>Herramientas diseñadas para el cuidado real de tus plantas.</p>
+          <p className="text-[var(--text-brown)]">Herramientas diseñadas para el cuidado real de tus plantas.</p>
         </div>
 
         <div className="features-grid">
           {features.map((f, i) => (
             <div key={i} className="feature-item">
-              <div className="feature-icon"><img src={f.icon} width={28} height={28} alt="" className="object-contain" /></div>
-              <h4>{f.title}</h4>
-              <p>{f.description}</p>
+              <div className="feature-icon">
+                <Image src={f.icon} alt="" width={28} height={28} className="object-contain" />
+                <h4>{f.title}</h4>
+              </div>
+              <p className="text-[var(--text-brown)]">{f.description}</p>
             </div>
           ))}
         </div>
@@ -94,8 +120,8 @@ export default function LandingPage() {
           Fue cultivada tecla a tecla por{" "}
           <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
             <strong className="text-[var(--primary)]">JFEspanolito</strong>
-          </a>{" "}
-          y{" "}
+          </a>
+          y
           <a href="https://github.com/rockzilla22" target="_blank" rel="noopener noreferrer">
             <strong className="text-[var(--primary)]">Alex</strong>
           </a>
@@ -272,8 +298,20 @@ export default function LandingPage() {
 
         .features-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: 1fr;
           gap: 2rem;
+        }
+
+        @media (min-width: 700px) {
+          .features-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+
+        @media (min-width: 1100px) {
+          .features-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
         }
 
         .feature-item {
@@ -288,13 +326,15 @@ export default function LandingPage() {
         }
 
         .feature-icon {
-          font-size: 2.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
           margin-bottom: 1.5rem;
         }
 
         .feature-item h4 {
           font-size: 1.25rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0;
           color: var(--primary);
         }
 
