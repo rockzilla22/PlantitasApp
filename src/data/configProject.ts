@@ -98,6 +98,19 @@ export interface ConfigProject {
       billingType: 'free' | 'one-time' | 'subscription' | 'system';
     };
   };
+
+  // Catálogo de Feedback
+  feedback: {
+    types: {
+      [key: string]: { label: string; icon: string; color: string; bgColor: string };
+    };
+    statuses: {
+      [key: string]: { label: string; color: string; bgColor: string };
+    };
+    priorities: {
+      [key: string]: { label: string; color: string; bgColor: string };
+    };
+  };
 }
 
 const configProject: ConfigProject = {
@@ -220,7 +233,7 @@ const configProject: ConfigProject = {
       id: "Free",
       label: "Usuario",
       icon: "🌱",
-      color: "var(--primary-light)",
+      color: "var(--text-white)",
       description: "Cuenta básica. Acceso a gestión botánica local.",
       maxSlots: 50,
       hasCloud: false,
@@ -255,6 +268,29 @@ const configProject: ConfigProject = {
       maxSlots: 999999,
       hasCloud: true,
       billingType: 'system',
+    },
+  },
+
+  // ======================================================
+  // 💬 CATÁLOGO DE FEEDBACK (gestión de reportes)
+  // ======================================================
+  feedback: {
+    types: {
+      Bug: { label: "Bug / Error", icon: "🐛", color: "#e11d48", bgColor: "#fff1f2" },
+      Idea: { label: "Idea / Sugerencia", icon: "💡", color: "#2563eb", bgColor: "#eff6ff" },
+      Comentario: { label: "Comentario", icon: "💬", color: "#4b5563", bgColor: "#f3f4f6" },
+    },
+    statuses: {
+      nuevo: { label: "Nuevo", color: "#059669", bgColor: "#f0fdf4" },
+      en_revision: { label: "En Revisión", color: "#d97706", bgColor: "#fffbeb" },
+      resuelto: { label: "Resuelto", color: "#2563eb", bgColor: "#eff6ff" },
+      cerrado: { label: "Cerrado", color: "#4b5563", bgColor: "#f3f4f6" },
+    },
+    priorities: {
+      baja: { label: "Baja", color: "#4b5563", bgColor: "#f3f4f6" },
+      media: { label: "Media", color: "#2563eb", bgColor: "#eff6ff" },
+      alta: { label: "Alta", color: "#d97706", bgColor: "#fffbeb" },
+      critica: { label: "Crítica", color: "#e11d48", bgColor: "#fff1f2" },
     },
   },
 };

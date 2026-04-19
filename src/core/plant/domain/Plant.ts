@@ -31,6 +31,7 @@ export const PlantSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   icon: z.string().default("🌿"),
   type: z.string().default("Planta"),
+  subtype: z.string().optional(),
   location: z.string().default("No especificada"),
   light: z.enum(["Baja", "Media", "Alta/Directa"]).default("Media"),
   potType: z.enum(["Autorriego", "Barro", "Plástico", "Terracota"]).default("Plástico"),

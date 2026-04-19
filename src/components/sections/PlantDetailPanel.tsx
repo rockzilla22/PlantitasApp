@@ -5,10 +5,12 @@ import { $resizerWidth } from "@/store/uiStore";
 import { $store, $selectedPlantId, addPlantLog, removePlantLog, removePlant } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
+import Image from "next/image";
 import {
   LOG_ACTIONS,
   LOG_ACTION_ICON_BY_VALUE,
   LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE,
+  PLANT_TYPES,
 } from "@/data/catalog";
 
 export function PlantDetailPanel() {
@@ -66,6 +68,10 @@ export function PlantDetailPanel() {
     );
   }
 
+  const plantTypeInfo = PLANT_TYPES.find((t) => t.value === plant.type);
+  const isCustom = !plantTypeInfo || plant.type === "CUSTOM";
+  const plantImg = plantTypeInfo?.img || "/icons/environment/plants/alocasia.svg";
+
   const inventoryCategory = LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE[logAction] as keyof typeof inventory | undefined;
 
   const handleAddLog = () => {
@@ -97,7 +103,16 @@ export function PlantDetailPanel() {
   return (
     <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <h2 style={{ margin: 0 }}>{plant.icon} {plant.name}</h2>
+        <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="w-10 h-10 flex items-center justify-center shrink-0">
+            {isCustom ? (
+              <span className="text-2xl">{plant.icon}</span>
+            ) : (
+              <Image src={plantImg} alt={plant.type} width={40} height={40} className="object-contain" />
+            )}
+          </div>
+          {plant.name}
+        </h2>
         <div className="flex gap-1">
           {!isWideLayout && (
             <button className="icon-btn" onClick={() => $selectedPlantId.set(null)} title="Cerrar detalle">✕</button>
@@ -191,24 +206,36 @@ export function PlantDetailPanel() {
             if (dateCompare !== 0) return dateCompare;
             return logSortOrder === 'desc' ? b.id - a.id : a.id - b.id;
           })
-          .map(log => (
-            <div key={log.id} className="log-item">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <strong>{LOG_ACTION_ICON_BY_VALUE[log.actionType] || '📝'} {log.actionType}</strong>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <small>📅 {formatDate(log.date)}</small>
-                  <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={() => {
-                    openModal("confirm", {
-                      title: "¿Eliminar registro?",
-                      message: "Esta acción quitará el evento del historial.",
-                      onConfirm: () => removePlantLog(plant.id, log.id)
-                    });
-                  }}>🗑️</button>
+          .map(log => {
+            const actionCfg = LOG_ACTIONS.find(a => a.value === log.actionType);
+            return (
+              <div key={log.id} className="log-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                      {actionCfg?.img ? (
+                        <Image src={actionCfg.img} alt={log.actionType} width={18} height={18} className="object-contain" />
+                      ) : (
+                        <span>{LOG_ACTION_ICON_BY_VALUE[log.actionType] || '📝'}</span>
+                      )}
+                    </div>
+                    <strong>{log.actionType}</strong>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <small>📅 {formatDate(log.date)}</small>
+                    <button className="btn-text" style={{ color: 'var(--danger)', padding: 0 }} onClick={() => {
+                      openModal("confirm", {
+                        title: "¿Eliminar registro?",
+                        message: "Esta acción quitará el evento del historial.",
+                        onConfirm: () => removePlantLog(plant.id, log.id)
+                      });
+                    }}>🗑️</button>
+                  </div>
                 </div>
+                <p style={{ fontSize: '0.85rem' }}>{log.detail}</p>
               </div>
-              <p style={{ fontSize: '0.85rem' }}>{log.detail}</p>
-            </div>
-          ))}
+            );
+          })}
       </div>
     </aside>
   );
