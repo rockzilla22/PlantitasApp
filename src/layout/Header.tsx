@@ -170,15 +170,18 @@ export function Header() {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="no-underline text-[var(--text-white)] whitespace-nowrap">
-            <h1 className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold" style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
+            <h1
+              className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold leading-none"
+              style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}
+            >
               <Image
                 src="/icons/environment/location/greenhouse.svg"
                 alt="Greenhouse"
-                width={32}
-                height={32}
+                width={28}
+                height={28}
                 className="shrink-0 object-contain"
               />
-              <span>PlantitasApp</span>
+              <span className="block leading-none">PlantitasApp</span>
             </h1>
           </Link>
         </div>
@@ -462,14 +465,15 @@ export function Header() {
       </div>
 
       {/* Bottom Navigation Content */}
-      <nav className="h-nav-desktop hidden lg:flex justify-center gap-8 py-2">
+      <nav className="h-nav-desktop hidden lg:flex justify-center">
         {tabs.map((tab) => (
           <a
             key={tab.id}
             href={tab.href ?? "#"}
             onClick={(e) => handleNav(e, tab.href ?? "#")}
-            className={`tab-link${pathname === tab.href ? " active" : ""}`}
+            className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex items-center gap-2`}
           >
+            {tab.icon ? <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" /> : null}
             {tab.label}
           </a>
         ))}

@@ -129,7 +129,6 @@ export default function LandingPage() {
           refugio digital perfecto para tus plantas. Porque sabemos que cuidar de una selva personal requiere la misma precisión que ganar
           una partida difícil, las cuales sirvieron de inspiración para transformar una gran idea en una herramienta real.
         </p>
-        <div style={{ marginTop: "2rem", fontSize: "2rem" }}>🎮🌿🛡️</div>
       </section>
 
       <style jsx>{`
@@ -315,14 +314,17 @@ export default function LandingPage() {
         }
 
         .feature-item {
-          padding: 2rem;
-          background: var(--background);
-          border-radius: var(--radius);
-          transition: transform 0.2s;
+          padding: 2.5rem 2rem;
+          background: var(--input-bg);
+          border: 1px solid var(--border);
+          border-radius: 2rem;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .feature-item:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
         .feature-icon {
