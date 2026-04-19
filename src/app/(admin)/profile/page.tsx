@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { getPlanLevel, hasPremium, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
+import { getPlanLevel, hasPremium, getEffectiveMaxSlots, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
 import { $store } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
@@ -123,10 +124,10 @@ export default function ProfilePage() {
       </div>
     );
 
-  const isMasterAdmin = user.app_metadata?.role === "master_admin";
   const planLevel = getPlanLevel(user);
-  const isPremium = hasPremium(user);
   const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
+  const isMasterAdmin = planConfig.id === configProject.plans.MASTER.id;
+  const isPremium = hasPremium(user);
 
   const usedSlots = useMemo(() => {
     const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
@@ -134,7 +135,7 @@ export default function ProfilePage() {
     return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
   }, [data]);
 
-  const maxSlots = isMasterAdmin ? Infinity : 50 + (user.app_metadata?.purchased_slots || 0);
+  const maxSlots = isMasterAdmin ? Infinity : getEffectiveMaxSlots(user);
   const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
   const usagePercent = isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots as number)) * 100);
 
@@ -287,7 +288,6 @@ export default function ProfilePage() {
               {/* Plan badge */}
               <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{planConfig.icon}</span>
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
                 {isPremium && (
@@ -326,7 +326,9 @@ export default function ProfilePage() {
                 className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">🗑️</span>
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                    <NextImage src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
+                  </div>
                   <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
                   {trashItems.length > 0 && !showTrash && (
                     <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />
@@ -343,17 +345,26 @@ export default function ProfilePage() {
                     <p className="text-center py-6 text-sm text-[var(--text-gray)] opacity-40 italic">Papelera vacía</p>
                   ) : (
                     (() => {
-                      const groups: Record<string, { label: string; items: TrashItem[] }> = {
-                        plants: { label: "🌿 Plantas", items: [] },
-                        propagations: { label: "🧪 Propagaciones", items: [] },
-                        global_notes: { label: "📝 Notas", items: [] },
-                        wishlist: { label: "✨ Deseos", items: [] },
+                      const groups: Record<string, { label: string; img: string; items: TrashItem[] }> = {
+                        plants: { label: "Plantas", img: "/icons/environment/plants/alocasia.svg", items: [] },
+                        propagations: { label: "Propagaciones", img: "/icons/environment/plants/layering.svg", items: [] },
+                        global_notes: { label: "Notas", img: "/icons/common/notes.svg", items: [] },
+                        wishlist: { label: "Deseos", img: "/icons/common/wishlist.svg", items: [] },
                       };
                       trashItems.forEach((i) => groups[i.table]?.items.push(i));
                       return Object.entries(groups).map(([k, g]) =>
                         g.items.length === 0 ? null : (
                           <div key={k} className="flex flex-col gap-2">
-                            <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 font-semibold">{g.label}</p>
+                            <div className="flex items-center gap-2 opacity-50">
+                              <NextImage 
+  src={g.img} 
+  alt={g.label} 
+  width={14} 
+  height={14} 
+  className="object-contain" 
+/>
+                              <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] m-0 font-semibold">{g.label}</p>
+                            </div>
                             {g.items.map((i) => (
                               <div key={i.id} className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]">
                                 <div className="min-w-0">

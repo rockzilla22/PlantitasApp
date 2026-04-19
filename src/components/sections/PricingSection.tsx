@@ -1,106 +1,99 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
+import { getPlanLevel } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 
-export default function PricingPage() {
+export function PricingSection() {
   const router = useRouter();
   const user = useStore($user);
   const p = configProject.plans;
+  const currentPlanId = getPlanLevel(user);
 
   return (
-    <div className="landing-container py-12 animate-in fade-in duration-700">
-      <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-         <Link href="/" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem" }}>
-          ← Volver al inicio
-        </Link>
-      </header>
-
-      {/* Títulos originales */}
-      <section className="info-section bg-soft" style={{ margin: '0 auto', maxWidth: '1400px' }}>
+    <>
+      <section className="info-section bg-soft" style={{ margin: "0 auto", maxWidth: "1400px" }}>
         <div className="section-title">
           <h2>Cultiva sin límites</h2>
           <p>Tus datos son tuyos. Elige el nivel de expansión que necesitas.</p>
         </div>
 
         <div className="plans-grid">
-          
           {/* MODO INVITADO (SIN CUENTA) */}
-          <div className="plan-card guest">
-            <h3> {p.NONE.icon} {p.NONE.label}</h3>
+          <div className={`plan-card guest ${currentPlanId === p.NONE.id ? "current-plan" : ""}`}>
+            {currentPlanId === p.NONE.id && <div className="current-badge">TU NIVEL ACTUAL</div>}
+            <h3>{p.NONE.label}</h3>
             <p className="plan-subtitle">Uso Efímero</p>
             <ul>
-              <li>❌ Sin registro / perfil</li>
-              <li>❌ Sin respaldo real</li>
-              <li>⚠️ Límite: {p.NONE.maxSlots} items</li>
-              <li>⚠️ Riesgo de pérdida al borrar cache</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin registro / perfil</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin respaldo real</li>
+              <li><img src="/icons/common/warning.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Límite: {p.NONE.maxSlots} items</li>
+              <li><img src="/icons/common/warning.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Riesgo de pérdida al borrar cache</li>
             </ul>
-            <button 
-              className="btn-primary-large" 
-              style={{ marginTop: '2rem', width: '100%', background: 'var(--text-gray)', opacity: 0.8 }}
+            <button
+              className="btn-primary-large"
+              style={{ marginTop: "2rem", width: "100%", background: "var(--text-gray)", opacity: 0.8 }}
               onClick={() => router.push("/plants")}
             >
-              Solo Probar
+              {currentPlanId === p.NONE.id ? "Seguir Probando" : "Modo Invitado"}
             </button>
           </div>
 
           {/* PLAN GRATUITO (CON CUENTA) */}
-          <div className="plan-card">
-            <h3> {p.FREE.icon} {p.FREE.label}</h3>
+          <div className={`plan-card ${currentPlanId === p.FREE.id ? "current-plan" : ""}`}>
+            {currentPlanId === p.FREE.id && <div className="current-badge">TU NIVEL ACTUAL</div>}
+            <h3>{p.FREE.label}</h3>
             <p className="plan-subtitle">Identidad Botánica</p>
             <ul>
-              <li>✅ Tu perfil guardado</li>
-              <li>✅ Límite: {p.FREE.maxSlots} items</li>
-              <li>✅ Historial de acciones</li>
-              <li>❌ Sin sincronización nube</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Tu perfil guardado</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Límite: {p.FREE.maxSlots} items</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Historial de acciones</li>
+              <li><img src="/icons/common/fail.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin sincronización nube</li>
             </ul>
-            <button 
-              className="btn-primary-large" 
-              style={{ marginTop: '2rem', width: '100%' }}
+            <button
+              className="btn-primary-large"
+              style={{ marginTop: "2rem", width: "100%" }}
               onClick={() => router.push(user ? "/plants" : "/login")}
             >
-              Crear Cuenta
+              {user ? "Ir a mis plantas" : "Crear Cuenta"}
             </button>
           </div>
 
           {/* PLAN PREMIUM */}
-          <div className="plan-card premium">
-            <div className="premium-badge">RECOMENDADO</div>
-            <h3> {p.PREMIUM.icon} {p.PREMIUM.label}</h3>
+          <div className={`plan-card premium ${currentPlanId === p.PREMIUM.id ? "current-plan" : ""}`}>
+            {currentPlanId === p.PREMIUM.id && <div className="current-badge">TU NIVEL ACTUAL</div>}
+            {currentPlanId !== p.PREMIUM.id && <div className="premium-badge">RECOMENDADO</div>}
+            <h3>{p.PREMIUM.label}</h3>
             <p className="plan-subtitle">Sincronización en la Nube</p>
             <ul>
-              <li>✅ Todo lo del plan gratuito</li>
-              <li>✅ Items ILIMITADOS</li>
-              <li>✅ Respaldo automático Cloud</li>
-              <li>✅ Acceso multi-dispositivo</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Todo lo del plan gratuito</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Items ILIMITADOS</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Respaldo automático Cloud</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Acceso multi-dispositivo</li>
             </ul>
-            <button 
-              className="btn-secondary-large" 
-              disabled 
-              style={{ marginTop: '2rem', width: '100%', opacity: 0.6 }}
-            >
+            <button className="btn-secondary-large" disabled style={{ marginTop: "2rem", width: "100%", opacity: 0.6 }}>
               Próximamente
             </button>
           </div>
 
           {/* PLAN PRO */}
-          <div className="plan-card pro">
-            <h3> {p.PRO.icon} {p.PRO.label}</h3>
+          <div className={`plan-card pro ${currentPlanId === p.PRO.id ? "current-plan" : ""}`}>
+            {currentPlanId === p.PRO.id && <div className="current-badge">TU NIVEL ACTUAL</div>}
+            <h3>{p.PRO.label}</h3>
             <p className="plan-subtitle">Expansión Permanente</p>
             <ul>
-              <li>✅ Pago único vitalicio</li>
-              <li>✅ +{p.PRO.maxSlots} slots adicionales</li>
-              <li>✅ Sin suscripciones</li>
-              <li>✅ Sincronización Cloud</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Pago único vitalicio</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> +{p.PRO.maxSlots} slots adicionales</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sin suscripciones</li>
+              <li><img src="/icons/common/success.svg" width={13} height={13} alt="" className="object-contain inline mr-1" /> Sincronización Cloud</li>
             </ul>
-            <button 
-              className="btn-secondary-large" 
-              disabled 
-              style={{ marginTop: '2rem', width: '100%', opacity: 0.6, borderColor: 'var(--secondary)', color: 'var(--secondary)' }}
+            <button
+              className="btn-secondary-large"
+              disabled
+              style={{ marginTop: "2rem", width: "100%", opacity: 0.6, borderColor: "var(--secondary)", color: "var(--secondary)" }}
             >
               Próximamente
             </button>
@@ -109,12 +102,6 @@ export default function PricingPage() {
       </section>
 
       <style jsx>{`
-        .landing-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 2rem 1rem;
-        }
-
         .info-section {
           padding: 6rem 2rem;
           border-radius: 2rem;
@@ -168,6 +155,11 @@ export default function PricingPage() {
           transition: transform 0.3s ease;
         }
 
+        .plan-card.current-plan {
+          border: 3px solid var(--primary);
+          background: var(--bg-faint);
+        }
+
         .plan-card:hover {
           transform: translateY(-5px);
         }
@@ -183,7 +175,8 @@ export default function PricingPage() {
           border: 1px solid var(--border);
         }
 
-        .premium-badge {
+        .premium-badge,
+        .current-badge {
           position: absolute;
           top: -12px;
           left: 50%;
@@ -196,6 +189,11 @@ export default function PricingPage() {
           font-weight: 900;
           letter-spacing: 1px;
           white-space: nowrap;
+          z-index: 10;
+        }
+
+        .current-badge {
+          background: var(--primary);
         }
 
         .plan-card h3 {
@@ -263,9 +261,9 @@ export default function PricingPage() {
 
         .btn-primary-large:hover:not(:disabled) {
           background: var(--secondary);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
       `}</style>
-    </div>
+    </>
   );
 }

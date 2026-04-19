@@ -3,10 +3,26 @@
 import { useStore } from "@nanostores/react";
 import { $activeModal, closeModal, openModal } from "@/store/modalStore";
 import { useEffect, useRef, useState } from "react";
-import { addPlant, $store, addPropagation, addWish, addNote, updateInventoryItem, addSeasonTask, updatePlant, updatePropagation, updateWish, updateSeasonTask, updateNote, mergeData, setStoreData } from "@/store/plantStore";
+import {
+  addPlant,
+  $store,
+  addPropagation,
+  addWish,
+  addNote,
+  updateInventoryItem,
+  addSeasonTask,
+  updatePlant,
+  updatePropagation,
+  updateWish,
+  updateSeasonTask,
+  updateNote,
+  mergeData,
+  setStoreData,
+} from "@/store/plantStore";
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { PotLabel } from "@/components/ui/PotLabel";
 import configProject from "@/data/configProject";
+import NextImage from "next/image";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -21,124 +37,240 @@ import {
   type Option,
 } from "@/data/catalog";
 
-const renderOptions = (options: Option[]) =>
-  options.map((option) => (
-    <option key={option.value} value={option.value}>
-      {option.label}
-    </option>
-  ));
+function CustomSelect({
+  options,
+  defaultValue,
+  onChange,
+  name,
+  className = "",
+}: {
+  options: Option[];
+  defaultValue: string;
+  onChange?: (val: string) => void;
+  name: string;
+  className?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(defaultValue);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find((o) => o.value === selected) || options[0];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    setSelected(defaultValue);
+  }, [defaultValue]);
+
+  const handleSelect = (val: string) => {
+    setSelected(val);
+    if (onChange) onChange(val);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className={`relative w-full ${className}`} ref={containerRef}>
+      <input type="hidden" name={name} value={selected} />
+      <div
+        className="flex items-center gap-3 p-3 bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all h-[52px]"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {selectedOption?.img && (
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
+            <NextImage src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
+          </div>
+        )}
+        <span className="flex-1 text-sm font-bold text-[var(--text)]">{selectedOption?.label}</span>
+        <span className={`text-[var(--text-gray)] transition-transform ${isOpen ? "rotate-180" : ""}`}>▼</span>
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-[100] w-full mt-2 bg-[var(--white)] border border-[var(--border-light)] rounded-2xl shadow-xl max-h-60 overflow-y-auto animate-in fade-in zoom-in duration-200">
+          {options.map((option) => (
+            <div
+              key={option.value}
+              className={`flex items-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
+              onClick={() => handleSelect(option.value)}
+            >
+              {option.img && (
+                <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                  <NextImage src={option.img} alt="" width={28} height={28} className="object-contain" />
+                </div>
+              )}
+              <span className="text-sm font-medium text-[var(--text)]">{option.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: () => void }) {
-  const [activePlanTab, setActivePlanTab] = useState<"FREE" | "PRO" | "PREMIUM">("PREMIUM");
   const p = configProject.plans;
+  const plansToShow = [p.PREMIUM, p.PRO, p.FREE];
+  const [activePlanTab, setActivePlanTab] = useState(p.PREMIUM.id);
+
+  const currentGiftSlots: number = props?.giftSlots || 0;
+  const expiresAt: string | null = props?.premiumExpiresAt || null;
+  const isExpired = expiresAt ? new Date() > new Date(expiresAt) : true;
 
   return (
     <div className="admin-manage-modal">
-      <h3 className="text-xl font-black text-[var(--primary)] mb-2">Gestionar Usuario</h3>
-      <p className="mb-6 text-xs font-bold text-[var(--text-gray)] opacity-60 uppercase tracking-widest border-b border-[var(--border-light)] pb-4">
+      <h3 className="mb-2 text-xl font-black text-[var(--primary)]">Gestionar Usuario</h3>
+      <p className="mb-6 border-b border-[var(--border-light)] pb-4 text-xs font-bold uppercase tracking-widest text-[var(--text-gray)]">
         Operador: <span className="text-[var(--text)]">{props?.userName}</span>
       </p>
 
       {/* TABS DE PLAN */}
       <div className="flex bg-[var(--bg-faint)] p-1.5 rounded-2xl gap-1.5 mb-8 shadow-inner">
-        {(["FREE", "PRO", "PREMIUM"] as const).map((planKey) => (
+        {plansToShow.map((plan) => (
           <button
-            key={planKey}
+            key={plan.id}
             type="button"
             className={`flex-1 py-3 text-[0.65rem] font-black uppercase tracking-widest rounded-xl transition-all ${
-              activePlanTab === planKey
-                ? "bg-[var(--white)] text-[var(--primary)] shadow-md"
-                : "text-[var(--text-gray)] opacity-40 hover:opacity-100"
+              activePlanTab === plan.id
+                ? "bg-[var(--white)] text-[var(--primary)] shadow-md ring-1 ring-[var(--border)]"
+                : "text-[var(--text-gray)] opacity-80 hover:bg-[var(--white)]/70 hover:text-[var(--text)]"
             }`}
-            onClick={() => setActivePlanTab(planKey)}
+            onClick={() => setActivePlanTab(plan.id)}
           >
-            {p[planKey].icon} {p[planKey].label}
+            {plan.label}
           </button>
         ))}
       </div>
 
       <div className="space-y-6">
-        {activePlanTab === "PREMIUM" && (
-          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
-            e.preventDefault();
-            const fd = new FormData(e.currentTarget);
-            props?.onConfirm({ 
-              action: "add", 
-              hasPremium: true, 
-              amount: fd.get("amount"), 
-              unit: fd.get("unit") 
-            });
-            handleClose();
-          }}>
-             <div className="bg-[var(--info-bg)]/30 p-6 rounded-3xl border border-[var(--info)]/10">
-                <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">🎁 REGALAR MEMBRESÍA PREMIUM</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-group mb-0">
-                    <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Cantidad</label>
-                    <input type="number" name="amount" defaultValue="1" min="1" required className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
-                  </div>
-                  <div className="form-group mb-0">
-                    <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Unidad</label>
-                    <select name="unit" defaultValue="months" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-xs">
-                      <option value="months">Meses</option>
-                      <option value="days">Días</option>
-                    </select>
-                  </div>
+        {activePlanTab === p.PREMIUM.id && (
+          <form
+            className="space-y-6 animate-in fade-in duration-300"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              props?.onConfirm({
+                action: "gift_premium",
+                amount: fd.get("amount"),
+                unit: fd.get("unit"),
+              });
+              handleClose();
+            }}
+          >
+            <div className="rounded-3xl border border-[var(--info)]/25 bg-[var(--info-bg)]/60 p-6">
+              <p className="m-0 text-xs font-bold text-[var(--info-dark)] mb-4">REGALAR MEMBRESÍA PREMIUM</p>
+              {expiresAt && !isExpired && (
+                <p className="mb-3 text-[0.6rem] text-[var(--info-dark)] opacity-90">
+                  Premium activo hasta: {new Date(expiresAt).toLocaleDateString()} — el tiempo se acumula.
+                </p>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-group mb-0">
+                  <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Cantidad</label>
+                  <input
+                    type="number"
+                    name="amount"
+                    defaultValue="1"
+                    min="1"
+                    required
+                    className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
+                  />
                 </div>
-             </div>
-             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em]">Aplicar Tiempo Premium</button>
+                <div className="form-group mb-0">
+                  <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Unidad</label>
+                  <select
+                    name="unit"
+                    defaultValue="months"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-xs font-black text-[var(--text)]"
+                  >
+                    <option value="months">Meses</option>
+                    <option value="days">Días</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em]">
+              Aplicar Tiempo Premium
+            </button>
           </form>
         )}
 
-        {activePlanTab === "PRO" && (
-          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
-            e.preventDefault();
-            const fd = new FormData(e.currentTarget);
-            props?.onConfirm({ 
-              action: "set_pro", 
-              slotsToGift: parseInt(fd.get("slots") as string || "0")
-            });
-            handleClose();
-          }}>
-             <div className="bg-[var(--success-bg)]/50 p-6 rounded-3xl border border-[var(--primary)]/10">
-                <p className="m-0 text-xs font-bold text-[var(--primary)] mb-4">💎 ASCENDER A PRO + REGALAR SLOTS</p>
-                <div className="form-group mb-0">
-                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Slots de Expansión</label>
-                  <input type="number" name="slots" defaultValue="0" min="0" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
-                  <span className="text-[0.55rem] opacity-40 mt-2 block italic">Los slots se suman a su límite actual de Pro ({p.PRO.maxSlots}).</span>
-                </div>
-             </div>
-             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--secondary)]">Activar Nivel Pro</button>
+        {activePlanTab === p.PRO.id && (
+          <form
+            className="space-y-6 animate-in fade-in duration-300"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              props?.onConfirm({
+                action: "gift_pro",
+                slotsToGift: parseInt((fd.get("slots") as string) || "0"),
+              });
+              handleClose();
+            }}
+          >
+            <div className="rounded-3xl border border-[var(--primary)]/20 bg-[var(--success-bg)]/70 p-6">
+              <p className="m-0 text-xs font-bold text-[var(--primary)] mb-4">ASCENDER A PRO + REGALAR SLOTS</p>
+              {currentGiftSlots > 0 && (
+                <p className="mb-3 text-[0.6rem] text-[var(--primary)] opacity-90">
+                  Gift slots actuales: {currentGiftSlots} — los nuevos se acumulan.
+                </p>
+              )}
+              <div className="form-group mb-0">
+                <label className="mb-2 block text-[0.6rem] font-black uppercase text-[var(--text-gray)]">Slots a Regalar</label>
+                <input
+                  type="number"
+                  name="slots"
+                  defaultValue="0"
+                  min="0"
+                  className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
+                />
+                <span className="mt-2 block text-[0.55rem] italic text-[var(--text-gray)] opacity-80">
+                  Base Pro: {p.PRO.maxSlots} slots. Gift slots se acumulan encima.
+                </span>
+              </div>
+            </div>
+            <button type="submit" className="btn-warning w-full rounded-2xl py-4 text-xs font-black uppercase tracking-[0.2em]">
+              Activar Nivel Pro
+            </button>
           </form>
         )}
 
-        {activePlanTab === "FREE" && (
-          <form className="space-y-6 animate-in fade-in duration-300" onSubmit={(e) => {
-            e.preventDefault();
-            const fd = new FormData(e.currentTarget);
-            const slots = parseInt(fd.get("slots") as string || "0");
-            if (slots > 0) {
-              props?.onConfirm({ action: "set_free", slotsToGift: slots });
-            } else {
-              props?.onConfirm({ action: "set_free" });
-            }
-            handleClose();
-          }}>
-             <div className="bg-[var(--warning-bg)]/50 p-6 rounded-3xl border border-[var(--secondary)]/10">
-                <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-4">🌱 NIVEL USUARIO (BASE)</p>
-                <div className="form-group mb-0">
-                  <label className="text-[0.6rem] uppercase opacity-60 font-black mb-2 block">Regalar Slots Extras</label>
-                  <input type="number" name="slots" defaultValue="0" min="0" className="bg-[var(--white)] border-[var(--border)] p-3 rounded-xl font-black text-sm" />
-                  <span className="text-[0.55rem] opacity-40 mt-2 block italic">Esto aumentará sus slots permanentes más allá de los {p.FREE.maxSlots} base.</span>
-                </div>
-             </div>
-             <button type="submit" className="btn-primary w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] bg-[var(--text-gray)]">Resetear a Nivel Usuario</button>
-          </form>
+        {activePlanTab === p.FREE.id && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="rounded-3xl border border-[var(--secondary)]/25 bg-[var(--warning-bg)]/75 p-6">
+              <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">RESETEAR A NIVEL USUARIO</p>
+              <p className="text-[0.65rem] leading-relaxed text-[var(--text)]">
+                Elimina Premium, Pro, y todos los gift slots. El usuario vuelve al límite base de {p.FREE.maxSlots} slots sin nube.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="w-full rounded-2xl border border-[var(--text)] bg-[var(--text)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--text-white)] transition-all hover:bg-[var(--brand-dark)]"
+              onClick={() => {
+                props?.onConfirm({ action: "reset_free" });
+                handleClose();
+              }}
+            >
+              Resetear a Nivel Usuario
+            </button>
+          </div>
         )}
       </div>
 
       <div className="mt-8 flex justify-center">
-        <button type="button" className="btn-text text-[0.6rem] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-all" onClick={handleClose}>Cancelar Operación</button>
+        <button
+          type="button"
+          className="btn-text text-[0.6rem] font-black uppercase tracking-widest opacity-80 transition-all hover:opacity-100"
+          onClick={handleClose}
+        >
+          Cancelar Operación
+        </button>
       </div>
     </div>
   );
@@ -148,7 +280,7 @@ export function Modals() {
   const { type, props } = useStore($activeModal);
   const { plants } = useStore($store);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [plantType, setPlantType] = useState("🌿|Planta");
+  const [plantType, setPlantType] = useState("Planta");
   const [plantLocation, setPlantLocation] = useState("Sala");
 
   useEffect(() => {
@@ -166,9 +298,12 @@ export function Modals() {
 
     const currentLocation = props?.location || "Sala";
     const hasCatalogLocation = PLANT_LOCATIONS.some((option) => option.value === currentLocation);
-
     setPlantLocation(hasCatalogLocation ? currentLocation : "Otros");
-  }, [props?.location, type]);
+
+    const currentType = props?.type || "Planta";
+    const isCustom = !PLANT_TYPES.some((option) => option.value === currentType);
+    setPlantType(isCustom ? "CUSTOM" : currentType);
+  }, [props?.location, props?.type, type]);
 
   const handleClose = () => {
     closeModal();
@@ -177,27 +312,32 @@ export function Modals() {
   // --- Handlers ---
   const handlePlantSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const fd = new FormData(e.currentTarget);
-    let icon = "🌿", typeLabel = "Planta";
+    let icon = "/icons/environment/plants/generic.svg",
+      typeLabel = "Planta";
     const typeSelect = fd.get("p-type") as string;
+
     if (typeSelect === "CUSTOM") {
-      const custom = (fd.get("p-custom-type") as string) || "🌿|Planta";
-      const parts = custom.includes("|") ? custom.split("|") : ["🌿", custom];
-      icon = parts[0]; typeLabel = parts[1];
+      const custom = (fd.get("p-custom-type") as string) || "Planta";
+      typeLabel = custom;
     } else {
-      const parts = typeSelect.split("|");
-      icon = parts[0]; typeLabel = parts[1];
+      const catalogType = PLANT_TYPES.find((t) => t.value === typeSelect);
+      if (catalogType) {
+        typeLabel = catalogType.value;
+        icon = catalogType.img || "/icons/environment/plants/generic.svg";
+      } else {
+        typeLabel = typeSelect;
+      }
     }
 
     const selectedLocation = fd.get("p-location") as string;
     const customLocation = (fd.get("p-custom-location") as string | null)?.trim();
-    const location = selectedLocation === "Otros"
-      ? customLocation || "Otros"
-      : selectedLocation || "No especificada";
+    const location = selectedLocation === "Otros" ? customLocation || "Otros" : selectedLocation || "No especificada";
 
     const data = {
       name: fd.get("p-name") as string,
       icon,
       type: typeLabel,
+      subtype: fd.get("p-subtype") as string,
       location,
       light: fd.get("p-light") as any,
       potType: fd.get("p-pot") as any,
@@ -219,7 +359,7 @@ export function Modals() {
       method: fd.get("prop-method") as any,
       startDate: fd.get("prop-start") as string,
       parentId: fd.get("prop-parent") ? parseInt(fd.get("prop-parent") as string) : null,
-      notes: fd.get("prop-notes") as string
+      notes: fd.get("prop-notes") as string,
     };
     if (type === "edit-prop") {
       updatePropagation(props.id, data);
@@ -234,7 +374,7 @@ export function Modals() {
     const data = {
       name: fd.get("w-name") as string,
       priority: fd.get("w-priority") as any,
-      notes: fd.get("w-notes") as string
+      notes: fd.get("w-notes") as string,
     };
     if (type === "edit-wish") {
       updateWish(props.id, data);
@@ -248,7 +388,7 @@ export function Modals() {
     const fd = new FormData(e.currentTarget);
     const data = {
       type: fd.get("st-type") as any,
-      desc: fd.get("st-desc") as string
+      desc: fd.get("st-desc") as string,
     };
     if (type === "edit-season-task") {
       updateSeasonTask(props.season, props.index, data);
@@ -275,7 +415,7 @@ export function Modals() {
       category: fd.get("i-type") as InventoryCategory,
       name: fd.get("i-name") as string,
       qty: parseFloat(fd.get("i-qty") as string),
-      unit: fd.get("i-unit") as string
+      unit: fd.get("i-unit") as string,
     };
     updateInventoryItem(data.category, data.name, data.qty, data.unit);
     handleClose();
@@ -286,220 +426,365 @@ export function Modals() {
     const fd = new FormData(e.currentTarget);
     const title = fd.get("cal-title") as string;
     const desc = fd.get("cal-desc") as string;
-    const date = (fd.get("cal-date") as string).replace(/-/g, '');
+    const date = (fd.get("cal-date") as string).replace(/-/g, "");
     const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(desc)}&dates=${date}/${date}`;
-    window.open(url, '_blank');
+    window.open(url, "_blank");
     handleClose();
   };
 
   return (
     <>
-      <dialog ref={dialogRef} onCancel={handleClose} id={`modal-${type}`}>
+      <dialog
+        ref={dialogRef}
+        onCancel={handleClose}
+        id={`modal-${type}`}
+        className={type === "add-plant" || type === "edit-plant" ? "plant-form-modal" : undefined}
+      >
+        {/* --- MODAL DE AGREGAR/EDITAR PLANTA --- */}
         {(type === "add-plant" || type === "edit-plant") && (
           <form method="dialog" onSubmit={handlePlantSubmit}>
-            <h3>{type === "edit-plant" ? "✏️ Editar Perfil Botánico" : "🌿 Nueva Planta"}</h3>
+            <h3 className="flex items-center gap-2">
+              {type === "edit-plant" ? (
+                <>
+                  <NextImage src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
+                  <span>Modificar Planta</span>
+                </>
+              ) : (
+                <>
+                  <NextImage src="/icons/common/stars.svg" alt="Nueva Planta" width={18} height={18} className="object-contain" />
+                  <span>Nueva Planta</span>
+                </>
+              )}
+            </h3>
+            {/* --- Nombre --- */}
             <div className="form-group">
-              <label>Nombre (obligatorio)</label>
-              <input type="text" name="p-name" required placeholder="Ej: Monstera Albo" defaultValue={props?.name || props?.initialName || ""} />
+              <label>Nombre*</label>
+              <input
+                type="text"
+                name="p-name"
+                required
+                placeholder="Ej: Monstera Albo"
+                defaultValue={props?.name || props?.initialName || ""}
+              />
             </div>
-            <div className="form-group">
-              <label>Tipo de Planta</label>
-              <select name="p-type" defaultValue={props ? `${props.icon}|${props.type}` : "🌿|Planta"} onChange={(e) => setPlantType(e.target.value)}>
-                {renderOptions(PLANT_TYPES)}
-              </select>
-              {plantType === "CUSTOM" && (
+            {/* --- Tipo y Subtipo --- */}
+            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* --- Tipo --- */}
+              <div className="form-group">
+                <label>Tipo de Planta*</label>
+                <CustomSelect
+                  name="p-type"
+                  options={PLANT_TYPES}
+                  defaultValue={props?.type || "Planta"}
+                  onChange={(val) => setPlantType(val)}
+                />
+                {plantType === "CUSTOM" && (
+                  <input type="text" name="p-custom-type" placeholder="Orquídea" style={{ marginTop: "0.4rem" }} />
+                )}
+              </div>
+              {/* --- Subtipo --- */}
+              <div className="form-group">
+                <label>Subtipo</label>
                 <input
                   type="text"
-                  name="p-custom-type"
-                  placeholder="emoji|NombreTipo  ej: 🌺|Orquídea"
-                  style={{ marginTop: '0.4rem' }}
+                  name="p-subtype"
+                  required
+                  placeholder="Ej: Epífita"
+                  defaultValue={props?.subtype || props?.initialSubtype || ""}
                 />
-              )}
+              </div>
             </div>
+            {/* --- Ubicación y Luz --- */}
             <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* --- Ubicación --- */}
               <div className="form-group mb-0">
-                <label>📍 Ubicación</label>
-                <select
+                <label>Ubicación</label>
+                <CustomSelect
                   name="p-location"
-                  className="p-2 text-sm sm:text-base"
-                  value={plantLocation}
-                  onChange={(event) => setPlantLocation(event.target.value)}
-                >
-                  {renderOptions(PLANT_LOCATIONS)}
-                </select>
+                  options={PLANT_LOCATIONS}
+                  defaultValue={
+                    PLANT_LOCATIONS.some((option) => option.value === props?.location) ? props.location : props?.location ? "Otros" : "Sala"
+                  }
+                  onChange={(val) => setPlantLocation(val)}
+                />
                 {plantLocation === "Otros" && (
                   <input
                     type="text"
                     name="p-custom-location"
                     className="mt-2 p-2 text-sm sm:text-base"
                     placeholder="Ej: Lavadero, Ventana norte, Terraza"
-                    defaultValue={props?.location && !PLANT_LOCATIONS.some((option) => option.value === props.location) ? props.location : ""}
+                    defaultValue={
+                      props?.location && !PLANT_LOCATIONS.some((option) => option.value === props.location) ? props.location : ""
+                    }
                     required
                   />
                 )}
               </div>
+              {/* --- Luz --- */}
               <div className="form-group mb-0">
-                <label>☀️ Luz</label>
-                <select name="p-light" className="p-2 text-sm sm:text-base" defaultValue={props?.light || "Media"}>
-                  {renderOptions(LIGHT_LEVELS)}
-                </select>
+                <label>Luz</label>
+                <CustomSelect name="p-light" options={LIGHT_LEVELS} defaultValue={props?.light || "Media"} />
               </div>
             </div>
-            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
+            {/* --- Maceta y Dormancia --- */}
+            <div className="form-grid grid grid-cols-1 sm:grid-cols-2 sm:gap-4 mt-3 sm:mt-4">
+              {/* --- Maceta --- */}
               <div className="form-group mb-0">
                 <PotLabel />
-                <select name="p-pot" className="p-2 text-sm sm:text-base" defaultValue={props?.potType || "Plástico"}>
-                  {renderOptions(POT_TYPES)}
-                </select>
+                <CustomSelect name="p-pot" options={POT_TYPES} defaultValue={props?.potType || "Plástico"} />
               </div>
+              {/* --- Dormancia --- */}
               <div className="form-group mb-0">
-                <label>💤 Dormancia</label>
-                <select name="p-dormancy" className="p-2 text-sm sm:text-base" defaultValue={props?.dormancy || "Ninguna"}>
-                  {renderOptions(DORMANCIES)}
-                </select>
+                <label>
+                  <img src="/icons/common/sleep.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                  Dormancia
+                </label>
+                <CustomSelect name="p-dormancy" options={DORMANCIES} defaultValue={props?.dormancy || "Ninguna"} />
               </div>
             </div>
-            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-plant" ? "Actualizar" : "Guardar Planta"}</button>
+            {/* --- Guardar o Cancelar --- */}
+            <div className="mt-8 space-y-3">
+              <div className="modal-actions col-span-2 flex flex-col-reverse items-center justify-center sm:flex-row sm:gap-4">
+                <button type="button" className="btn-text text-[var(--danger)] w-full max-w-[220px] sm:w-auto py-2" onClick={handleClose}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full max-w-[220px] sm:w-auto py-2">
+                  {type === "edit-plant" ? "Actualizar" : "Guardar Planta"}
+                </button>
+              </div>
+              <p className="text-center text-sm text-[var(--text-gray)]">Todos los campos con * son obligatorios.</p>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE AGREGAR/EDITAR PROPAGACIÓN --- */}
         {(type === "add-prop" || type === "edit-prop") && (
           <form method="dialog" onSubmit={handlePropSubmit}>
-            <h3>{type === "edit-prop" ? "✏️ Editar Propagación" : "🧪 Nueva Propagación"}</h3>
+            <h3>{type === "edit-prop" ? "Editar Propagación" : "Nueva Propagación"}</h3>
             <div className="form-group">
               <label>Planta Madre (Opcional)</label>
-              <select name="prop-parent" defaultValue={props?.parentId || ""}>
-                <option value="">-- Sin madre (Independiente) --</option>
-                {plants.sort((a,b) => a.name.localeCompare(b.name)).map(p => (
-                  <option key={p.id} value={p.id}>{p.icon} {p.name}</option>
-                ))}
-              </select>
+              <CustomSelect
+                name="prop-parent"
+                options={[
+                  { value: "", label: "-- Sin madre (Independiente) --" },
+                  ...plants
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((p) => {
+                      const typeInfo = PLANT_TYPES.find((t) => t.value === p.type);
+                      return {
+                        value: String(p.id),
+                        label: p.name,
+                        img: typeInfo?.img,
+                      };
+                    }),
+                ]}
+                defaultValue={props?.parentId ? String(props.parentId) : ""}
+              />
             </div>
             <div className="form-group">
-              <label>Nombre Identificador (obligatorio)</label>
+              <label>Nombre Identificador*</label>
               <input type="text" name="prop-name" placeholder="Ej: Esqueje de Pothos" required defaultValue={props?.name || ""} />
             </div>
             <div className="form-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="form-group mb-0">
                 <label>Método</label>
-                <select name="prop-method" className="p-2 text-sm sm:text-base" defaultValue={props?.method || "Agua"}>
-                  {renderOptions(PROP_METHODS)}
-                </select>
+                <CustomSelect name="prop-method" options={PROP_METHODS} defaultValue={props?.method || "Agua"} />
               </div>
               <div className="form-group mb-0">
-                <label>📅 Fecha Inicio (obligatorio)</label>
-                <input type="date" name="prop-start" className="p-2 text-sm sm:text-base" required defaultValue={props?.startDate || new Date().toISOString().split('T')[0]} />
+                <label>
+                  <img src="/icons/common/calendar.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                  Fecha Inicio*
+                </label>
+                <input
+                  type="date"
+                  name="prop-start"
+                  className="p-2 text-sm sm:text-base"
+                  required
+                  defaultValue={props?.startDate || new Date().toISOString().split("T")[0]}
+                />
               </div>
             </div>
-            <div className="form-group mt-3 sm:mt-4"><label>📝 Notas</label><textarea name="prop-notes" className="p-2 text-sm sm:text-base" placeholder="Condiciones, hormonas, etc." defaultValue={props?.notes || ""}></textarea></div>
+            <div className="form-group mt-3 sm:mt-4">
+              <label>
+                <img src="/icons/common/notes.svg" width={14} height={14} alt="" className="object-contain inline mr-1" />
+                Notas
+              </label>
+              <textarea
+                name="prop-notes"
+                className="p-2 text-sm sm:text-base"
+                placeholder="Condiciones, hormonas, etc."
+                defaultValue={props?.notes || ""}
+              ></textarea>
+            </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-prop" ? "Actualizar" : "Iniciar"}</button>
+              <button type="button" className="btn-text text-[var(--danger)] w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <span className="items-center justify-center text-center text-sm">Todos los campos con * son Obligatorios.</span>
+              <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full sm:w-auto py-2">
+                {type === "edit-prop" ? "Actualizar" : "Iniciar"}
+              </button>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE AGREGAR/EDITAR DESEO --- */}
         {(type === "add-wish" || type === "edit-wish") && (
           <form method="dialog" onSubmit={handleWishSubmit}>
-            <h3>{type === "edit-wish" ? "✏️ Editar Deseo" : "✨ Nuevo Deseo"}</h3>
+            <h3>{type === "edit-wish" ? "Editar Deseo" : "Nuevo Deseo"}</h3>
             <div className="form-group">
-              <label>¿Qué deseamos? (obligatorio)</label>
-              <input type="text" name="w-name" required placeholder="Ej: Tijeras, Fertilizante, Monstera..." className="p-2 text-sm sm:text-base" defaultValue={props?.name || ""} />
+              <label>¿Qué deseamos?*</label>
+              <input
+                type="text"
+                name="w-name"
+                required
+                placeholder="Ej: Tijeras, Fertilizante, Monstera..."
+                className="p-2 text-sm sm:text-base"
+                defaultValue={props?.name || ""}
+              />
             </div>
             <div className="form-group">
               <label>Prioridad</label>
-              <select name="w-priority" className="p-2 text-sm sm:text-base" defaultValue={props?.priority || "Media"}>
-                {renderOptions(WISH_PRIORITIES)}
-              </select>
+              <CustomSelect name="w-priority" options={WISH_PRIORITIES} defaultValue={props?.priority || "Media"} />
             </div>
-            <div className="form-group"><label>📝 Notas</label><textarea name="w-notes" className="p-2 text-sm sm:text-base" placeholder="Link, precio, lugar..." defaultValue={props?.notes || ""}></textarea></div>
+            <div className="form-group">
+              <label>Notas</label>
+              <textarea
+                name="w-notes"
+                className="p-2 text-sm sm:text-base"
+                placeholder="Link, precio, lugar..."
+                defaultValue={props?.notes || ""}
+              ></textarea>
+            </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-wish" ? "Actualizar" : "Añadir"}</button>
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
+                {type === "edit-wish" ? "Actualizar" : "Añadir"}
+              </button>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE AGREGAR/EDITAR PLAN DE TEMPORADA --- */}
         {(type === "add-season-task" || type === "edit-season-task") && (
           <form method="dialog" onSubmit={handleSeasonTaskSubmit}>
-            <h3>{type === "edit-season-task" ? "✏️ Editar Plan de Temporada" : "📅 Planear Acción"}</h3>
+            <h3>{type === "edit-season-task" ? "Editar Plan de Temporada" : "Planear Acción"}</h3>
             <div className="form-group">
               <label>Tipo de Tarea</label>
-              <select name="st-type" className="p-2 text-sm sm:text-base" defaultValue={props?.type || "Otro"}>
-                {renderOptions(SEASON_TASK_TYPES)}
-              </select>
+              <CustomSelect name="st-type" options={SEASON_TASK_TYPES} defaultValue={props?.type || "Otro"} />
             </div>
             <div className="form-group">
-              <label>Descripción del Plan (obligatorio)</label>
-              <textarea name="st-desc" required className="p-2 text-sm sm:text-base" placeholder="Ej: Podar los geranios..." defaultValue={props?.desc || ""}></textarea>
+              <label>Descripción del Plan*</label>
+              <textarea
+                name="st-desc"
+                required
+                className="p-2 text-sm sm:text-base"
+                placeholder="Ej: Podar los geranios..."
+                defaultValue={props?.desc || ""}
+              ></textarea>
             </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}</button>
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
+                {type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}
+              </button>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE AGREGAR/EDITAR NOTA GLOBAL --- */}
         {(type === "add-note" || type === "edit-note") && (
           <form method="dialog" onSubmit={handleNoteSubmit}>
-            <h3>{type === "edit-note" ? "✏️ Editar Nota Global" : "📝 Nueva Nota Global"}</h3>
+            <h3>{type === "edit-note" ? "Editar Nota Global" : "Nueva Nota Global"}</h3>
             <div className="form-group">
-              <label>Contenido de la nota (obligatorio)</label>
-              <textarea name="n-content" rows={4} required className="p-2 text-sm sm:text-base" placeholder="Ej: Comprar fertilizante orgánico..." defaultValue={props?.content || ""}></textarea>
+              <label>Contenido de la nota*</label>
+              <textarea
+                name="n-content"
+                rows={4}
+                required
+                className="p-2 text-sm sm:text-base"
+                placeholder="Ej: Comprar fertilizante orgánico..."
+                defaultValue={props?.content || ""}
+              ></textarea>
             </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-note" ? "Actualizar" : "Guardar"}</button>
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
+                {type === "edit-note" ? "Actualizar" : "Guardar"}
+              </button>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE AGREGAR/EDITAR INSUMO --- */}
         {(type === "add-item" || type === "edit-item") && (
           <form method="dialog" onSubmit={handleItemSubmit}>
-            <h3>{type === "edit-item" ? "✏️ Editar Insumo" : "📦 Nuevo Insumo"}</h3>
+            <h3>{type === "edit-item" ? "Editar Insumo" : "Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>
-              <select name="i-type" className="p-2 text-sm sm:text-base" defaultValue={props?.cat || "substrates"}>
-                {renderOptions(INVENTORY_CATEGORIES)}
-              </select>
+              <CustomSelect name="i-type" options={INVENTORY_CATEGORIES} defaultValue={props?.cat || "substrates"} />
             </div>
             <div className="form-group">
-              <label>Nombre del insumo (obligatorio)</label>
-              <input type="text" name="i-name" required className="p-2 text-sm sm:text-base" placeholder="Ej: Humus de lombriz" defaultValue={props?.name || ""} />
+              <label>Nombre del insumo*</label>
+              <input
+                type="text"
+                name="i-name"
+                required
+                className="p-2 text-sm sm:text-base"
+                placeholder="Ej: Humus de lombriz"
+                defaultValue={props?.name || ""}
+              />
             </div>
             <div className="form-grid grid grid-cols-2 gap-3 sm:gap-4">
               <div className="form-group mb-0">
                 <label>Cantidad</label>
-                <input type="number" name="i-qty" step="0.1" required className="p-2 text-sm sm:text-base" defaultValue={props?.qty || "1"} />
+                <input
+                  type="number"
+                  name="i-qty"
+                  step="0.1"
+                  required
+                  className="p-2 text-sm sm:text-base"
+                  defaultValue={props?.qty || "1"}
+                />
               </div>
               <div className="form-group mb-0">
                 <label>Unidad</label>
-                <select name="i-unit" className="p-2 text-sm sm:text-base" defaultValue={props?.unit || "L"}>
-                  {renderOptions(INVENTORY_UNITS)}
-                </select>
+                <CustomSelect name="i-unit" options={INVENTORY_UNITS} defaultValue={props?.unit || "L"} />
               </div>
             </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">{type === "edit-item" ? "Actualizar" : "Añadir"}</button>
+              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
+                {type === "edit-item" ? "Actualizar" : "Añadir"}
+              </button>
             </div>
           </form>
         )}
 
+        {/* --- MODAL DE CONFIRMACIÓN --- */}
         {type === "confirm" && (
           <div style={{ textAlign: "center" }}>
-            <h3>{props?.title || "¿Estás seguro?"}</h3>
-            <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
+            <h3 className="text-2xl font-bold text-[var(--text)]">{props?.title || "¿Estás seguro?"}</h3>
+            <p className="my-4 text-base font-medium leading-relaxed text-[var(--text)]">{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button 
-                type="button" 
-                className="btn-primary" 
-                style={{ background: props?.confirmClass === 'secondary' ? 'var(--secondary)' : 'var(--danger)' }}
-                onClick={() => { props?.onConfirm(); handleClose(); }}
+              <button type="button" className="btn-secondary" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className={props?.confirmClass === "secondary" ? "btn-warning" : "btn-danger"}
+                onClick={() => {
+                  props?.onConfirm();
+                  handleClose();
+                }}
               >
                 {props?.confirmText || "Confirmar"}
               </button>
@@ -509,7 +794,10 @@ export function Modals() {
 
         {type === "import-choice" && (
           <div style={{ textAlign: "center" }}>
-            <h3>⚠️ Resolución de Conflicto</h3>
+            <h3>
+              <img src="/icons/common/warning.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />
+              Resolución de Conflicto
+            </h3>
             <p style={{ margin: "1rem 0", color: "var(--text-gray)", textAlign: "left", fontSize: "0.9rem", lineHeight: "1.4" }}>
               {props?.message}
             </p>
@@ -518,9 +806,12 @@ export function Modals() {
                 type="button"
                 className="btn-primary"
                 style={{ background: "var(--secondary)", width: "100%" }}
-                onClick={() => { mergeData(props.data); handleClose(); }}
+                onClick={() => {
+                  mergeData(props.data);
+                  handleClose();
+                }}
               >
-                🤝 Unificar Datos (Mezclar ambos)
+                Unificar Datos (Mezclar ambos)
               </button>
               <button
                 type="button"
@@ -531,69 +822,90 @@ export function Modals() {
                   handleClose();
                 }}
               >
-                🔄 Sobreescribir (Usar solo archivo)
+                Sobreescribir (Usar solo archivo)
               </button>
-              <button type="button" className="btn-text" onClick={handleClose} style={{ width: "100%" }}>Cancelar</button>
+              <button type="button" className="btn-text" onClick={handleClose} style={{ width: "100%" }}>
+                Cancelar
+              </button>
             </div>
           </div>
         )}
 
+        {/* --- MODAL DE INFO --- */}
         {type === "info" && (
           <div style={{ textAlign: "center" }}>
             <h3>{props?.title || "¡Logrado!"}</h3>
             <p style={{ margin: "1rem 0", color: "var(--text-gray)" }}>{props?.message}</p>
             <div className="modal-actions" style={{ justifyContent: "center" }}>
-              <button type="button" className="btn-primary" onClick={handleClose}>Entendido</button>
+              <button type="button" className="btn-primary" onClick={handleClose}>
+                Entendido
+              </button>
             </div>
           </div>
         )}
 
-        {type === "admin-premium" && (
-          <AdminPremiumModal props={props} handleClose={handleClose} />
-        )}
+        {type === "admin-premium" && <AdminPremiumModal props={props} handleClose={handleClose} />}
 
         {type === "admin-master" && (
           <div style={{ textAlign: "center" }}>
-            <h3>Gestionar Rango Master</h3>
+            <h3>Gestionar Rango {configProject.plans.MASTER.label}</h3>
             <p className="my-4 text-sm text-[var(--text-gray)]">
               Usuario: <strong>{props?.userName}</strong>
             </p>
             <div className="flex flex-col gap-3">
-              {props?.currentRole === 'master_admin' ? (
-                <button 
+              {props?.currentRole === configProject.plans.MASTER.id ? (
+                <button
                   className="btn-primary bg-[var(--danger)] w-full py-3"
-                  onClick={() => { props?.onConfirm({ role: 'user' }); handleClose(); }}
+                  onClick={() => {
+                    props?.onConfirm({ role: "user" });
+                    handleClose();
+                  }}
                 >
-                  Quitar Rango Master
+                  Quitar Rango {configProject.plans.MASTER.label}
                 </button>
               ) : (
-                <button 
+                <button
                   className="btn-primary bg-[var(--secondary)] w-full py-3"
-                  onClick={() => { props?.onConfirm({ role: 'master_admin' }); handleClose(); }}
+                  onClick={() => {
+                    props?.onConfirm({ role: configProject.plans.MASTER.id });
+                    handleClose();
+                  }}
                 >
-                  Subir a Master
+                  Subir a {configProject.plans.MASTER.label}
                 </button>
               )}
-              <button className="btn-text w-full" onClick={handleClose}>Cancelar</button>
+              <button className="btn-text w-full" onClick={handleClose}>
+                Cancelar
+              </button>
             </div>
           </div>
         )}
 
         {type === "calendar" && (
           <form method="dialog" onSubmit={handleCalendarSubmit}>
-            <h3>📅 Recordatorio Google</h3>
+            <h3>
+              <img src="/icons/common/calendar.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />
+              Recordatorio Google
+            </h3>
             <div className="form-group">
-              <label>Título (obligatorio)</label>
+              <label>Título*</label>
               <input type="text" name="cal-title" required defaultValue={props?.title || ""} />
             </div>
-            <div className="form-group"><label>Descripción</label><textarea name="cal-desc" defaultValue={props?.desc || ""}></textarea></div>
             <div className="form-group">
-              <label>Fecha (obligatorio)</label>
-              <input type="date" name="cal-date" required defaultValue={new Date().toISOString().split('T')[0]} />
+              <label>Descripción</label>
+              <textarea name="cal-desc" defaultValue={props?.desc || ""}></textarea>
+            </div>
+            <div className="form-group">
+              <label>Fecha*</label>
+              <input type="date" name="cal-date" required defaultValue={new Date().toISOString().split("T")[0]} />
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn-text" onClick={handleClose}>Cancelar</button>
-              <button type="submit" className="btn-primary">Añadir</button>
+              <button type="button" className="btn-text" onClick={handleClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary">
+                Añadir
+              </button>
             </div>
           </form>
         )}

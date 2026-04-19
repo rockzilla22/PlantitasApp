@@ -1,76 +1,75 @@
 export type Option = { value: string; label: string; img?: string };
 export type LogActionOption = Option & {
-  icon: string;
   inventoryCategory?: string;
 };
 
 export const PLANT_TYPES: Option[] = [
-  { value: "Alocasia", label: "🍃 Alocasia", img: "/standard/plants/alocasia.svg" },
-  { value: "Arbusto", label: "🌳 Árbol / Arbusto", img: "/standard/plants/shrub.svg" },
-  { value: "Aromática", label: "🌿 Aromática", img: "/standard/plants/aromatic.svg" },
-  { value: "Cactus", label: "🌵 Cactus / Suculenta", img: "/standard/plants/cactus.svg" },
-  { value: "Carnívora", label: "🌱 Carnívora", img: "/standard/plants/carnivorous.svg" },
-  { value: "Flor", label: "🌸 Flor", img: "/standard/plants/flower.svg" },
-  { value: "Frutal", label: "🍓 Frutal", img: "/standard/plants/fruits.svg" },
-  { value: "Hierba", label: "🌿 Hierba", img: "/standard/plants/aromatic.svg" },
-  { value: "Monstera", label: "🍃 Monstera", img: "/standard/plants/alocasia.svg" },
-  { value: "Philodendron", label: "🍃 Philodendron", img: "/standard/plants/alocasia.svg" },
-  { value: "Planta", label: "🌿 Planta (Genérica)", img: "/standard/plants/alocasia.svg" },
-  { value: "Syngonium", label: "🌿 Syngonium", img: "/standard/plants/alocasia.svg" },
-  { value: "Trébol", label: "☘️ Trébol", img: "/standard/plants/clover.svg" },
-  { value: "CUSTOM", label: "✨ Otra (Personalizada)...", img: "/icons/common/stars.svg" },
+  { value: "Planta", label: "Planta (Genérica)", img: "/icons/environment/plants/generic.svg" },
+  { value: "Alocasia", label: "Alocasia", img: "/icons/environment/plants/alocasia.svg" },
+  { value: "Arbusto", label: "Árbol / Arbusto", img: "/icons/environment/plants/shrub.svg" },
+  { value: "Aromática", label: "Aromática", img: "/icons/environment/plants/aromatic.svg" },
+  { value: "Cactus", label: "Cactus / Suculenta", img: "/icons/environment/plants/cactus.svg" },
+  { value: "Carnívora", label: "Carnívora", img: "/icons/environment/plants/carnivorous.svg" },
+  { value: "Flor", label: "Flor", img: "/icons/environment/plants/flower.svg" },
+  { value: "Frutal", label: "Frutal", img: "/icons/environment/plants/fruits.svg" },
+  { value: "Hierba", label: "Hierba", img: "/icons/environment/plants/grass.svg" },
+  { value: "Monstera", label: "Monstera", img: "/icons/environment/plants/monstera.svg" },
+  { value: "Philodendron", label: "Philodendron", img: "/icons/environment/plants/philodendron.svg" },
+  { value: "Syngonium", label: "Syngonium", img: "/icons/environment/plants/syngonium.svg" },
+  { value: "Trébol", label: "Trébol", img: "/icons/environment/plants/clover.svg" },
+  { value: "CUSTOM", label: "Otra...", img: "/icons/common/stars.svg" },
 ];
 
 export const LIGHT_LEVELS: Option[] = [
-  { value: "Alta/Directa", label: "☀️ Alta/Directa", img: "/icons/environment/sun.svg" },
-  { value: "Alta/Indirecta", label: "☀️ Alta/Indirecta", img: "/icons/environment/cloud_sun_high.svg" },
-  { value: "Baja", label: "☁️ Baja", img: "/icons/environment/cloud.svg" },
-  { value: "Media", label: "⛅ Media", img: "/icons/environment/cloud_sun.svg" },
+  { value: "Alta/Directa", label: "Alta/Directa", img: "/icons/environment/lightLevels/cloud_direct.svg" },
+  { value: "Alta/Indirecta", label: "Alta/Indirecta", img: "/icons/environment/lightLevels/cloud_sun_high.svg" },
+  { value: "Baja", label: "Baja", img: "/icons/environment/lightLevels/cloud_sun.svg" },
+  { value: "Media", label: "Media", img: "/icons/environment/lightLevels/cloud.svg" },
 ];
 
 export const POT_TYPES: Option[] = [
-  { value: "Autorriego", label: "💧 Autorriego", img: "/icons/actions/water.svg" },
-  { value: "Barro", label: "🏺 Barro", img: "/standard/pots/terra_pot.svg" },
-  { value: "Plástico", label: "📦 Plástico", img: "/standard/pots/plastic_pot.svg" },
-  { value: "Orquidea", label: "🥤 Orquidea", img: "/standard/pots/orchid_pot.svg" },
-  { value: "Terracota", label: "🧱 Terracota", img: "/standard/pots/terra_pot.svg" },
+  { value: "Autorriego", label: "Autorriego", img: "/icons/environment/log/watering_can.svg" },
+  { value: "Barro", label: "Barro", img: "/icons/environment/pots/clay_pot.svg" },
+  { value: "Orquidea", label: "Orquidea", img: "/icons/environment/pots/orchid_pot.svg" },
+  { value: "Plástico", label: "Plástico", img: "/icons/environment/pots/plastic_pot.svg" },
+  { value: "Terracota", label: "Terracota", img: "/icons/environment/pots/terra_pot.svg" },
 ];
 
 export const DORMANCIES: Option[] = [
-  { value: "Invierno", label: "❄️ Invierno", img: "/icons/environment/4_winter.svg" },
-  { value: "Ninguna", label: "🚫 Ninguna", img: "/icons/common/nothing.svg" },
-  { value: "Verano", label: "☀️ Verano", img: "/icons/environment/2_summer.svg" },
+  { value: "Invierno", label: "Invierno", img: "/icons/environment/summerStations/4_winter.svg" },
+  { value: "Ninguna", label: "Ninguna", img: "/icons/common/nothing.svg" },
+  { value: "Verano", label: "Verano", img: "/icons/environment/summerStations/2_summer.svg" },
 ];
 
 export const PROP_METHODS: Option[] = [
-  { value: "Acodo", label: "🌳 Acodo", img: "/icons/common/layering.svg" },
-  { value: "Agua", label: "💧 Agua", img: "/icons/actions/water.svg" },
-  { value: "Semilla", label: "🌱 Semilla", img: "/icons/common/propagacion_Semilla.svg" },
-  { value: "Sustrato", label: "🟤 Sustrato", img: "/standard/inventory/substrates.svg" },
+  { value: "Acodo", label: "Acodo", img: "/icons/environment/methods/layering.svg" },
+  { value: "Agua", label: "Agua", img: "/icons/environment/inventory/water.svg" },
+  { value: "Semilla", label: "Semilla", img: "/icons/environment/plants/seed.svg" },
+  { value: "Sustrato", label: "Sustrato", img: "/icons/environment/log/substrates.svg" },
 ];
 
 export const WISH_PRIORITIES: Option[] = [
-  { value: "Alta", label: "Alta", img: "/icons/common/fail.svg" },
-  { value: "Baja", label: "Baja", img: "/icons/common/success.svg" },
-  { value: "Media", label: "Media", img: "/icons/common/sand_timer.svg" },
+  { value: "Alta", label: "Alta", img: "/icons/common/prio_1.svg" },
+  { value: "Baja", label: "Baja", img: "/icons/common/prio_3.svg" },
+  { value: "Media", label: "Media", img: "/icons/common/prio_2.svg" },
 ];
 
 export const SEASON_TASK_TYPES: Option[] = [
-  { value: "Abonado", label: "🧪 Abonado", img: "/standard/inventory/fertilizer.svg" },
-  { value: "Limpieza", label: "🧹 Limpieza", img: "/icons/actions/dead_plant.svg" },
-  { value: "Poda", label: "✂️ Poda", img: "/icons/common/pencil.svg" },
-  { value: "Siembra", label: "🌱 Siembra", img: "/icons/common/propagacion_Semilla.svg" },
-  { value: "Trasplante", label: "🛒 Trasplante", img: "/standard/pots/plant_pot.svg" },
-  { value: "Otro", label: "📝 Otro", img: "/icons/common/notes.svg" },
+  { value: "Abonado", label: "Abonado", img: "/icons/environment/inventory/fertilizer.svg" },
+  { value: "Limpieza", label: "Limpieza", img: "/icons/environment/log/dead_plant.svg" },
+  { value: "Poda", label: "Poda", img: "/icons/common/pencil.svg" },
+  { value: "Siembra", label: "Siembra", img: "/icons/environment/plants/seed.svg" },
+  { value: "Trasplante", label: "Trasplante", img: "/icons/environment/pots/plant_pot.svg" },
+  { value: "Otro", label: "Otro", img: "/icons/common/notes.svg" },
 ];
 
 export const INVENTORY_CATEGORIES: Option[] = [
-  { value: "fertilizers", label: "🧴 Fertilizantes", img: "/standard/inventory/fertilizer.svg" },
-  { value: "meds", label: "💊 Insecticidas/Medicinas", img: "/standard/inventory/medicine.svg" },
-  { value: "liquids", label: "🧪 Líquidos", img: "/standard/inventory/liquid.svg" },
-  { value: "powders", label: "⚪ Polvos", img: "/icons/actions/powder.svg" },
-  { value: "substrates", label: "🟤 Sustratos", img: "/standard/inventory/substrates.svg" },
-  { value: "others", label: "📦 Otros", img: "/icons/common/box.svg" },
+  { value: "fertilizers", label: "Fertilizantes", img: "/icons/environment/inventory/fertilizer.svg" },
+  { value: "meds", label: "Insecticidas/Medicinas", img: "/icons/environment/inventory/medicine.svg" },
+  { value: "liquids", label: "Líquidos", img: "/icons/environment/log/lab.svg" },
+  { value: "powders", label: "Polvos", img: "/icons/environment/log/powder.svg" },
+  { value: "substrates", label: "Sustratos", img: "/icons/environment/log/substrates.svg" },
+  { value: "others", label: "Otros", img: "/icons/common/box.svg" },
 ];
 
 export const INVENTORY_UNITS: Option[] = [
@@ -82,46 +81,58 @@ export const INVENTORY_UNITS: Option[] = [
 ];
 
 export const PLANT_LOCATIONS: Option[] = [
-  { value: "Sala", label: "🛋️ Sala", img: "/icons/common/home.svg" },
-  { value: "Comedor", label: "🪑 Comedor", img: "/icons/common/home.svg" },
-  { value: "Cocina", label: "🍳 Cocina", img: "/icons/common/home.svg" },
-  { value: "Recámara", label: "🛌 Recámara", img: "/icons/common/home.svg" },
-  { value: "Baño", label: "🚿 Baño", img: "/icons/common/home.svg" },
-  { value: "Estudio", label: "🖥️ Estudio", img: "/icons/common/home.svg" },
-  { value: "Entrada", label: "🚪 Entrada", img: "/icons/common/home.svg" },
-  { value: "Balcón", label: "🪴 Balcón", img: "/icons/common/home.svg" },
-  { value: "Patio", label: "🧺 Patio", img: "/icons/common/home.svg" },
-  { value: "Jardín", label: "🌳 Jardín", img: "/icons/common/home.svg" },
-  { value: "Techo", label: "🏠 Techo / Azotea", img: "/icons/common/home.svg" },
-  { value: "Oficina", label: "💼 Oficina", img: "/icons/common/home.svg" },
-  { value: "Otros", label: "✨ Otra", img: "/icons/common/map.svg" },
+  { value: "Balcón", label: "Balcón", img: "/icons/environment/location/balcon.svg" },
+  { value: "Baño", label: "Baño", img: "/icons/environment/location/bathroom.svg" },
+  { value: "Cocina", label: "Cocina", img: "/icons/environment/location/kitchen.svg" },
+  { value: "Comedor", label: "Comedor", img: "/icons/environment/location/dining-room.svg" },
+  { value: "Entrada", label: "Entrada", img: "/icons/environment/location/entrance.svg" },
+  { value: "Estudio", label: "Estudio", img: "/icons/environment/location/study.svg" },
+  { value: "Jardín", label: "Jardín", img: "/icons/environment/location/garden.svg" },
+  { value: "Lavanderia", label: "Lavandería", img: "/icons/environment/location/laundry.svg" },
+  { value: "Oficina", label: "Oficina", img: "/icons/environment/location/office.svg" },
+  { value: "Patio", label: "Patio", img: "/icons/environment/location/patio.svg" },
+  { value: "Recámara", label: "Recámara", img: "/icons/environment/location/bedroom.svg" },
+  { value: "Sala", label: "Sala", img: "/icons/environment/location/living-room.svg" },
+  { value: "Techo", label: "Techo / Azotea", img: "/icons/environment/location/azotea.svg" },
+  { value: "Otros", label: "Otra", img: "/icons/environment/location/other.svg" },
 ];
 
 export const LOG_ACTIONS: LogActionOption[] = [
-  { value: "Fertilizante", label: "🧴 Fertilizante", icon: "🧴", inventoryCategory: "fertilizers", img: "/standard/inventory/fertilizer.svg" },
-  { value: "Insecticidas/Medicinas", label: "💊 Insecticidas/Medicinas", icon: "💊", inventoryCategory: "meds", img: "/standard/inventory/medicine.svg" },
-  { value: "Líquidos", label: "🧪 Líquidos", icon: "🧪", inventoryCategory: "liquids", img: "/standard/inventory/liquid.svg" },
-  { value: "Medición", label: "📏 Medición", icon: "📏", img: "/icons/common/pencil.svg" },
-  { value: "Nota", label: "📝 Nota", icon: "📝", img: "/icons/common/notes.svg" },
-  { value: "Plaga/Enfermedad", label: "🐛 Plaga/Enfermedad", icon: "🐛", inventoryCategory: "meds", img: "/icons/actions/pest.svg" },
-  { value: "Polvos", label: "⚪ Polvos", icon: "⚪", inventoryCategory: "powders", img: "/icons/actions/powder.svg" },
-  { value: "Riego", label: "💧 Riego", icon: "💧", img: "/icons/actions/water.svg" },
-  { value: "Sustrato", label: "🟤 Sustrato", icon: "🟤", inventoryCategory: "substrates", img: "/standard/inventory/substrates.svg" },
-  { value: "Trasplante", label: "🌳 Trasplante", icon: "🌳", img: "/standard/pots/plant_pot.svg" },
+  {
+    value: "Fertilizante",
+    label: "Fertilizante",
+    inventoryCategory: "fertilizers",
+    img: "/icons/environment/inventory/fertilizer.svg",
+  },
+  {
+    value: "Insecticidas/Medicinas",
+    label: "Insecticidas/Medicinas",
+    inventoryCategory: "meds",
+    img: "/icons/environment/inventory/medicine.svg",
+  },
+  { value: "Líquidos", label: "Líquidos", inventoryCategory: "liquids", img: "/icons/environment/log/lab.svg" },
+  { value: "Medición", label: "Medición", img: "/icons/environment/log/rule.svg" },
+  { value: "Nota", label: "Nota", img: "/icons/common/notes.svg" },
+  { value: "Plaga/Enfermedad", label: "Plaga/Enfermedad", inventoryCategory: "meds", img: "/icons/environment/animals/ant.svg" },
+  { value: "Polvos", label: "Polvos", inventoryCategory: "powders", img: "/icons/environment/log/powder.svg" },
+  { value: "Riego", label: "Riego", img: "/icons/environment/log/watering_can.svg" },
+  { value: "Sustrato", label: "Sustrato", inventoryCategory: "substrates", img: "/icons/environment/log/substrates.svg" },
+  { value: "Trasplante", label: "Trasplante", img: "/icons/environment/pots/plant_pot.svg" },
+  { value: "murio", label: "Se marchitó", img: "/icons/environment/log/dead_plant.svg" },
 ];
 
 export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
-  Fertilizante: "🧴",
-  "Insecticidas/Medicinas": "💊",
-  Líquidos: "🧪",
-  Medición: "📏",
-  Nota: "📝",
-  "Plaga/Enfermedad": "🐛",
-  Polvos: "⚪",
-  Riego: "💧",
-  Sustrato: "🟤",
-  Trasplante: "🌳",
-  "Registro Nuevo": "🌱",
+  Fertilizante: "/icons/environment/inventory/fertilizer.svg",
+  "Insecticidas/Medicinas": "/icons/environment/inventory/medicine.svg",
+  Líquidos: "/icons/environment/log/lab.svg",
+  Medición: "/icons/environment/log/rule.svg",
+  Nota: "/icons/common/notes.svg",
+  "Plaga/Enfermedad": "/icons/environment/animals/ant.svg",
+  Polvos: "/icons/environment/log/powder.svg",
+  Riego: "/icons/environment/log/watering_can.svg",
+  Sustrato: "/icons/environment/log/substrates.svg",
+  Trasplante: "/icons/environment/pots/plant_pot.svg",
+  "Registro Nuevo": "/icons/environment/plants/generic.svg",
 };
 
 export const LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE: Record<string, string> = {

@@ -3,6 +3,8 @@
 import { Plant } from "@/core/plant/domain/Plant";
 import { useStore } from "@nanostores/react";
 import { $selectedPlantId } from "@/store/plantStore";
+import Image from "next/image";
+import { PLANT_TYPES } from "@/data/catalog";
 
 interface PlantGridProps {
   plants: Plant[];
@@ -25,57 +27,71 @@ export function PlantGrid({ plants }: PlantGridProps) {
           No hay plantas registradas. ¡Añadí tu primera planta!
         </div>
       ) : (
-        sortedPlants.map((plant) => (
-          <div
-            key={plant.id}
-            onClick={() => $selectedPlantId.set(plant.id)}
-            className={`card min-h-fit h-auto flex flex-col bg-[var(--card-bg)] rounded-[2.5rem] border transition-all cursor-pointer group shadow-md hover:shadow-lg overflow-hidden gap-y-3 ${
-              selectedId === plant.id ? "ring-2 ring-[var(--primary)]/20 bg-[var(--success-bg)]/10" : "border-[var(--border)]"
-            }`}
-            style={{ borderTop: `5px solid ${selectedId === plant.id ? "var(--primary)" : "var(--primary-light)"}` }}
-          >
-            {/* ROW 1: HEADER (Identidad) */}
-            <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
-              <div className="flex flex-col gap-y-2 min-w-0">
-                <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
-                  <span className="text-2xl"> {plant.icon} </span> {plant.name}
-                </h3>
-                <small className="text-[0.8rem] font-bold text-[var(--text-gray)] uppercase tracking-widest truncate block opacity-70">
-                  📍 {plant.location}
-                </small>
-              </div>
-              <div className="flex flex-col items-end gap-y-2 shrink-0">
-                <span className="badge badge-success text-[0.7rem] px-3 py-1">{plant.type}</span>
-                <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">💡 {plant.light}</small>
-              </div>
-            </div>
+        sortedPlants.map((plant) => {
+          const plantTypeInfo = PLANT_TYPES.find((t) => t.value === plant.type);
+          const isCustom = !plantTypeInfo || plant.type === "CUSTOM";
+          const plantImg = plantTypeInfo?.img || "/icons/environment/plants/alocasia.svg";
 
-            {/* ROW 2: BODY (Info Técnica) */}
-            <div className="pt-1">
-              <div className="flex justify-between items-center rounded-2xl px-5 py-3">
+          return (
+            <div
+              key={plant.id}
+              onClick={() => $selectedPlantId.set(plant.id)}
+              className={`card min-h-fit h-auto flex flex-col bg-[var(--card-bg)] rounded-[2.5rem] border transition-all cursor-pointer group shadow-md hover:shadow-lg overflow-hidden gap-y-3 ${
+                selectedId === plant.id ? "ring-2 ring-[var(--primary)]/20 bg-[var(--success-bg)]/10" : "border-[var(--border)]"
+              }`}
+              style={{ borderTop: `5px solid ${selectedId === plant.id ? "var(--primary)" : "var(--primary-light)"}` }}
+            >
+              {/* ROW 1: HEADER (Identidad) */}
+              <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+                <div className="flex flex-col gap-y-2 min-w-0">
+                  <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                      {isCustom ? (
+                        <span className="text-2xl">{plant.icon}</span>
+                      ) : (
+                        <Image src={plantImg} alt={plant.type} width={40} height={40} className="object-contain" />
+                      )}
+                    </div>
+                    <span className="truncate">{plant.name}</span>
+                  </h3>
+                  <small className="text-[0.8rem] font-bold text-[var(--text-gray)] uppercase tracking-widest truncate block opacity-70">
+                    {plant.location}
+                  </small>
+                </div>
+                <div className="flex flex-col items-end gap-y-2 shrink-0">
+                  <span className="badge badge-success text-[0.7rem] px-3 py-1">{plant.type}</span>
+                  <small className="text-[0.7rem] text-[var(--primary)] opacity-50 uppercase tracking-tighter">{plant.light}</small>
+                </div>
+              </div>
+
+              {/* ROW 2: BODY (Info Técnica) */}
+              <div className="pt-1">
+                <div className="flex justify-between items-center rounded-2xl px-5 py-3">
+                  <div className="flex flex-col gap-y-2">
+                    <span className="text-[0.8rem] font-bold text-[var(--text-gray)] block mb-1 opacity-60">Último Riego</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[0.8rem] text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
+                      <Image src="/icons/environment/inventory/water_drops.svg" alt="" width={14} height={14} className="inline mr-1" />{formatDate(plant.lastWateredDate)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ROW 3: FOOTER (Acciones) */}
+              <div className="flex items-center justify-between pt-2 mt-auto text-[var(--footer-bg)]">
                 <div className="flex flex-col gap-y-2">
-                  <span className="text-[0.8rem] font-bold text-[var(--text-gray)] block mb-1 opacity-60">Último Riego</span>
+                  <span className="text-[0.85rem] italic">Perfil Completo</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-[0.8rem] text-[var(--text)] bg-[var(--card-bg)] px-3 py-1">
-                    💧 {formatDate(plant.lastWateredDate)}
-                  </span>
-                </div>
+                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
+                  ➔
+                </button>
               </div>
             </div>
-
-            {/* ROW 3: FOOTER (Acciones) */}
-            <div className="flex items-center justify-between pt-2 mt-auto text-[var(--footer-bg)]">
-              <div className="flex flex-col gap-y-2">
-                <span className="text-[0.85rem] italic">Perfil Completo</span>
-              </div>
-              <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
-                ➔
-              </button>
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );
 }
+

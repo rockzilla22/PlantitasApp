@@ -138,7 +138,7 @@ Reemplazar TODOS los emojis del proyecto por icons SVG en `/public/icons/`. Esto
 
 ```typescript
 export type IconOption = Option & {
-  icon: string;          // Ruta: "/icons/actions/water.svg"
+  img: string;          // Ruta: "/icons/actions/water.svg"
   svg?: string;         // Ruta assets (opcional)
 };
 
@@ -146,12 +146,12 @@ export const LOG_ACTIONS: IconOption[] = [
   { 
     value: "Riego", 
     label: "Riego", 
-    icon: "/icons/actions/water.svg" 
+    img: "/icons/actions/water.svg" 
   },
   { 
     value: "Fertilizante", 
     label: "Fertilizante", 
-    icon: "/icons/actions/fertilizer.svg",
+    img: "/icons/actions/fertilizer.svg",
     inventoryCategory: "fertilizers" 
   },
   // ...
@@ -164,39 +164,7 @@ export function getActionIcon(action: string): string {
 }
 ```
 
-### Actualizar otros catálogos
-
-```typescript
-export const LIGHT_LEVELS: IconOption[] = [
-  { value: "Alta/Directa", label: "☀️ Alta/Directa", icon: "/icons/environment/light-high.svg" },
-  { value: "Alta/Indirecta", label: "☀️ Alta/Indirecta", icon: "/icons/environment/light-high-indirect.svg" },
-  { value: "Media", label: "⛅ Media", icon: "/icons/environment/light-medium.svg" },
-  { value: "Baja", label: "☁️ Baja", icon: "/icons/environment/light-low.svg" },
-];
-
-export const DORMANCIES: IconOption[] = [
-  { value: "Invierno", label: "❄️ Invierno", icon: "/icons/environment/dormancy-winter.svg" },
-  { value: "Verano", label: "☀️ Verano", icon: "/icons/environment/dormancy-summer.svg" },
-  { value: "Ninguna", label: "🚫 Ninguna", icon: "/icons/environment/dormancy-none.svg" },
-];
-
-export const PLANT_TYPES: IconOption[] = [
-  { value: "Alocasia", label: "🍃 Alocasia", icon: "/icons/plants/alocasia.svg" },
-  { value: "Cactus", label: "🌵 Cactus/Suculenta", icon: "/icons/plants/cactus.svg" },
-  // ...
-];
-
-export const POT_TYPES: IconOption[] = [
-  { value: "Autorriego", label: "💧 Autorriego", icon: "/icons/pots/autorriego.svg" },
-  // ...
-];
-
-export const INVENTORY_CATEGORIES: IconOption[] = [
-  { value: "fertilizers", label: "🧴 Fertilizantes", icon: "/icons/inventory/fertilizers.svg" },
-  { value: "meds", label: "💊 Insecticidas/Medicinas", icon: "/icons/inventory/meds.svg" },
-  // ...
-];
-```
+### Catálogo actualizado src\data\catalog.ts
 
 ## 4. COMPONENTE ICONO
 
@@ -280,29 +248,17 @@ export function Icon({ name, size = 24, className }: IconProps) {
 
 ## 6. IMPLEMENTATION CHECKLIST
 
-### Fase 1: Assets (antes del código)
-- [ ] 1. Crear carpeta `/public/icons/`
-- [ ] 2. Crear SVGs de `common/` (15 files)
-- [ ] 3. Crear SVGs de `environment/` (7 files)
-- [ ] 4. Crear SVGs de `actions/` (13 files)
-- [ ] 5. Crear SVGs de `plants/` (14 files)
-- [ ] 6. Crear SVGs de `pots/` (5 files)
-- [ ] 7. Crear SVGs de `inventory/` (6 files)
-- [ ] 8. Crear SVGs de `navigation/` (12 files)
-- [ ] 9. Crear SVGs de `status/` (6 files)
-
-### Fase 2: catalog.ts
-- [ ] 10. Actualizar tipos en catalog.ts
-- [ ] 11. Agregar helper `getActionIcon()`, `getPlantIcon()`, etc.
-- [ ] 12. Agregar `useIcon` hook
-
-### Fase 3: UI (progressive)
+### Fase 1: UI (progressive)
+En general, ya no se usarán emojis, se deben usar los SVG que correspondan en el catalog o los directos en su caso.
+Pregunta si tienes dudas antes de ejecutar.
+Hay campos que antes tenían emoji y ahorita no, es porqué el CLI se detuvo a medio proceso y no terminó.
 - [ ] 13. Reemplazar en PlantGrid.tsx
 - [ ] 14. Reemplazar en PlantDetailPanel.tsx
 - [ ] 15. Reemplazar en todas las pages
 - [ ] 16. Reemplazar en Modals.tsx
+- [ ] 17. Reemplazar en todos los archivos.
 
-### Fase 4: Limpieza
+### Fase 2: Limpieza
 - [ ] 17. Verificar que no queden emojis huérfanos
 - [ ] 18. Test en diferentes browsers
 - [ ] 19. Test en mobile
@@ -364,7 +320,8 @@ const EMOJI_FALLBACK: Record<string, string> = {
 ## 10. NOTAS
 
 - **No es todo o nada** → Se puede hacer incrementally
-- **Fallback siempre** → Si el SVG no existe, mostrar emoji
+- **Fallback siempre** → Si el SVG no existe, dejar "<emoji>" y notificar para buscar un svg y/o crearlo.
 - **IGUALAR color** → Usar `currentColor` en SVG para que herede del CSS
+- **IGUALAR tamaño** → Usar un tamaño acorde al texto, para mantener tamaño alineados
 - **Testing** → Verificar en Chrome, Safari, Firefox, mobile
 - **Performance** → Los SVGs deben cachearse en browser

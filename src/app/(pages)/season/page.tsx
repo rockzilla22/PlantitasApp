@@ -5,16 +5,17 @@ import { $store, removeSeasonTask } from "@/store/plantStore";
 import { Season, SeasonTask } from "@/core/season/domain/SeasonTask";
 import { openModal } from "@/store/modalStore";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function SeasonPage() {
   const { seasonalTasks } = useStore($store);
   const [sortBy, setSortBy] = useState<"type" | "desc">("type");
 
   const seasons: { name: Season; icon: string }[] = [
-    { name: "Primavera", icon: "🌸" },
-    { name: "Verano", icon: "☀️" },
-    { name: "Otoño", icon: "🍂" },
-    { name: "Invierno", icon: "❄️" },
+    { name: "Primavera", icon: "/icons/environment/summerStations/1_spring.svg" },
+    { name: "Verano", icon: "/icons/environment/summerStations/2_summer.svg" },
+    { name: "Otoño", icon: "/icons/environment/summerStations/3_autumn.svg" },
+    { name: "Invierno", icon: "/icons/environment/summerStations/4_winter.svg" },
   ];
 
   const handleAddTask = (season: Season) => {
@@ -22,8 +23,15 @@ export default function SeasonPage() {
   };
 
   const getTaskIcon = (type: string) => {
-    const icons: Record<string, string> = { Poda: "✂️", Siembra: "🌱", Trasplante: "🛒", Abonado: "🧪", Limpieza: "🧹", Otro: "📝" };
-    return icons[type] || "📝";
+    const icons: Record<string, string> = {
+      Poda: "/icons/common/pencil.svg",
+      Siembra: "/icons/environment/plants/seed.svg",
+      Trasplante: "/icons/environment/pots/plant_pot.svg",
+      Abonado: "/icons/environment/inventory/fertilizer.svg",
+      Limpieza: "/icons/environment/log/dead_plant.svg",
+      Otro: "/icons/common/notes.svg",
+    };
+    return icons[type] || "/icons/common/notes.svg";
   };
 
   const getSortedTasks = (season: Season) => {
@@ -54,13 +62,13 @@ export default function SeasonPage() {
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === "type" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
             onClick={() => setSortBy("type")}
           >
-            🏷️ Tipo
+            Tipo
           </button>
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all  ${sortBy === "desc" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
             onClick={() => setSortBy("desc")}
           >
-            🔤 Descripción
+            Descripción
           </button>
         </div>
       </div>
@@ -73,7 +81,7 @@ export default function SeasonPage() {
           >
             <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-4 mb-6">
               <h3 className="m-0 text-xl flex items-center gap-3 text-[var(--primary)] font-bold">
-                <span className="text-3xl">{s.icon}</span> {s.name}
+                <Image src={s.icon} alt={s.name} width={32} height={32} /> {s.name}
               </h3>
               <button className="btn-primary h-9 min-h-[36px] px-4 text-xs uppercase tracking-widest" onClick={() => handleAddTask(s.name)}>
                 + Añadir
@@ -91,8 +99,8 @@ export default function SeasonPage() {
                 >
                   {/* Info Tarea */}
                   <div className="flex items-center gap-4 min-w-0 flex-1">
-                    <span className="text-2xl shrink-0" title={t.type}>
-                      {getTaskIcon(t.type)}
+                    <span className="shrink-0" title={t.type}>
+                      <Image src={getTaskIcon(t.type)} alt={t.type} width={24} height={24} />
                     </span>
                     <p className="m-0 text-[0.95rem] font-semibold text-[var(--text-brown)] truncate leading-tight" title={t.desc}>
                       {t.desc}
@@ -102,25 +110,25 @@ export default function SeasonPage() {
                   {/* Acciones */}
                   <div className="flex items-center gap-2 shrink-0 ml-2 border-l border-[var(--border)] pl-4">
                     <button
-                      className="p-2 text-2xl hover:scale-125 transition-transform"
+                      className="p-2 hover:scale-125 transition-transform"
                       title="Agendar"
                       onClick={() => openModal("calendar", { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}
                     >
-                      📅
+                      <Image src="/icons/common/calendar.svg" alt="Agendar" width={22} height={22} />
                     </button>
                     <button
-                      className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all opacity-60 hover:opacity-100 "
+                      className="p-2 hover:bg-[var(--card-bg)] rounded-xl transition-all opacity-60 hover:opacity-100"
                       title="Editar"
                       onClick={() => openModal("edit-season-task", { ...t, season: s.name, index: idx })}
                     >
-                      ✏️
+                      <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                     </button>
                     <button
-                      className="p-2 text-[var(--danger)] hover:bg-[var(--danger-bg-light)] rounded-xl transition-all opacity-60 hover:opacity-100 "
+                      className="p-2 hover:bg-[var(--danger-bg-light)] rounded-xl transition-all opacity-60 hover:opacity-100"
                       title="Borrar"
                       onClick={() => handleRemove(s.name, idx)}
                     >
-                      🗑️
+                      <Image src="/icons/common/trash.svg" alt="Borrar" width={18} height={18} />
                     </button>
                   </div>
                 </li>

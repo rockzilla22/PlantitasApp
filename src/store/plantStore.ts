@@ -75,7 +75,7 @@ export const normalizeData = (d: any): AppData => {
         },
         plants: (d.plants || []).map((p: any) => ({
             ...p,
-            icon: p.icon || '🌿',
+            icon: p.icon || '/icons/environment/plants/generic.svg',
             type: p.type || 'Planta',
             location: p.location || 'No especificada',
             light: p.light || 'Media',

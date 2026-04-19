@@ -29,8 +29,9 @@ export const PlantSchema = z.object({
   id: z.number(),
   user_id: z.string().uuid().optional(), // For Supabase RLS
   name: z.string().min(1, "El nombre es obligatorio"),
-  icon: z.string().default("🌿"),
+  icon: z.string().default("/icons/environment/plants/generic.svg"),
   type: z.string().default("Planta"),
+  subtype: z.string().optional(),
   location: z.string().default("No especificada"),
   light: z.enum(["Baja", "Media", "Alta/Directa"]).default("Media"),
   potType: z.enum(["Autorriego", "Barro", "Plástico", "Terracota"]).default("Plástico"),

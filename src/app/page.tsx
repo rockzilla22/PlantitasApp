@@ -1,57 +1,40 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
+import configProject from "@/data/configProject";
+import { PricingSection } from "@/components/sections/PricingSection";
+import Image from "next/image";
+
+type FeatureItem = {
+  title: string;
+  description: string;
+  icon: string;
+};
 
 export default function LandingPage() {
   const router = useRouter();
   const user = useStore($user);
 
-  const features = [
-    {
-      title: "🌱 Mis Plantas",
-      description: "Registra cada ejemplar con su ubicación, luz y sustrato. Lleva el historial completo de riegos y cuidados.",
-      icon: "🌿",
-    },
-    {
-      title: "🧪 Propagación",
-      description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
-      icon: "🧪",
-    },
-    {
-      title: "📅 Temporada",
-      description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
-      icon: "📅",
-    },
-    {
-      title: "📦 Inventario",
-      description: "Control de stock de tus insumos: sustratos, fertilizantes y medicamentos siempre al día.",
-      icon: "📦",
-    },
-    {
-      title: "✨ Lista de Deseos",
-      description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
-      icon: "✨",
-    },
-    {
-      title: "📝 Notas",
-      description: "Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín.",
-      icon: "📝",
-    },
-  ];
+  const features: FeatureItem[] = Object.values(configProject.navigation.ES)
+    .filter((item): item is typeof item & { href: string; icon: string } => Boolean(item.href && item.icon && item.label !== "Jardín"))
+    .map((item) => ({
+      title: item.label,
+      description: item.description,
+      icon: item.icon,
+    }));
 
   return (
     <div className="landing-container">
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
-          <span className="hero-badge">Versión 1.0 — Beta 🌿</span>
+          <span className="hero-badge">Versión 1.0 — Beta</span>
           <h1>
             La app más completa <br /> que todo Plant Lover necesita.
           </h1>
-          <p className="!text-[var(--text-brown)]">
+          <p className="text-[var(--text-brown)]">
             En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
             compañera ideal en tu camino como coleccionista, brindándote el control total sobre los cuidados, riegos y necesidades
             específicas de cada una de tus joyas verdes. Organiza tu colección, registra su progreso y asegúrate de que siempre tengan
@@ -60,76 +43,65 @@ export default function LandingPage() {
         </div>
         <div className="hero-visual">
           <div className="plant-card-mockup">
-            <div className="mock-header">🌿 Monstera Deliciosa</div>
+            <div className="mock-header">
+              <Image src="/icons/environment/plants/monstera.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />
+              Monstera Deliciosa
+            </div>
             <div className="mock-body">
-              <p>📍 Sala · ☀️ Media</p>
-              <div className="mock-status">💧 Último riego: Hoy</div>
+              <p className="text-[var(--text-brown)]">
+                <Image src="/icons/common/map.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Sala · Media
+              </p>
+              <div className="mock-status">
+                <Image
+                  src="/icons/environment/inventory/water_drops.svg"
+                  width={13}
+                  height={13}
+                  alt=""
+                  className="object-contain inline mr-1"
+                />
+                Último riego: Hoy
+              </div>
             </div>
           </div>
           <div className="plant-card-mockup secondary">
-            <div className="mock-header">🧪 Esqueje de Pothos</div>
+            <div className="mock-header">
+              <Image src="/icons/environment/log/lab.svg" width={16} height={16} alt="" className="object-contain inline mr-1" />
+              Esqueje de Pothos
+            </div>
             <div className="mock-body">
-              <p>💧 Método: Agua</p>
-              <div className="mock-status">✨ Raíces visibles</div>
+              <p className="text-[var(--text-brown)]"></p>
+              <p>
+                <Image src="/icons/common/map.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Sala · Media
+              </p>
+              <div className="mock-status">
+                <Image src="/icons/common/notes.svg" width={13} height={13} alt="" className="object-contain inline mr-1" />
+                Raíces visibles
+              </div>
             </div>
           </div>
-        </div>
-        <div className="hero-actions-row">
-          <button className="btn-primary-large" onClick={() => router.push(user ? "/plants" : "/login")}>
-            Empezar mi jardín — Gratis
-          </button>
-          <button className="btn-secondary-large" disabled title="Próximamente">
-            Ir a Premium ☁ (Próximamente)
-          </button>
         </div>
       </section>
 
       {/* How it Works / Plans */}
-      <section className="info-section bg-soft">
-        <div className="section-title ">
-          <h2>Privacidad por diseño</h2>
-          <p className="!text-[var(--text-brown)]">Tus datos son tuyos. Elige cómo guardarlos.</p>
-        </div>
-
-        <div className="plans-grid">
-          <div className="plan-card">
-            <h3>Plan Gratuito 🌱</h3>
-            <p className="plan-subtitle">100% Local y Privado</p>
-            <ul>
-              <li>✅ Todas las funciones incluidas</li>
-              <li>✅ Datos en tu navegador (almacenamiento local)</li>
-              <li>✅ Respaldo e Importación manual</li>
-              <li>✅ Sin necesidad de crear cuenta</li>
-            </ul>
-          </div>
-
-          <div className="plan-card premium">
-            <div className="premium-badge">RECOMENDADO</div>
-            <h3>Plan Premium ☁</h3>
-            <p className="plan-subtitle">Sincronización en la Nube</p>
-            <ul>
-              <li>✅ Todo lo del plan gratuito</li>
-              <li>✅ Respaldo automático en la nube</li>
-              <li>✅ Acceso multi-dispositivo</li>
-              <li>✅ Papelera de registros recuperable</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* Features Grid */}
       <section className="info-section">
         <div className="section-title">
           <h2>Todo lo que necesitas</h2>
-          <p>Herramientas diseñadas para el cuidado real de tus plantas.</p>
+          <p className="text-[var(--text-brown)]">Herramientas diseñadas para el cuidado real de tus plantas.</p>
         </div>
 
         <div className="features-grid">
           {features.map((f, i) => (
             <div key={i} className="feature-item">
-              <div className="feature-icon">{f.icon}</div>
-              <h4>{f.title}</h4>
-              <p>{f.description}</p>
+              <div className="feature-icon">
+                <Image src={f.icon} alt="" width={28} height={28} className="object-contain" />
+                <h4>{f.title}</h4>
+              </div>
+              <p className="text-[var(--text-brown)]">{f.description}</p>
             </div>
           ))}
         </div>
@@ -148,8 +120,8 @@ export default function LandingPage() {
           Fue cultivada tecla a tecla por{" "}
           <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
             <strong className="text-[var(--primary)]">JFEspanolito</strong>
-          </a>{" "}
-          y{" "}
+          </a>
+          y
           <a href="https://github.com/rockzilla22" target="_blank" rel="noopener noreferrer">
             <strong className="text-[var(--primary)]">Alex</strong>
           </a>
@@ -157,12 +129,11 @@ export default function LandingPage() {
           refugio digital perfecto para tus plantas. Porque sabemos que cuidar de una selva personal requiere la misma precisión que ganar
           una partida difícil, las cuales sirvieron de inspiración para transformar una gran idea en una herramienta real.
         </p>
-        <div style={{ marginTop: "2rem", fontSize: "2rem" }}>🎮🌿🛡️</div>
       </section>
 
       <style jsx>{`
         .landing-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 2rem 1rem;
         }
@@ -324,91 +295,48 @@ export default function LandingPage() {
           color: var(--text-brown);
         }
 
-        .plans-grid {
+        .features-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 2rem;
-          max-width: 900px;
-          margin: 0 auto;
         }
 
-        @media (max-width: 768px) {
-          .plans-grid {
-            grid-template-columns: 1fr;
+        @media (min-width: 700px) {
+          .features-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
 
-        .plan-card {
-          padding: 3rem;
-          background: var(--background);
-          border-radius: var(--radius);
-          border: 1px solid var(--border);
-          position: relative;
-        }
-
-        .plan-card.premium {
-          background: white;
-          border: 2px solid var(--secondary);
-          box-shadow: 0 10px 30px rgba(255, 160, 0, 0.1);
-        }
-
-        .premium-badge {
-          position: absolute;
-          top: -12px;
-          right: 20px;
-          background: var(--secondary);
-          color: white;
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 800;
-        }
-
-        .plan-card h3 {
-          font-size: 1.5rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .plan-subtitle {
-          color: var(--text-brown);
-          margin-bottom: 2rem;
-          font-size: 0.9rem;
-        }
-
-        .plan-card ul {
-          list-style: none;
-        }
-
-        .plan-card li {
-          margin-bottom: 0.75rem;
-          font-size: 0.95rem;
-        }
-
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 2rem;
+        @media (min-width: 1100px) {
+          .features-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
         }
 
         .feature-item {
-          padding: 2rem;
-          background: var(--background);
-          border-radius: var(--radius);
-          transition: transform 0.2s;
+          padding: 2.5rem 2rem;
+          background: var(--input-bg);
+          border: 1px solid var(--border);
+          border-radius: 2rem;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .feature-item:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
         }
 
         .feature-icon {
-          font-size: 2.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
           margin-bottom: 1.5rem;
         }
 
         .feature-item h4 {
           font-size: 1.25rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0;
           color: var(--primary);
         }
 

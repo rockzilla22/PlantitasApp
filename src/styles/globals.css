@@ -180,6 +180,8 @@
     .h-search {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .h-right {
@@ -286,10 +288,18 @@
     position: relative;
     display: flex;
     align-items: center;
+    min-height: 36px;
+  }
+
+  .h-search > .btn-backup,
+  .h-search > .search-input-wrapper {
+    height: 36px;
+    box-sizing: border-box;
   }
 
   #global-search {
     width: 100%;
+    height: 100%;
     padding: 0.65rem 2.5rem 0.65rem 1rem;
     border: 2px solid var(--border);
     border-radius: 20px;
@@ -851,7 +861,7 @@
   }
   .microclima-tag {
     background: var(--bg-faint);
-    padding: 4px 10px;
+    padding: 2px 6px;
     border-radius: 20px;
     font-size: 0.8rem;
     color: var(--text-gray);
@@ -885,10 +895,20 @@
     color: var(--text);
   }
 
+  dialog.plant-form-modal {
+    max-width: 620px;
+    min-height: 640px;
+    overflow: visible;
+  }
+
   @media (min-width: 600px) {
     dialog {
       padding: 2rem;
       width: 90%;
+    }
+
+    dialog.plant-form-modal {
+      width: min(92vw, 620px);
     }
   }
 
@@ -996,7 +1016,7 @@
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--primary);
-    color: var(--input-bg);
+    color: var(--text-brown);
   }
   .btn-primary:disabled {
     opacity: 0.6;
@@ -1017,8 +1037,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    &:hover:not(:disabled) { opacity: 0.85; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
   .btn-warning {
@@ -1035,8 +1060,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    &:hover:not(:disabled) { opacity: 0.85; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
   .btn-secondary {
@@ -1067,6 +1097,8 @@
   }
   .btn-text:hover {
     color: var(--primary);
+    background: var(--bg-faint);
+    border-radius: 8px;
   }
 
   .btn-logoff {

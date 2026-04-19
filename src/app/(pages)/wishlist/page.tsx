@@ -4,6 +4,7 @@ import { useStore } from "@nanostores/react";
 import { $store, removeWish } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
 import { useState, useMemo } from "react";
+import Image from "next/image";
 
 export default function WishlistPage() {
   const { wishlist } = useStore($store);
@@ -66,7 +67,7 @@ export default function WishlistPage() {
                 <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
                     <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
-                      <span className="text-2xl"> ✨ </span> {name}
+                      <Image src="/icons/common/stars.svg" alt="" width={24} height={24} /> {name}
                     </h3>
                     <small className="text-[0.7rem] font-bold text-[var(--text-gray)] uppercase tracking-widest opacity-60">Deseo</small>
                   </div>
@@ -78,27 +79,27 @@ export default function WishlistPage() {
                 {/* BODY: Notas con borde superior sutil */}
                 <div className="flex-1 border-t border-[var(--border-light)] pt-8">
                   <p className="m-0 text-sm text-[var(--text)] bg-[var(--input-bg)] leading-relaxed italic opacity-80 break-words whitespace-pre-wrap">
-                    📝 {notes || "Sin notas adicionales."}
+                    {notes || "Sin notas adicionales."}
                   </p>
                 </div>
 
                 {/* FOOTER: Acciones con separador */}
                 <div className="flex items-center justify-between border-t border-[var(--border-light)] pt-8 mt-auto text-[var(--footer-bg)]">
                   <button className="btn-primary h-8 min-h-[32px] px-4 text-[0.7rem] font-black" onClick={() => removeWish(id)}>
-                    💸 ¡Comprado!
+                    ¡Comprado!
                   </button>
                   <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                     <button
-                      className="p-2 text-xl hover:scale-110 transition-transform"
+                      className="p-2 hover:scale-110 transition-transform"
                       onClick={() => openModal("calendar", { title: `Comprar: ${name}`, desc: `Prioridad: ${priority}. Notas: ${notes}` })}
                     >
-                      📅
+                      <Image src="/icons/common/calendar.svg" alt="Recordatorio" width={20} height={20} />
                     </button>
-                    <button className="p-2 text-base hover:scale-110 transition-transform" onClick={() => openModal("edit-wish", item)}>
-                      ✏️
+                    <button className="p-2 hover:scale-110 transition-transform" onClick={() => openModal("edit-wish", item)}>
+                      <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                     </button>
                     <button
-                      className="p-2 text-base text-[var(--danger)] hover:scale-110 transition-transform"
+                      className="p-2 hover:scale-110 transition-transform"
                       onClick={() => {
                         openModal("confirm", {
                           title: "¿Eliminar deseo?",
@@ -107,7 +108,7 @@ export default function WishlistPage() {
                         });
                       }}
                     >
-                      🗑️
+                      <Image src="/icons/common/trash.svg" alt="Eliminar" width={18} height={18} />
                     </button>
                   </div>
                 </div>

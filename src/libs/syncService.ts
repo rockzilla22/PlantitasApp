@@ -1,38 +1,34 @@
 import { supabaseBrowser } from "./db";
 import type { AppData } from "@/store/plantStore";
 import type { User } from "@supabase/supabase-js";
+import configProject from "@/data/configProject";
 
-export type PlanLevel = "NoAccount" | "Free" | "Pro" | "Premium" | "Master";
-
-export function hasPremium(user: User | null): boolean {
-  if (!user) return false;
-  if (user.app_metadata?.role === "master_admin") return true;
-
-  const hasAccess = !!user.app_metadata?.has_access;
-  const expiresAt = user.app_metadata?.premium_expires_at;
-
-  if (hasAccess && expiresAt) {
-    return new Date() < new Date(expiresAt);
-  }
-
-  return hasAccess;
-}
+export type PlanLevel = string;
 
 export function getPlanLevel(user: User | null): PlanLevel {
-  if (!user) return "NoAccount";
-  if (user.app_metadata?.role === "master_admin") return "Master";
-
-  const hasAccess = !!user.app_metadata?.has_access;
-  const expiresAt = user.app_metadata?.premium_expires_at;
-
-  if (hasAccess) {
-    if (expiresAt && new Date() > new Date(expiresAt)) {
-      return "Free"; // Expirado → vuelve a free
-    }
-    return "Premium";
+  if (!user) return configProject.plans.NONE.id;
+  const role = user.app_metadata?.role;
+  if (role === configProject.plans.MASTER.id) return configProject.plans.MASTER.id;
+  if (role === configProject.plans.PREMIUM.id) {
+    const exp = user.app_metadata?.premium_expires_at;
+    if (exp && new Date() > new Date(exp)) return configProject.plans.FREE.id;
+    return configProject.plans.PREMIUM.id;
   }
+  if (role === configProject.plans.PRO.id) return configProject.plans.PRO.id;
+  return configProject.plans.FREE.id;
+}
 
-  return "Free";
+export function hasPremium(user: User | null): boolean {
+  const level = getPlanLevel(user);
+  return level === configProject.plans.PREMIUM.id || level === configProject.plans.MASTER.id;
+}
+
+export function getEffectiveMaxSlots(user: User | null): number {
+  const level = getPlanLevel(user);
+  const basePlan = Object.values(configProject.plans).find(p => p.id === level) ?? configProject.plans.FREE;
+  const giftSlots: number = user?.app_metadata?.gift_slots || 0;
+  const extraSlots: number = user?.app_metadata?.extra_slots || 0;
+  return basePlan.maxSlots + giftSlots + extraSlots;
 }
 
 export async function syncToSupabase(data: AppData, userId: string): Promise<void> {
@@ -42,8 +38,8 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   const plantRows = data.plants.map((p) => ({
     id: p.id,
     user_id: userId,
-    icon: p.icon,
     type: p.type,
+    subtype: p.subtype || null,
     name: p.name,
     last_watered_date: p.lastWateredDate || null,
     location: p.location,
@@ -183,14 +179,14 @@ export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]
     { data: notes },
     { data: wishlist },
   ] = await Promise.all([
-    sb.from("plants").select("id,name,icon,type,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("plants").select("id,name,type,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
     sb.from("propagations").select("id,name,method,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
     sb.from("global_notes").select("id,content,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
     sb.from("wishlist").select("id,name,priority,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
   ]);
 
   const items: TrashItem[] = [];
-  (plants || []).forEach((p: any) => items.push({ id: p.id, table: "plants", label: `${p.icon} ${p.name}`, meta: p.type, deleted_at: p.deleted_at }));
+  (plants || []).forEach((p: any) => items.push({ id: p.id, table: "plants", label: p.name, meta: p.type, deleted_at: p.deleted_at }));
   (propagations || []).forEach((p: any) => items.push({ id: p.id, table: "propagations", label: p.name, meta: p.method, deleted_at: p.deleted_at }));
   (notes || []).forEach((n: any) => items.push({ id: n.id, table: "global_notes", label: n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), meta: "", deleted_at: n.deleted_at }));
   (wishlist || []).forEach((w: any) => items.push({ id: w.id, table: "wishlist", label: w.name, meta: w.priority, deleted_at: w.deleted_at }));
@@ -231,8 +227,8 @@ export async function loadFromSupabase(userId: string): Promise<AppData | null> 
 
   const mappedPlants = (plants || []).map((p: any) => ({
     id: p.id,
-    icon: p.icon,
     type: p.type,
+    subtype: p.subtype ?? "",
     name: p.name,
     lastWateredDate: p.last_watered_date ?? "",
     location: p.location,

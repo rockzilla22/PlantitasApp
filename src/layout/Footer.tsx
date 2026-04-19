@@ -17,7 +17,7 @@ export function Footer() {
           title="Ver código en GitHub"
           className="github-link"
         >
-          <Image src="/icons/github.svg" alt="GitHub" width={24} height={24} className="github-icon" />
+          <Image src="/icons/socialMedia/github.svg" alt="GitHub" width={24} height={24} className="github-icon" />
         </a>
         <Link href="/privacy" className="btn-text !bg-transparent" style={{ fontSize: "0.85rem", textDecoration: "none" }}>
           Privacidad y Términos

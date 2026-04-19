@@ -5,6 +5,8 @@ interface NavSubItem {
 
 interface NavItem {
   label: string;
+  description: string;
+  icon?: string;
   href?: string;
   submenu?: NavSubItem[];
 }
@@ -90,19 +92,31 @@ export interface ConfigProject {
     [key: string]: {
       id: string;
       label: string;
-      icon: string;
       color: string;
       description: string;
-      maxSlots: number;      // Límite de items (plantas + notas + etc)
-      hasCloud: boolean;     // Sincronización en la nube activa
-      billingType: 'free' | 'one-time' | 'subscription' | 'system';
+      maxSlots: number; // Límite de items (plantas + notas + etc)
+      hasCloud: boolean; // Sincronización en la nube activa
+      billingType: "free" | "one-time" | "subscription" | "system";
+    };
+  };
+
+  // Catálogo de Feedback
+  feedback: {
+    types: {
+      [key: string]: { label: string; icon: string; color: string; bgColor: string };
+    };
+    statuses: {
+      [key: string]: { label: string; color: string; bgColor: string };
+    };
+    priorities: {
+      [key: string]: { label: string; color: string; bgColor: string };
     };
   };
 }
 
 const configProject: ConfigProject = {
   // ======================================================
-  // 🧩 PROYECTO (metadata / web)
+  // PROYECTO (metadata / web)
   // ======================================================
   appName: "PlantitasApp",
   tabname: "PlantitasApp - Gestión Botánica",
@@ -115,7 +129,7 @@ const configProject: ConfigProject = {
   copyright_en: `© ${new Date().getFullYear()} — PlantitasApp — All rights reserved.`,
 
   // ======================================================
-  // 🌐 METADATOS / SEO
+  // METADATOS / SEO
   // ======================================================
   language: "es-AR",
   themeColor: "var(--brand-dark)",
@@ -132,9 +146,9 @@ const configProject: ConfigProject = {
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
-    favicon: "/PageCover/favicon.svg",
-    icon16: "/PageCover/favicon.svg",
-    icon32: "/PageCover/favicon.svg",
+    favicon: "/icons/environment/location/greenhouse.svg",
+    icon16: "/icons/environment/location/greenhouse.svg",
+    icon32: "/icons/environment/location/greenhouse.svg",
     icon192: "/PageCover/favicon.svg",
     icon512: "/PageCover/favicon.svg",
     appleTouch: "/PageCover/favicon.svg",
@@ -142,14 +156,14 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 💬 SOPORTE / CONTACTO (publico)
+  // SOPORTE / CONTACTO (publico)
   // ======================================================
   support: {
     email: "hola@plantitasapp.com",
   },
 
   // ======================================================
-  // ✉️ RESEND (client-side references)
+  // RESEND (client-side references)
   // ======================================================
   resend: {
     fromAdmin: "admin@plantitasapp.com",
@@ -157,7 +171,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 🔗 REDES SOCIALES (para SocialDock / JSON-LD)
+  // REDES SOCIALES (para SocialDock / JSON-LD)
   // ======================================================
   socials: {
     github: "https://github.com/JFEspanolito/PlantitasApp",
@@ -167,7 +181,7 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 📣 MARKETING (placeholders)
+  // MARKETING (placeholders)
   // ======================================================
   marketing: {
     tagline: "Cultivá con precisión profesional.",
@@ -179,82 +193,155 @@ const configProject: ConfigProject = {
   },
 
   // ======================================================
-  // 🧭 NAVEGACION (labels y rutas i18n)
+  // NAVEGACION (labels y rutas i18n)
   // ======================================================
   navigation: {
     ES: {
-      plants: { label: "🌿 Mis Plantas", href: "/plants" },
-      nursery: { label: "🧪 Propagación", href: "/nursery" },
-      inventory: { label: "📦 Inventario", href: "/inventory" },
-      season: { label: "📅 Temporada", href: "/season" },
-      wishlist: { label: "✨ Lista de Deseos", href: "/wishlist" },
-      notes: { label: "📝 Notas", href: "/notes" },
-      garden: { label: "🏡 Jardín", href: "/garden" },
+      plants: {
+        label: "Mis Plantas",
+        description: "Registra cada ejemplar con su ubicación, luz y sustrato. Lleva el historial completo de riegos y cuidados.",
+        icon: "/icons/environment/plants/generic.svg",
+        href: "/plants",
+      },
+      nursery: {
+        label: "Propagación",
+        description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
+        icon: "/icons/environment/plants/flower2.svg",
+        href: "/nursery",
+      },
+      inventory: {
+        label: "Inventario",
+        description: "Control de stock de tus insumos: sustratos, fertilizantes y medicamentos siempre al día.",
+        icon: "/icons/environment/inventory/box.svg",
+        href: "/inventory",
+      },
+      season: {
+        label: "Temporada",
+        description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
+        icon: "/icons/common/calendar.svg",
+        href: "/season",
+      },
+      wishlist: {
+        label: "Lista de Deseos",
+        description: "Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna.",
+        icon: "/icons/common/gift.svg",
+        href: "/wishlist",
+      },
+      notes: {
+        label: "Notas",
+        description: "Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín.",
+        icon: "/icons/common/notes.svg",
+        href: "/notes",
+      },
+      garden: { label: "Jardín", description: "Visualiza y gestiona tu jardín completo.", icon: "/icons/environment/location/garden.svg", href: "/garden" },
     },
     EN: {
-      plants: { label: "🌿 My Plants", href: "/plants" },
-      nursery: { label: "🧪 Nursery", href: "/nursery" },
-      season: { label: "📅 Season", href: "/season" },
-      wishlist: { label: "✨ Wishlist", href: "/wishlist" },
-      inventory: { label: "📦 Inventory", href: "/inventory" },
-      notes: { label: "📝 Notes", href: "/notes" },
-      garden: { label: "🏡 Garden", href: "/garden" },
+      plants: {
+        label: "My Plants",
+        description: "Register each specimen with its location, light, and substrate. Keep a complete history of watering and care.",
+        icon: "/icons/environment/plants/generic.svg",
+        href: "/plants",
+      },
+      nursery: {
+        label: "Nursery",
+        description: "Track cuttings and seeds. Link propagations with their parent plants and monitor their progress.",
+        icon: "/icons/environment/log/lab.svg",
+        href: "/nursery",
+      },
+      season: {
+        label: "Season",
+        description: "Organize tasks by season. Watering, pruning, fertilizing, and planting according to the natural cycle.",
+        icon: "/icons/common/calendar.svg",
+        href: "/season",
+      },
+      wishlist: {
+        label: "Wishlist",
+        description: "Your botanical Wishlist organized by priority so you don't miss anything.",
+        icon: "/icons/common/stars.svg",
+        href: "/wishlist",
+      },
+      inventory: {
+        label: "Inventory",
+        description: "Keep your supplies stock up to date: substrates, fertilizers, and medications.",
+        icon: "/icons/environment/inventory/box.svg",
+        href: "/inventory",
+      },
+      notes: { label: "Notes", description: "Free space for your quick observations, ideas, or garden reminders.", icon: "/icons/common/notes.svg", href: "/notes" },
+      garden: { label: "Garden", description: "Visualize and manage your entire garden.", icon: "/icons/environment/location/garden.svg", href: "/garden" },
     },
   },
 
   // ======================================================
-  // 💎 CATÁLOGO DE PLANES (niveles de acceso)
+  // CATÁLOGO DE PLANES (niveles de acceso)
   // ======================================================
   plans: {
     NONE: {
       id: "NoAccount",
       label: "Sin cuenta",
-      icon: "👤",
       color: "var(--text-gray)",
       description: "Modo invitado. Tus datos se guardan solo en este navegador.",
       maxSlots: 25,
       hasCloud: false,
-      billingType: 'free',
+      billingType: "free",
     },
     FREE: {
       id: "Free",
       label: "Usuario",
-      icon: "🌱",
-      color: "var(--primary-light)",
+      color: "var(--text-white)",
       description: "Cuenta básica. Acceso a gestión botánica local.",
       maxSlots: 50,
       hasCloud: false,
-      billingType: 'free',
+      billingType: "free",
     },
     PRO: {
       id: "Pro",
       label: "Pro",
-      icon: "💎",
       color: "var(--secondary)",
       description: "Pago único. Ampliá tu capacidad local permanentemente.",
       maxSlots: 200,
       hasCloud: true,
-      billingType: 'one-time',
+      billingType: "one-time",
     },
     PREMIUM: {
       id: "Premium",
       label: "Premium",
-      icon: "✨",
       color: "var(--primary)",
       description: "Acceso total. Sincronización en la nube e ilimitados.",
       maxSlots: 999999,
       hasCloud: true,
-      billingType: 'subscription',
+      billingType: "subscription",
     },
     MASTER: {
       id: "Master",
       label: "Master",
-      icon: "🛡️",
       color: "var(--gold)",
       description: "Nivel de sistema. Control total e integridad suprema.",
       maxSlots: 999999,
       hasCloud: true,
-      billingType: 'system',
+      billingType: "system",
+    },
+  },
+
+  // ======================================================
+  // CATÁLOGO DE FEEDBACK (gestión de reportes)
+  // ======================================================
+  feedback: {
+    types: {
+      Bug: { label: "Bug / Error", icon: "/icons/environment/animals/ant.svg", color: "#e11d48", bgColor: "#fff1f2" },
+      Idea: { label: "Idea / Sugerencia", icon: "/icons/common/stars.svg", color: "#2563eb", bgColor: "#eff6ff" },
+      Comentario: { label: "Comentario", icon: "/icons/common/notes.svg", color: "#4b5563", bgColor: "#f3f4f6" },
+    },
+    statuses: {
+      nuevo: { label: "Nuevo", color: "#059669", bgColor: "#f0fdf4" },
+      en_revision: { label: "En Revisión", color: "#d97706", bgColor: "#fffbeb" },
+      resuelto: { label: "Resuelto", color: "#2563eb", bgColor: "#eff6ff" },
+      cerrado: { label: "Cerrado", color: "#4b5563", bgColor: "#f3f4f6" },
+    },
+    priorities: {
+      baja: { label: "Baja", color: "#4b5563", bgColor: "#f3f4f6" },
+      media: { label: "Media", color: "#2563eb", bgColor: "#eff6ff" },
+      alta: { label: "Alta", color: "#d97706", bgColor: "#fffbeb" },
+      critica: { label: "Crítica", color: "#e11d48", bgColor: "#fff1f2" },
     },
   },
 };

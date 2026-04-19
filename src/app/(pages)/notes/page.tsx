@@ -3,6 +3,7 @@
 import { useStore } from "@nanostores/react";
 import { $store, removeNote } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
+import Image from "next/image";
 
 export default function NotesPage() {
   const { globalNotes } = useStore($store);
@@ -38,7 +39,7 @@ export default function NotesPage() {
                 <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
                   <div>
                     <h3 className="text-[var(--primary)] flex items-center gap-3 text-lg font-bold">
-                      <span className="text-2xl"> 📝 </span> Nota Global
+                      <Image src="/icons/common/notes.svg" alt="" width={24} height={24} /> Nota Global
                     </h3>
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
@@ -58,21 +59,21 @@ export default function NotesPage() {
                   <span className="text-[0.6rem] opacity-40 tracking-tighter uppercase"></span>
                   <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                     <button
-                      className="p-2 text-xl hover:scale-110 transition-transform"
+                      className="p-2 hover:scale-110 transition-transform"
                       title="Recordatorio"
                       onClick={() => openModal("calendar", { title: `Nota: ${note.content.substring(0, 15)}`, desc: note.content })}
                     >
-                      📅
+                      <Image src="/icons/common/calendar.svg" alt="Recordatorio" width={20} height={20} />
                     </button>
                     <button
-                      className="p-2 text-base hover:scale-110 transition-transform"
+                      className="p-2 hover:scale-110 transition-transform"
                       title="Editar"
                       onClick={() => openModal("edit-note", note)}
                     >
-                      ✏️
+                      <Image src="/icons/common/pencil.svg" alt="Editar" width={18} height={18} />
                     </button>
                     <button
-                      className="p-2 text-base text-[var(--danger)] hover:scale-110 transition-transform"
+                      className="p-2 hover:scale-110 transition-transform"
                       title="Eliminar"
                       onClick={() => {
                         openModal("confirm", {
@@ -82,7 +83,7 @@ export default function NotesPage() {
                         });
                       }}
                     >
-                      🗑️
+                      <Image src="/icons/common/trash.svg" alt="Eliminar" width={18} height={18} />
                     </button>
                   </div>
                 </div>
