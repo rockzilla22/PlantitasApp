@@ -12,7 +12,7 @@ import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 import Link from "next/link";
-import NextImage from "next/image";
+import Image from "next/image";
 
 export function Header() {
   const pathname = usePathname();
@@ -100,7 +100,9 @@ export function Header() {
       if (session) $user.set(session.user);
       $authLoading.set(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       const currentUser = $user.get();
       if (session?.user?.id !== currentUser?.id) $user.set(session?.user ?? null);
       $authLoading.set(false);
@@ -149,8 +151,17 @@ export function Header() {
       <div className="h-top">
         <div className="flex items-center">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="no-underline text-[var(--text-white)] whitespace-nowrap">
-            <h1 className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold leading-none" style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
-              <NextImage src="/icons/environment/location/greenhouse.svg" alt="Greenhouse" width={28} height={28} className="shrink-0 object-contain" />
+            <h1
+              className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold leading-none"
+              style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}
+            >
+              <Image
+                src="/icons/environment/location/greenhouse.svg"
+                alt="Greenhouse"
+                width={28}
+                height={28}
+                className="shrink-0 object-contain"
+              />
               <span className="block leading-none">PlantitasApp</span>
             </h1>
           </Link>
@@ -171,7 +182,14 @@ export function Header() {
               triggerExportFlash();
             }}
           >
-            {isDirty ? <><NextImage src="/icons/common/warning.svg" alt="" width={14} height={14} className="inline mr-1" />Exportar</> : "Exportar"}
+            {isDirty ? (
+              <>
+                <Image src="/icons/common/warning.svg" alt="" width={14} height={14} className="inline mr-1" />
+                Exportar
+              </>
+            ) : (
+              "Exportar"
+            )}
           </button>
 
           <div className="search-input-wrapper">
@@ -184,10 +202,14 @@ export function Header() {
               autoComplete="off"
               className="bg-[var(--input-bg)] text-[var(--text)] border-[var(--border)] rounded-full"
             />
-            <span className="search-icon"><NextImage src="/icons/common/search.svg" alt="Buscar" width={16} height={16} /></span>
+            <span className="search-icon">
+              <Image src="/icons/common/search.svg" alt="Buscar" width={16} height={16} />
+            </span>
           </div>
 
-          <button type="button" className="btn-backup rounded-full" onClick={() => importInputRef.current?.click()}>Importar</button>
+          <button type="button" className="btn-backup rounded-full" onClick={() => importInputRef.current?.click()}>
+            Importar
+          </button>
           <input
             ref={importInputRef}
             type="file"
@@ -219,28 +241,39 @@ export function Header() {
               className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isNotifyMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
               onClick={handleOpenNotify}
             >
-              <NextImage src="/icons/common/ringbell.svg" alt="Notificaciones" width={28} height={28} className="brightness-0 invert" />
+              <Image src="/icons/common/ringbell.svg" alt="Notificaciones" width={28} height={28} className="brightness-0 invert" />
               {hasNewNotification && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)] animate-bounce">1</span>
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)] animate-bounce">
+                  1
+                </span>
               )}
             </button>
 
             {isNotifyMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
-                <h3 className="p-4 text-center text-sm font-bold text-[var(--text)] border-b border-[var(--border-light)]">Notificaciones</h3>
-                
+                <h3 className="p-4 text-center text-sm font-bold text-[var(--text)] border-b border-[var(--border-light)]">
+                  Notificaciones
+                </h3>
+
                 <div className="max-h-80 overflow-y-auto">
                   {/* ALERTA (Real para Premium) */}
                   {daysLeft !== null && daysLeft <= 7 && (
                     <div className="p-4 bg-red-500/10 border-b border-red-500/20">
                       <div className="flex items-start gap-3">
-                        <span className="text-lg">⚠️</span>
+                        <Image src="/icons/common/warning.svg" alt="" width={32} height={32} className="object-contain" />
                         <div>
                           <p className="text-xs font-bold text-red-600 m-0">¡Membresía por vencer!</p>
                           <p className="text-[0.7rem] text-[var(--text)] mt-1 leading-relaxed font-medium">
-                            Tu suscripción {planConfig.label} termina en <strong>{daysLeft <= 0 ? "hoy mismo" : `${daysLeft} días`}</strong>.
+                            Tu suscripción {planConfig.label} termina en <strong>{daysLeft <= 0 ? "hoy mismo" : `${daysLeft} días`}</strong>
+                            .
                           </p>
-                          <Link href="/pricing" onClick={() => setIsNotifyMenuOpen(false)} className="text-[0.6rem] font-bold text-[var(--primary)] uppercase tracking-widest mt-2 block hover:underline">Renovar ahora →</Link>
+                          <Link
+                            href="/pricing"
+                            onClick={() => setIsNotifyMenuOpen(false)}
+                            className="text-[0.6rem] font-bold text-[var(--primary)] uppercase tracking-widest mt-2 block hover:underline"
+                          >
+                            Renovar ahora →
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -255,23 +288,25 @@ export function Header() {
                           {(() => {
                             const isExpired = premiumExpiresAt && new Date() > new Date(premiumExpiresAt);
                             return (
-                              <span className={`text-[0.6rem] px-2 py-0.5 rounded-full text-white font-bold uppercase tracking-tighter ${isExpired ? "bg-red-500" : "bg-[var(--primary)]"}`}>
+                              <span
+                                className={`text-[0.6rem] px-2 py-0.5 rounded-full text-white font-bold uppercase tracking-tighter ${isExpired ? "bg-red-500" : "bg-[var(--primary)]"}`}
+                              >
                                 {isExpired ? "Vencido" : "Activo"}
                               </span>
                             );
                           })()}
                         </div>
                         <p className="text-[0.7rem] text-[var(--text-gray)] mt-1 italic font-medium">
-                          {premiumExpiresAt ? (
-                            (() => {
-                              const isExpired = new Date() > new Date(premiumExpiresAt);
-                              return (
-                                <span className={isExpired ? "text-red-500 font-bold" : ""}>
-                                  {isExpired ? "Venció el " : "Vence el "} {expirationDate}
-                                </span>
-                              );
-                            })()
-                          ) : "Vigencia: Ilimitada"}
+                          {premiumExpiresAt
+                            ? (() => {
+                                const isExpired = new Date() > new Date(premiumExpiresAt);
+                                return (
+                                  <span className={isExpired ? "text-red-500 font-bold" : ""}>
+                                    {isExpired ? "Venció el " : "Vence el "} {expirationDate}
+                                  </span>
+                                );
+                              })()
+                            : "Vigencia: Ilimitada"}
                         </p>
                       </div>
 
@@ -282,8 +317,8 @@ export function Header() {
                           <span className="text-sm text-[var(--text-gray)] opacity-60">/ {maxSlotsLabel} items</span>
                         </div>
                         <div className="w-full bg-[var(--border-light)] h-2 rounded-full mt-2 overflow-hidden border border-[var(--border-light)]">
-                          <div 
-                            className={`h-full transition-all duration-700 ${usedSlots >= maxSlots ? 'bg-red-500' : 'bg-[var(--primary)]'}`}
+                          <div
+                            className={`h-full transition-all duration-700 ${usedSlots >= maxSlots ? "bg-red-500" : "bg-[var(--primary)]"}`}
                             style={{ width: `${isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots || 1)) * 100)}%` }}
                           />
                         </div>
@@ -293,9 +328,11 @@ export function Header() {
                 </div>
 
                 {!user && (
-                   <div className="p-8 text-center flex flex-col items-center gap-3">
-                    <NextImage src="/icons/common/lock.svg" alt="Lock" width={32} height={32} className="opacity-20" />
-                    <p className="italic text-xs text-[var(--text-gray)] opacity-60 m-0 leading-relaxed">Iniciá sesión para ver tus alertas botánicas.</p>
+                  <div className="p-8 text-center flex flex-col items-center gap-3">
+                    <Image src="/icons/common/lock.svg" alt="Lock" width={32} height={32} className="opacity-20" />
+                    <p className="italic text-xs text-[var(--text-gray)] opacity-60 m-0 leading-relaxed">
+                      Iniciá sesión para ver tus alertas botánicas.
+                    </p>
                   </div>
                 )}
               </div>
@@ -310,10 +347,14 @@ export function Header() {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
-                  <NextImage src="/icons/environment/animals/turtle.svg" alt="Turtle" width={24} height={24} className="object-contain" />
+                  <Image src="/icons/environment/animals/turtle.svg" alt="Turtle" width={24} height={24} className="object-contain" />
                 </div>
                 <span className="hidden md:block uppercase text-[0.7rem] tracking-wide text-[var(--text-white)] font-bold">Perfil</span>
-                <span className={`text-[0.5rem] transition-transform duration-200 text-[var(--text-white)] ${isProfileMenuOpen ? "rotate-180" : ""}`}>▼</span>
+                <span
+                  className={`text-[0.5rem] transition-transform duration-200 text-[var(--text-white)] ${isProfileMenuOpen ? "rotate-180" : ""}`}
+                >
+                  ▼
+                </span>
               </button>
 
               {isProfileMenuOpen && (
@@ -357,7 +398,9 @@ export function Header() {
               )}
             </div>
           ) : (
-            <button type="button" className="btn-backup" onClick={(e) => handleNav(e, "/login")} disabled={authLoading}>{authLoading ? "..." : "Iniciar sesión"}</button>
+            <button type="button" className="btn-backup" onClick={(e) => handleNav(e, "/login")} disabled={authLoading}>
+              {authLoading ? "..." : "Iniciar sesión"}
+            </button>
           )}
 
           <button
@@ -365,7 +408,9 @@ export function Header() {
             className={`mobile-menu-toggle h-burger lg:hidden ${isMobileMenuOpen ? " is-open" : ""}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </button>
         </div>
       </div>
@@ -373,21 +418,36 @@ export function Header() {
       <div className={`h-panel-mobile${isMobileMenuOpen ? " open" : ""}`}>
         <nav className="flex flex-col p-4 gap-1">
           {tabs.map((tab) => (
-            <a key={tab.id} href={tab.href ?? "#"} onClick={(e) => handleNav(e, tab.href ?? "#")} className={`tab-link${pathname === tab.href ? " active" : ""}`}>
-              {tab.icon && <NextImage src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
+            <a
+              key={tab.id}
+              href={tab.href ?? "#"}
+              onClick={(e) => handleNav(e, tab.href ?? "#")}
+              className={`tab-link${pathname === tab.href ? " active" : ""}`}
+            >
+              {tab.icon && <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
               {tab.label}
             </a>
           ))}
           {user && (
-            <button className="tab-link text-[var(--danger)] border-t border-[var(--text-white)]/10 mt-2 pt-4 text-left" onClick={handleLogout}>Cerrar sesión</button>
+            <button
+              className="tab-link text-[var(--danger)] border-t border-[var(--text-white)]/10 mt-2 pt-4 text-left"
+              onClick={handleLogout}
+            >
+              Cerrar sesión
+            </button>
           )}
         </nav>
       </div>
 
       <nav className="h-nav-desktop hidden lg:flex justify-center">
         {tabs.map((tab) => (
-          <a key={tab.id} href={tab.href ?? "#"} onClick={(e) => handleNav(e, tab.href ?? "#")} className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex items-center gap-2`}>
-            {tab.icon && <NextImage src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
+          <a
+            key={tab.id}
+            href={tab.href ?? "#"}
+            onClick={(e) => handleNav(e, tab.href ?? "#")}
+            className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex items-center gap-2`}
+          >
+            {tab.icon && <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
             {tab.label}
           </a>
         ))}

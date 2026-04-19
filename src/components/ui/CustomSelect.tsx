@@ -63,7 +63,7 @@ export function CustomSelect({
         {selectedOption?.img && (
           <div className="w-8 h-8 flex items-center justify-center shrink-0">
             {selected === "CUSTOM" ? (
-              <span className="text-xl">✨</span>
+              <Image src="/icons/common/stars.svg" alt="" width={32} height={32} className="object-contain" />
             ) : (
               <Image src={selectedOption.img} alt="" width={32} height={32} className="object-contain" />
             )}
@@ -102,7 +102,7 @@ export function CustomSelect({
                   {option.img && (
                     <div className="w-7 h-7 flex items-center justify-center shrink-0">
                       {option.value === "CUSTOM" ? (
-                        <span className="text-lg">✨</span>
+                        <Image src="/icons/common/stars.svg" alt="" width={32} height={32} className="object-contain" />
                       ) : (
                         <Image src={option.img} alt="" width={28} height={28} className="object-contain" />
                       )}
