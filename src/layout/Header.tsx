@@ -301,18 +301,41 @@ export function Header() {
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute right-0 top-full w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="!py-2 text-center border-b border-[var(--border-light)] mb-2">
-                    <p className="text-sm text-[var(--text)] truncate mt-1 font-bold">{displayName}</p>
+                <div className="absolute right-0 top-full w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="!py-2 text-center">
+                    <p className="text-sm text-[var(--text)] truncate mt-1">{displayName}</p>
                     <p className="text-[0.7rem] text-[var(--text-gray)] truncate mt-0.5 opacity-80 italic">{user?.email}</p>
                   </div>
-                  <div className="py-2 pb-4 flex flex-col items-stretch w-full px-2 gap-1">
-                    <Link href="/profile" onClick={(e) => handleNav(e, "/profile")} className="tab-link-profile">Perfil</Link>
-                    <Link href="/pricing" onClick={(e) => handleNav(e, "/pricing")} className="tab-link-profile">Planes</Link>
-                    <Link href="/privacy" onClick={(e) => handleNav(e, "/privacy")} className="tab-link-profile">Privacidad</Link>
+                  <div className="py-2 pb-5 flex flex-col items-stretch w-full">
+                    <Link
+                      href="/profile"
+                      onClick={(e) => handleNav(e, "/profile")}
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
+                    >
+                      <span className="text-left">Perfil</span>
+                    </Link>
+                    <Link
+                      href="/pricing"
+                      onClick={(e) => handleNav(e, "/pricing")}
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
+                    >
+                      <span className="text-left">Planes</span>
+                    </Link>
+                    <Link
+                      href="/privacy"
+                      onClick={(e) => handleNav(e, "/privacy")}
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
+                    >
+                      <span className="text-left">Privacidad</span>
+                    </Link>
                   </div>
-                  <div className="pb-4 flex flex-col items-stretch w-full px-2">
-                    <button onClick={handleLogout} className="btn-logout-alt">Cerrar Sesión</button>
+                  <div className="pb-5 flex flex-col items-stretch w-full">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--secondary)] no-underline text-[var(--danger)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
+                    >
+                      <span className="text-center">Cerrar Sesión</span>
+                    </button>
                   </div>
                 </div>
               )}

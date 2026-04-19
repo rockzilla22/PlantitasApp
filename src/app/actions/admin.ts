@@ -31,10 +31,10 @@ export async function getAllUsers() {
     email: u.email,
     name: u.user_metadata?.custom_name || u.user_metadata?.full_name || "Sin nombre",
     role: u.app_metadata?.role || configProject.plans.FREE.id,
-    giftSlots: u.app_metadata?.gift_slots || 0,
-    extraSlots: u.app_metadata?.extra_slots || 0,
-    premiumStartedAt: u.app_metadata?.premium_started_at,
-    premiumExpiresAt: u.app_metadata?.premium_expires_at,
+    gift_slots: u.app_metadata?.gift_slots || 0,
+    extra_slots: u.app_metadata?.extra_slots || 0,
+    premium_started_at: u.app_metadata?.premium_started_at,
+    premium_expires_at: u.app_metadata?.premium_expires_at,
     lastSignIn: u.last_sign_in_at
   }));
 }
@@ -45,6 +45,10 @@ export async function updateUserStatus(userId: string, updates: {
   slotsToGift?: number,
   amount?: string,
   unit?: "days" | "months",
+  // Nuevos campos para actualización directa desde el modal
+  gift_slots?: number,
+  extra_slots?: number,
+  premium_expires_at?: string | null,
 }) {
   if (!(await checkIsMaster())) throw new Error("No autorizado");
 
@@ -52,12 +56,13 @@ export async function updateUserStatus(userId: string, updates: {
   if (error || !user) throw new Error("Usuario no encontrado");
 
   const currentRole = user.app_metadata?.role || configProject.plans.FREE.id;
-  let role = currentRole;
-  let giftSlots: number = user.app_metadata?.gift_slots || 0;
-  const extraSlots: number = user.app_metadata?.extra_slots || 0;
+  let role = updates.role !== undefined ? updates.role : currentRole;
+  let giftSlots: number = updates.gift_slots !== undefined ? updates.gift_slots : (user.app_metadata?.gift_slots || 0);
+  let extraSlots: number = updates.extra_slots !== undefined ? updates.extra_slots : (user.app_metadata?.extra_slots || 0);
   let premiumStartedAt: string | null = user.app_metadata?.premium_started_at || null;
-  let premiumExpiresAt: string | null = user.app_metadata?.premium_expires_at || null;
+  let premiumExpiresAt: string | null = updates.premium_expires_at !== undefined ? updates.premium_expires_at : (user.app_metadata?.premium_expires_at || null);
 
+  // Mantener compatibilidad con acciones antiguas si se usan
   if (updates.action === "gift_premium") {
     const val = parseInt(updates.amount || "0");
     const base = premiumExpiresAt && new Date(premiumExpiresAt) > new Date()
@@ -77,11 +82,9 @@ export async function updateUserStatus(userId: string, updates: {
     if (role === configProject.plans.MASTER.id) throw new Error("No se puede resetear un Master");
     role = configProject.plans.FREE.id;
     giftSlots = 0;
+    extraSlots = 0;
     premiumStartedAt = null;
     premiumExpiresAt = null;
-  } else if (updates.role !== undefined) {
-    // Solo para gestión de Master
-    role = updates.role;
   }
 
   const { has_access, is_pro, purchased_slots, ...oldMetadata } = (user.app_metadata || {}) as any;

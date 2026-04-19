@@ -59,7 +59,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
           <button
             key={plan.id}
             type="button"
-            className={`flex-1 py-3 text-[0.65rem] font-black uppercase tracking-widest rounded-xl transition-all ${
+            className={`flex-1 py-3 text-[0.9rem] font-black uppercase tracking-widest rounded-xl transition-all ${
               activePlanTab === plan.id
                 ? "bg-[var(--white)] text-[var(--primary)] shadow-md ring-1 ring-[var(--border)]"
                 : "text-[var(--text-gray)] opacity-80 hover:bg-[var(--white)]/70 hover:text-[var(--text)]"
@@ -153,9 +153,6 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
                   min="0"
                   className="rounded-xl border border-[var(--border)] bg-[var(--white)] p-3 text-sm font-black text-[var(--text)]"
                 />
-                <span className="mt-2 block text-[0.55rem] italic text-[var(--text-gray)] opacity-80">
-                  Base Pro: {p.PRO.maxSlots} slots. Gift slots se acumulan encima.
-                </span>
               </div>
             </div>
             <button type="submit" className="btn-warning w-full rounded-2xl py-4 text-xs font-black uppercase tracking-[0.2em]">
@@ -168,7 +165,7 @@ function AdminPremiumModal({ props, handleClose }: { props: any; handleClose: ()
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="rounded-3xl border border-[var(--secondary)]/25 bg-[var(--warning-bg)]/75 p-6">
               <p className="m-0 text-xs font-bold text-[var(--warning-dark)] mb-3">RESETEAR A NIVEL USUARIO</p>
-              <p className="text-[0.65rem] leading-relaxed text-[var(--text)]">
+              <p className="text-[0.9rem] leading-relaxed text-[var(--text)]">
                 Elimina Premium, Pro, y todos los gift slots. El usuario vuelve al límite base de {p.FREE.maxSlots} slots sin nube.
               </p>
             </div>
@@ -417,7 +414,6 @@ export function Modals() {
                 <input
                   type="text"
                   name="p-subtype"
-                  required
                   placeholder="Ej: Epífita"
                   defaultValue={props?.subtype || props?.initialSubtype || ""}
                 />
@@ -621,32 +617,6 @@ export function Modals() {
               </button>
               <button type="submit" className="btn-primary w-full sm:w-auto py-2">
                 {type === "edit-season-task" ? "Actualizar Plan" : "Guardar Plan"}
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* --- MODAL DE AGREGAR/EDITAR NOTA GLOBAL --- */}
-        {(type === "add-note" || type === "edit-note") && (
-          <form method="dialog" onSubmit={handleNoteSubmit}>
-            <h3>{type === "edit-note" ? "Editar Nota Global" : "Nueva Nota Global"}</h3>
-            <div className="form-group">
-              <label>Contenido de la nota*</label>
-              <textarea
-                name="n-content"
-                rows={4}
-                required
-                className="p-2 text-sm sm:text-base"
-                placeholder="Ej: Comprar fertilizante orgánico..."
-                defaultValue={props?.content || ""}
-              ></textarea>
-            </div>
-            <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
-              <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn-primary w-full sm:w-auto py-2">
-                {type === "edit-note" ? "Actualizar" : "Guardar"}
               </button>
             </div>
           </form>

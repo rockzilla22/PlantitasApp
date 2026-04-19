@@ -131,13 +131,22 @@ export default function AdminPanel() {
   };
 
   const handleManagePremium = (u: any) => {
+    // IMPORTANTE: Le pasamos los datos TAL CUAL vienen del app_metadata para que el modal sepa el estado real
     openModal("admin-premium", {
-      userName: u.name,
+      userName: u.name || u.email,
       currentRole: u.role,
-      giftSlots: u.giftSlots,
-      extraSlots: u.extraSlots,
-      premiumExpiresAt: u.premiumExpiresAt,
-      onConfirm: (data: any) => executeUpdate(u.id, data),
+      giftSlots: u.gift_slots || 0,
+      extraSlots: u.extra_slots || 0,
+      premiumExpiresAt: u.premium_expires_at || null,
+      onConfirm: (data: any) => {
+        // Aquí permitimos que el admin mande valores negativos o fechas anteriores para "reducir"
+        executeUpdate(u.id, {
+          role: data.role,
+          gift_slots: data.gift_slots,
+          extra_slots: data.extra_slots,
+          premium_expires_at: data.premium_expires_at
+        });
+      },
     });
   };
 
@@ -369,6 +378,8 @@ export default function AdminPanel() {
                           <td className="px-6 py-4">
                             {(() => {
                               const plan = getPlanConfig(u);
+                              const gSlots = u.gift_slots || 0;
+                              const eSlots = u.extra_slots || 0;
                               return (
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-1.5">
@@ -379,8 +390,11 @@ export default function AdminPanel() {
                                       Vence {new Date(u.premiumExpiresAt).toLocaleDateString()}
                                     </span>
                                   )}
-                                  {u.giftSlots > 0 && (
-                                    <span className="text-[0.65rem] text-[var(--text-gray)]">+{u.giftSlots} gift slots</span>
+                                  {(gSlots > 0 || eSlots > 0) && (
+                                    <div className="flex flex-col">
+                                      {gSlots > 0 && <span className="text-[10px] text-[var(--primary)] font-bold">+{gSlots} Regalo</span>}
+                                      {eSlots > 0 && <span className="text-[10px] text-[var(--secondary)] font-bold">+{eSlots} Extra</span>}
+                                    </div>
                                   )}
                                 </div>
                               );

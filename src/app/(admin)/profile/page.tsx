@@ -7,14 +7,27 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@nanostores/react";
 import { $user, $authLoading } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
-import { getPlanLevel, hasPremium, getEffectiveMaxSlots, loadTrashFromSupabase, restoreTrashItem, type TrashItem } from "@/libs/syncService";
+import {
+  getPlanLevel,
+  hasPremium,
+  getEffectiveMaxSlots,
+  loadTrashFromSupabase,
+  restoreTrashItem,
+  type TrashItem,
+} from "@/libs/syncService";
 import { $store } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
 
 function getInitials(name?: string | null, fallback?: string | null): string {
   if (name?.trim()) {
-    return name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+    return name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase();
   }
   return (fallback?.[0] ?? "U").toUpperCase();
 }
@@ -150,14 +163,19 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
-
         {/* NAV */}
         <div className="flex items-center justify-between">
-          <Link href="/" className="no-underline text-[var(--text-gray)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1">
+          <Link
+            href="/"
+            className="no-underline text-[var(--text-brown)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1"
+          >
             ← Inicio
           </Link>
           {isMasterAdmin && (
-            <Link href="/admin" className="no-underline text-xs font-semibold text-[var(--text-white)] bg-[var(--warning-dark)] px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity">
+            <Link
+              href="/admin"
+              className="no-underline text-xs font-semibold text-[var(--text-white)] bg-[var(--warning-dark)] px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+            >
               Admin
             </Link>
           )}
@@ -170,25 +188,20 @@ export default function ProfilePage() {
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-bold text-[var(--text)] m-0 truncate">{currentName || "Sin nombre"}</h1>
-            <p className="text-sm text-[var(--text-gray)] opacity-60 m-0 truncate">{user.email}</p>
+            <p className="text-sm text-[var(--text-brown)] m-0 truncate">{user.email}</p>
           </div>
-          {isMasterAdmin && (
-            <span className="badge badge-danger shrink-0">Master</span>
-          )}
         </div>
 
         {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           {/* COL 1: Editar perfil + Cuentas vinculadas */}
           <div className="flex flex-col gap-6">
-
             {/* Editar nombre */}
             <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
               <h2 className="text-sm font-bold text-[var(--text)] m-0">Editar perfil</h2>
               <form onSubmit={handleSave} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Nombre</label>
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)]">Nombre</label>
                   <input
                     type="text"
                     value={fullName}
@@ -199,12 +212,12 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-60">Email</label>
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)]">Email</label>
                   <input
                     type="email"
                     value={user.email ?? ""}
                     disabled
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm opacity-40 cursor-not-allowed"
+                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm cursor-not-allowed"
                   />
                 </div>
 
@@ -233,7 +246,7 @@ export default function ProfilePage() {
             <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
               <div>
                 <h2 className="text-sm font-bold text-[var(--text)] m-0">Cuentas vinculadas</h2>
-                <p className="text-xs text-[var(--text-gray)] opacity-50 mt-0.5">Métodos de acceso a tu cuenta</p>
+                <p className="text-xs text-[var(--text-brown)] mt-0.5">Métodos de acceso a tu cuenta</p>
               </div>
               <div className="flex flex-col gap-3">
                 {(["google", "discord"] as const).map((pid) => {
@@ -242,7 +255,10 @@ export default function ProfilePage() {
                   const iconBg = pid === "google" ? "var(--white)" : "var(--discord-blurple)";
                   const iconColor = pid === "google" ? "var(--google-blue)" : "var(--white)";
                   return (
-                    <div key={pid} className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]">
+                    <div
+                      key={pid}
+                      className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]"
+                    >
                       <div className="flex items-center gap-3">
                         <div
                           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
@@ -280,7 +296,6 @@ export default function ProfilePage() {
 
           {/* COL 2: Plan + Papelera */}
           <div className="flex flex-col gap-6">
-
             {/* Plan */}
             <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 shadow-sm flex flex-col gap-5">
               <h2 className="text-sm font-bold text-[var(--text)] m-0">Estado de la cuenta</h2>
@@ -290,18 +305,16 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
-                {isPremium && (
-                  <span className="text-xs text-[var(--text-gray)] opacity-60">Vence {expirationDate}</span>
-                )}
+                {isPremium && <span className="text-xs text-[var(--text-brown)]">Vence {expirationDate}</span>}
               </div>
 
               {/* Slots */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] opacity-50 m-0 mb-0.5">Almacenamiento</p>
+                    <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)] m-0 mb-0.5">Almacenamiento</p>
                     <p className="text-2xl font-bold text-[var(--text)] m-0 leading-none">
-                      {usedSlots} <span className="text-base text-[var(--text-gray)] opacity-40 font-normal">/ {maxSlotsLabel}</span>
+                      {usedSlots} <span className="text-base text-[var(--text-brown)] font-normal">/ {maxSlotsLabel}</span>
                     </p>
                   </div>
                   {!isPremium && !isMasterAdmin && (
@@ -316,6 +329,21 @@ export default function ProfilePage() {
                     style={{ width: `${usagePercent}%` }}
                   />
                 </div>
+                {!isMasterAdmin && (
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                    <span className="text-[10px] uppercase font-bold text-[var(--text-brown)]">Base: {planConfig.maxSlots}</span>
+                    {user.app_metadata?.gift_slots > 0 && (
+                      <span className="text-[10px] uppercase font-bold text-[var(--primary)]">
+                        🎁 Regalo: +{user.app_metadata.gift_slots}
+                      </span>
+                    )}
+                    {user.app_metadata?.extra_slots > 0 && (
+                      <span className="text-[10px] uppercase font-bold text-[var(--secondary)]">
+                        ⭐ Extra: +{user.app_metadata.extra_slots}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -330,19 +358,17 @@ export default function ProfilePage() {
                     <NextImage src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
                   </div>
                   <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
-                  {trashItems.length > 0 && !showTrash && (
-                    <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />
-                  )}
+                  {trashItems.length > 0 && !showTrash && <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />}
                 </div>
-                <span className="text-xs text-[var(--text-gray)] opacity-40">{showTrash ? "▲" : "▼"}</span>
+                <span className="text-xs text-[var(--text-brown)] ">{showTrash ? "▲" : "▼"}</span>
               </button>
 
               {showTrash && (
                 <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
                   {trashLoading ? (
-                    <p className="text-center py-6 text-xs text-[var(--text-gray)] opacity-50 animate-pulse">Cargando...</p>
+                    <p className="text-center py-6 text-xs text-[var(--text-brown)] animate-pulse">Cargando...</p>
                   ) : trashItems.length === 0 ? (
-                    <p className="text-center py-6 text-sm text-[var(--text-gray)] opacity-40 italic">Papelera vacía</p>
+                    <p className="text-center py-6 text-sm text-[var(--text-brown)] italic">Papelera vacía</p>
                   ) : (
                     (() => {
                       const groups: Record<string, { label: string; img: string; items: TrashItem[] }> = {
@@ -355,21 +381,20 @@ export default function ProfilePage() {
                       return Object.entries(groups).map(([k, g]) =>
                         g.items.length === 0 ? null : (
                           <div key={k} className="flex flex-col gap-2">
-                            <div className="flex items-center gap-2 opacity-50">
-                              <NextImage 
-  src={g.img} 
-  alt={g.label} 
-  width={14} 
-  height={14} 
-  className="object-contain" 
-/>
-                              <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-gray)] m-0 font-semibold">{g.label}</p>
+                            <div className="flex items-center gap-2">
+                              <NextImage src={g.img} alt={g.label} width={14} height={14} className="object-contain" />
+                              <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)] m-0 font-semibold">
+                                {g.label}
+                              </p>
                             </div>
                             {g.items.map((i) => (
-                              <div key={i.id} className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]">
+                              <div
+                                key={i.id}
+                                className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]"
+                              >
                                 <div className="min-w-0">
                                   <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
-                                  {i.meta && <span className="text-xs text-[var(--text-gray)] opacity-40 truncate block">{i.meta}</span>}
+                                  {i.meta && <span className="text-xs text-[var(--text-brown)] truncate block">{i.meta}</span>}
                                 </div>
                                 <button
                                   onClick={() => handleRestore(i)}
@@ -381,14 +406,13 @@ export default function ProfilePage() {
                               </div>
                             ))}
                           </div>
-                        )
+                        ),
                       );
                     })()
                   )}
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </div>

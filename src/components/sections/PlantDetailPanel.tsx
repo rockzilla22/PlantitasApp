@@ -151,7 +151,7 @@ export function PlantDetailPanel() {
         </div>
 
         {/* --- Badge --- */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-4">
           <span className="microclima-tag">
             <Image src="/icons/common/map.svg" alt="map" width={14} height={14} className="inline mr-1" />
             {plant.location}
@@ -168,6 +168,11 @@ export function PlantDetailPanel() {
             <Image src="/icons/common/sleep.svg" alt="sleep" width={14} height={14} className="inline mr-1" />
             {plant.dormancy}
           </span>
+          <span className="microclima-tag">
+            <Image src={plantImg} alt={plant.type} width={14} height={14} className="inline mr-1" />
+            {plant.type}
+          </span>
+          <span className="microclima-tag">{plant.subtype ? `Variedad: ${plant.subtype}` : "Sin variedad"}</span>
         </div>
 
         {/* --- Registro --- */}
