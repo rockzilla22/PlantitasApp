@@ -1,2 +1,4 @@
-Contact: mailto:contact@placeholder.com
-Expires: 2026-12-31T00:00:00.000Z
+Contact: mailto:hola@plantitasapp.com
+Expires: 2027-04-19T00:00:00.000Z
+Preferred-Languages: es, en
+Canonical: https://plantitas-app.vercel.app/.well-known/security.txt

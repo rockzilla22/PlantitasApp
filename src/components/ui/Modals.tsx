@@ -24,6 +24,7 @@ import { CustomSelect } from "@/components/ui/CustomSelect";
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import configProject from "@/data/configProject";
 import Image from "next/image";
+import { ImportSelectionModal } from "./ImportSelectionModal";
 import {
   DORMANCIES,
   INVENTORY_CATEGORIES,
@@ -825,6 +826,10 @@ export function Modals() {
               </button>
             </div>
           </div>
+        )}
+
+        {type === "import-select" && (
+          <ImportSelectionModal incomingData={props.data} mode={props.mode} />
         )}
 
         {type === "calendar" && (

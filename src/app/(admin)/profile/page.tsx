@@ -14,6 +14,7 @@ import {
   loadTrashFromSupabase,
   restoreTrashItem,
   deleteTrashItemPermanently,
+  emptyTrashPermanently,
   type TrashItem,
 } from "@/libs/syncService";
 import { $store, $trashCount } from "@/store/plantStore";
@@ -64,12 +65,26 @@ export default function ProfilePage() {
   const handleToggleTrash = async () => {
     if (!showTrash && trashItems.length === 0) {
       setTrashLoading(true);
-      const items = await loadTrashFromSupabase(user!.id);
+      const items = await loadTrashFromSupabase(user!.id, planConfig.trashRetentionDays);
       setTrashItems(items);
       $trashCount.set(items.length);
       setTrashLoading(false);
     }
     setShowTrash((v) => !v);
+  };
+
+  const handleEmptyTrash = async () => {
+    if (!confirm("¿Vaciar papelera permanentemente? Esta acción no se puede deshacer y liberará espacio en tu plan.")) return;
+    setTrashLoading(true);
+    try {
+      await emptyTrashPermanently(user!.id);
+      setTrashItems([]);
+      $trashCount.set(0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTrashLoading(false);
+    }
   };
 
   const handleRestore = async (item: TrashItem) => {
@@ -389,10 +404,20 @@ export default function ProfilePage() {
 
               {showTrash && (
                 <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
-                  <p className="text-[10px] text-[var(--text-brown)] italic bg-[var(--warning-bg)]/50 p-2 rounded-lg border border-[var(--border-light)]">
-                    💡 Los elementos en la papelera cuentan hacia tu límite de almacenamiento. 
-                    Se eliminan automáticamente después de 90 días.
-                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--warning-bg)]/50 p-3 rounded-xl border border-[var(--border-light)]">
+                    <p className="text-[10px] text-[var(--text-brown)] italic m-0 flex-1">
+                      💡 Los elementos en la papelera cuentan hacia tu límite de almacenamiento. 
+                      Se eliminan automáticamente según tu plan ({planConfig.trashRetentionDays} días).
+                    </p>
+                    {trashItems.length > 0 && (
+                      <button 
+                        onClick={handleEmptyTrash}
+                        className="btn-danger py-1.5 px-4 text-[10px] font-bold uppercase tracking-widest shrink-0"
+                      >
+                        Vaciar Papelera
+                      </button>
+                    )}
+                  </div>
                   {trashLoading ? (
                     <p className="text-center py-6 text-xs text-[var(--text-brown)] animate-pulse">Cargando...</p>
                   ) : trashItems.length === 0 ? (
@@ -422,10 +447,10 @@ export default function ProfilePage() {
                               >
                                 <div className="min-w-0">
                                   <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
-                                  <div className="flex flex-wrap gap-2 items-center">
+                                  <div className="flex flex-wrap gap-2 items-center mt-0.5">
                                     {i.meta && <span className="text-[10px] text-[var(--text-brown)] truncate">{i.meta}</span>}
-                                    <span className="text-[10px] text-[var(--text-gray)] italic">
-                                      Eliminado: {new Date(i.deleted_at).toLocaleDateString()}
+                                    <span className={`text-[10px] font-bold ${i.days_left <= 5 ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
+                                      Vence en: {i.days_left} {i.days_left === 1 ? "día" : "días"}
                                     </span>
                                   </div>
                                 </div>

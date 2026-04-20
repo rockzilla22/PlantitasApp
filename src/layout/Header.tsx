@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, setStoreData, $selectedPlantId, mergeData, forceSync } from "@/store/plantStore";
+import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeData, forceSync } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus, $lastSyncTime } from "@/store/authStore";
@@ -235,11 +235,25 @@ export function Header() {
               const reader = new FileReader();
               reader.onload = (ev) => {
                 try {
-                  const importedData = JSON.parse(ev.target?.result as string);
-                  mergeData(importedData);
-                  openModal("info", { title: "¡Sincronizado!", message: "Fusión completada." });
+                  const importedRaw = JSON.parse(ev.target?.result as string);
+                  const importedData = normalizeData(importedRaw);
+                  
+                  // Calculamos cuántos ítems nuevos vienen
+                  const incomingCount = importedData.plants.length + importedData.propagations.length + 
+                    importedData.wishlist.length + importedData.globalNotes.length + 
+                    Object.values(importedData.inventory).reduce((s: number, a: any[]) => s + a.length, 0);
+
+                  const totalPotential = usedSlots + incomingCount;
+
+                  if (totalPotential > (maxSlots as number)) {
+                     openModal("import-select", { data: importedRaw, mode: "merge" });
+                  } else {
+                    mergeData(importedRaw);
+                    openModal("info", { title: "¡Sincronizado!", message: "Fusión completada." });
+                  }
                 } catch (err) {
-                  openModal("info", { title: "Error", message: "JSON corrupto." });
+                  console.error(err);
+                  openModal("info", { title: "Error", message: "JSON corrupto o inválido." });
                 }
               };
               reader.readAsText(file);

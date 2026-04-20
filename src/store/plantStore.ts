@@ -436,32 +436,60 @@ export const setStoreData = (rawData: any) => {
   setDirty(false);
 };
 
-export const mergeData = (incomingData: any) => {
+const mergeById = (local: any[], imported: any[]) => {
+  const map = new Map();
+  local.forEach(item => map.set(item.id, item));
+  imported.forEach(item => map.set(item.id, item));
+  return Array.from(map.values());
+};
+
+export const mergeInventory = (local: any, imported: any) => {
+  const result = JSON.parse(JSON.stringify(local));
+  for (const cat in imported) {
+    if (!result[cat]) result[cat] = [];
+    imported[cat].forEach((impItem: any) => {
+      const localItem = result[cat].find((l: any) => l.name === impItem.name);
+      if (localItem) {
+        localItem.qty = Math.max(localItem.qty, impItem.qty);
+      } else {
+        result[cat].push(impItem);
+      }
+    });
+  }
+  return result;
+};
+
+export interface ImportSelectItem {
+  id: number;
+  label: string;
+  category: "Planta" | "Propagación" | "Nota" | "Wishlist";
+}
+
+export const mergeDataSelective = (incomingData: any, selectedIds: Set<number>) => {
   const incoming = normalizeData(incomingData);
   const data = $store.get();
-  
-  const mergeById = (local: any[], imported: any[]) => {
+
+  const mergeByIdFiltered = (local: any[], imported: any[]) => {
     const map = new Map();
     local.forEach(item => map.set(item.id, item));
-    imported.forEach(item => map.set(item.id, item));
+    imported.filter(i => selectedIds.has(i.id)).forEach(item => map.set(item.id, item));
     return Array.from(map.values());
   };
 
-  const mergeInventory = (local: any, imported: any) => {
-    const result = JSON.parse(JSON.stringify(local));
-    for (const cat in imported) {
-      if (!result[cat]) result[cat] = [];
-      imported[cat].forEach((impItem: any) => {
-        const localItem = result[cat].find((l: any) => l.name === impItem.name);
-        if (localItem) {
-          localItem.qty = Math.max(localItem.qty, impItem.qty);
-        } else {
-          result[cat].push(impItem);
-        }
-      });
-    }
-    return result;
-  };
+  $store.set({
+    plants: mergeByIdFiltered(data.plants, incoming.plants),
+    propagations: mergeByIdFiltered(data.propagations, incoming.propagations),
+    globalNotes: mergeByIdFiltered(data.globalNotes, incoming.globalNotes),
+    wishlist: mergeByIdFiltered(data.wishlist, incoming.wishlist),
+    inventory: mergeInventory(data.inventory, incoming.inventory),
+    seasonalTasks: incoming.seasonalTasks,
+  });
+  setDirty(false);
+};
+
+export const mergeData = (incomingData: any) => {
+  const incoming = normalizeData(incomingData);
+  const data = $store.get();
 
   $store.set({
     plants: mergeById(data.plants, incoming.plants),

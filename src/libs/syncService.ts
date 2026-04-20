@@ -174,9 +174,10 @@ export interface TrashItem {
   label: string;
   meta: string;
   deleted_at: string;
+  days_left: number;
 }
 
-export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]> {
+export async function loadTrashFromSupabase(userId: string, retentionDays: number): Promise<TrashItem[]> {
   const sb = supabaseBrowser();
   const [
     { data: plants },
@@ -191,12 +192,41 @@ export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]
   ]);
 
   const items: TrashItem[] = [];
-  (plants || []).forEach((p: any) => items.push({ id: p.id, table: "plants", label: p.name, meta: p.type, deleted_at: p.deleted_at }));
-  (propagations || []).forEach((p: any) => items.push({ id: p.id, table: "propagations", label: p.name, meta: p.method, deleted_at: p.deleted_at }));
-  (notes || []).forEach((n: any) => items.push({ id: n.id, table: "global_notes", label: n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), meta: "", deleted_at: n.deleted_at }));
-  (wishlist || []).forEach((w: any) => items.push({ id: w.id, table: "wishlist", label: w.name, meta: w.priority, deleted_at: w.deleted_at }));
+  const now = new Date();
 
-  return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
+  const mapItem = (row: any, table: TrashItem["table"], label: string, meta: string): TrashItem => {
+    const deletedAt = new Date(row.deleted_at);
+    const diffTime = now.getTime() - deletedAt.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return {
+      id: row.id,
+      table,
+      label,
+      meta,
+      deleted_at: row.deleted_at,
+      days_left: Math.max(0, retentionDays - diffDays),
+    };
+  };
+
+  (plants || []).forEach((p: any) => items.push(mapItem(p, "plants", p.name, p.type)));
+  (propagations || []).forEach((p: any) => items.push(mapItem(p, "propagations", p.name, p.method)));
+  (notes || []).forEach((n: any) => items.push(mapItem(n, "global_notes", n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), "")));
+  (wishlist || []).forEach((w: any) => items.push(mapItem(w, "wishlist", w.name, w.priority)));
+
+  return items.sort((a, b) => b.deleted_at.localeCompare(a.date));
+}
+
+export async function emptyTrashPermanently(userId: string): Promise<void> {
+  const sb = supabaseBrowser();
+  // Borramos todo lo que tenga deleted_at no nulo para este usuario
+  await Promise.all([
+    sb.from("plants").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("propagations").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("global_notes").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("wishlist").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    // Los logs se borran solos si están vinculados o los borramos por las dudas:
+    sb.from("plant_logs").delete().eq("user_id", userId).not("deleted_at", "is", null),
+  ]);
 }
 
 export async function restoreTrashItem(table: TrashItem["table"], id: number, userId: string): Promise<void> {
