@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, setStoreData, $selectedPlantId, mergeData } from "@/store/plantStore";
+import { $store, loadData, setStoreData, $selectedPlantId, mergeData, forceSync } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
-import { $user, $authLoading } from "@/store/authStore";
+import { $user, $authLoading, $syncStatus, $lastSyncTime } from "@/store/authStore";
 import { supabaseBrowser } from "@/libs/db";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
@@ -31,9 +31,24 @@ export function Header() {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notifyMenuRef = useRef<HTMLDivElement>(null);
   const [hasNewNotification, setHasNewNotification] = useState(false);
+  const lastSyncTime = useStore($lastSyncTime);
+  const syncStatus = useStore($syncStatus);
+
+  const formatLastSync = (iso?: string | null) => {
+    if (!iso) return "Nunca";
+    const d = new Date(iso);
+    return d.toLocaleString("es-AR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   // --- Plan & Storage Logic ---
   const planLevel = getPlanLevel(user);
+  const isProOrPremium = ["PRO", "PREMIUM", "MASTER"].includes(planLevel.toUpperCase());
   const planConfig = Object.values(configProject.plans).find((p) => p.id === planLevel) ?? configProject.plans.NONE;
   const isMasterAdmin = String(planLevel).toLowerCase() === configProject.plans.MASTER.id.toLowerCase();
 
@@ -156,7 +171,7 @@ export function Header() {
               style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}
             >
               <Image
-                src="/icons/environment/location/greenhouse.svg"
+                src="/icons/environment/plants/flower2.svg"
                 alt="Greenhouse"
                 width={28}
                 height={28}
@@ -250,7 +265,7 @@ export function Header() {
             </button>
 
             {isNotifyMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-[-100px] sm:right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-[320px] sm:w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
                 <h3 className="p-4 text-center text-sm font-bold text-[var(--text)] border-b border-[var(--border-light)]">
                   Notificaciones
                 </h3>
@@ -364,6 +379,27 @@ export function Header() {
                     <p className="text-[0.7rem] text-[var(--text-gray)] truncate mt-0.5 opacity-80 italic">{user?.email}</p>
                   </div>
                   <div className="py-2 pb-5 flex flex-col items-stretch w-full">
+                    {isProOrPremium && (
+                      <button
+                        onClick={() => forceSync()}
+                        disabled={syncStatus === "syncing"}
+                        className="flex flex-col items-center justify-center w-full hover:bg-[var(--bg-faint)] no-underline text-[var(--primary)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group py-3 px-4 mb-2"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Image
+                            src="/icons/common/success.svg"
+                            alt=""
+                            width={16}
+                            height={16}
+                            className={syncStatus === "syncing" ? "animate-spin" : ""}
+                          />
+                          {syncStatus === "syncing" ? "Sincronizando..." : "Guardar Cambios"}
+                        </span>
+                        <small className="text-[10px] text-[var(--text-gray)] font-normal mt-1 opacity-70">
+                          Último update: {formatLastSync(lastSyncTime)}
+                        </small>
+                      </button>
+                    )}
                     <Link
                       href="/profile"
                       onClick={(e) => handleNav(e, "/profile")}
@@ -428,14 +464,6 @@ export function Header() {
               {tab.label}
             </a>
           ))}
-          {user && (
-            <button
-              className="tab-link text-[var(--danger)] border-t border-[var(--text-white)]/10 mt-2 pt-4 text-left"
-              onClick={handleLogout}
-            >
-              Cerrar sesión
-            </button>
-          )}
         </nav>
       </div>
 

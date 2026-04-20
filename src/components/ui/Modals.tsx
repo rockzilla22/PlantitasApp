@@ -415,11 +415,17 @@ export function Modals() {
                 <CustomSelect
                   name="p-type"
                   options={PLANT_TYPES}
-                  defaultValue={props?.type || "Planta"}
+                  defaultValue={plantType}
                   onChange={(val) => setPlantType(val)}
                 />
                 {plantType === "CUSTOM" && (
-                  <input type="text" name="p-custom-type" placeholder="Orquídea" style={{ marginTop: "0.4rem" }} />
+                  <input
+                    type="text"
+                    name="p-custom-type"
+                    placeholder="Orquídea"
+                    style={{ marginTop: "0.4rem" }}
+                    defaultValue={!PLANT_TYPES.some((t) => t.value === props?.type) ? props?.type : ""}
+                  />
                 )}
               </div>
               {/* --- Subtipo --- */}

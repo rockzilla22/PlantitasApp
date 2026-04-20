@@ -513,7 +513,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 88vh;
+    height: 75vh;
     margin-top: 1rem;
     z-index: 200;
     background: var(--input-bg);
@@ -893,21 +893,21 @@
     padding: 1.5rem;
     width: 95%;
     max-width: 500px;
+    max-height: 90vh;
     margin: auto;
     background: var(--input-bg);
     color: var(--text);
+    overflow-y: auto;
   }
 
   dialog.plant-form-modal {
     max-width: 620px;
-    min-height: 640px;
-    overflow: visible;
+    overflow-y: auto;
   }
 
   dialog.season-task-modal {
     max-width: 560px;
-    min-height: 540px;
-    overflow: visible;
+    overflow-y: auto;
   }
 
   @media (min-width: 600px) {

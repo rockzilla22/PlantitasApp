@@ -2,7 +2,7 @@
 
 **PlantitasApp** es una app web para amantes de las plantas. Registrá tu colección, llevá el historial de cuidados, gestioná propagaciones, inventario de insumos y mucho más — sin fricción, desde cualquier dispositivo.
 
-Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JSON cuando quieras. Si querés respaldo automático en la nube, existe el plan Premium.
+Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JSON cuando quieras. Si querés respaldo automático en la nube, existen los planes Premium y Pro.
 
 ---
 
@@ -19,24 +19,23 @@ Podés usar PlantitasApp al 100% sin registrarte. No hay límite de plantas ni f
 
 > Los datos son tuyos. PlantitasApp no envía nada a ningún servidor si no tenés una cuenta activa.
 
-### Con cuenta — Plan Premium ☁
+### Con cuenta — Planes de Pago
 
-Al iniciar sesión con una cuenta Premium (o Master Admin), los datos se sincronizan automáticamente con la nube vía **Supabase**.
+Al iniciar sesión con una cuenta, según tu plan podrás acceder a diferentes niveles de funcionalidad:
 
-- El sync es transparente: cada vez que modificás algo, se guarda en la nube en segundo plano
-- Un indicador en el header muestra el estado: `☁` sincronizado · `⟳` sincronizando · `⚠` error
-- Podés usar la app desde múltiples dispositivos y los datos se mantienen consistentes
-- Los registros eliminados no se borran permanentemente — van a una **papelera** recuperable desde tu perfil
+| | Sin cuenta 🌱 | Gratuito 👤 | Pro 💎 | Premium ☁ | Master 👑 |
+|---|---|---|---|---|---|
+| Todas las funciones de la app | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Datos locales (localStorage) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Exportar / Importar JSON | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Sincronización en la nube | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Acceso multi-dispositivo | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Papelera de registros eliminados | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Perfil editable (nombre, teléfono) | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Límite de items (plantas, notas, etc.) | 25 | 50 | 250* | Ilimitado | Ilimitado |
+| Tipo de pago | Gratis | Gratis | Pago único | Suscripción | Sistema |
 
-| | Gratuito 🌱 | Premium ☁ |
-|---|---|---|
-| Todas las funciones de la app | ✅ | ✅ |
-| Datos locales (localStorage) | ✅ | ✅ |
-| Exportar / Importar JSON | ✅ | ✅ |
-| Sincronización en la nube | ❌ | ✅ |
-| Acceso multi-dispositivo | ❌ | ✅ |
-| Papelera de registros eliminados | ❌ | ✅ |
-| Perfil editable (nombre, teléfono) | ✅ | ✅ |
+*El plan Pro incluye 50 slots base + 200 slots adicionales = 250 total
 
 ---
 
@@ -85,8 +84,8 @@ Buscador en tiempo real en el header que encuentra plantas, propagaciones e insu
 Desde `/profile` podés:
 
 - Editar tu nombre y teléfono
-- Ver tu plan actual (Gratuito / Premium / Master Admin)
-- Acceder a la **papelera** (solo Premium) — restaurá registros eliminados sin perder historial
+- Ver tu plan actual (Gratuito / Pro / Premium / Master Admin)
+- Acceder a la **papelera** (solo planes Pro y superiores) — restaurá registros eliminados sin perder historial
 
 ---
 
@@ -130,6 +129,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 Aunque uses el plan gratuito, siempre podés exportar todo tu jardín como JSON desde el botón **Exportar** en el header. El archivo incluye plantas, logs, propagaciones, inventario, wishlist, notas y tareas estacionales.
 
 Para restaurar: usá el botón **Importar JSON** y elegí tu archivo. Podés elegir entre reemplazar los datos actuales o fusionarlos con los existentes.
+
+---
+
+## Notas de los Planes
+
+- **Sin cuenta**: Modo invitado ideal para probar la app. Los datos se pierden al borrar caché o cambiar de navegador.
+- **Gratuito**: Para quienes quieren crear un perfil y guardar preferencias, pero manteniendo todo localmente.
+- **Pro**: Pago único vitalicio que expande tu capacidad local sin suscripciones recurrentes. Incluye sincronización en la nube.
+- **Premium**: Suscripción mensual/anual con sincronización en la nube ilimitada y acceso multi-dispositivo.
+- **Master**: Nivel de sistema reservado para administradores y desarrollo interno.
 
 ---
 
