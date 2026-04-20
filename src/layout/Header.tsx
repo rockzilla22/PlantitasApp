@@ -479,6 +479,7 @@ export function Header() {
               key={tab.id}
               href={tab.href ?? "#"}
               onClick={(e) => handleNav(e, tab.href ?? "#")}
+              title={tab.description}
               className={`tab-link${pathname === tab.href ? " active" : ""}`}
             >
               {tab.icon && <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
@@ -494,6 +495,7 @@ export function Header() {
             key={tab.id}
             href={tab.href ?? "#"}
             onClick={(e) => handleNav(e, tab.href ?? "#")}
+            title={tab.description}
             className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex registros-center gap-2`}
           >
             {tab.icon && <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}

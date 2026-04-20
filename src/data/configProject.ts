@@ -236,7 +236,7 @@ const configProject: ConfigProject = {
       },
       garden: {
         label: "Jardín",
-        description: "Visualiza y gestiona tu jardín completo.",
+        description: "El espacio donde tu esfuerzo florece y tu colección cobra vida.",
         icon: "/icons/environment/location/home.svg",
         href: "/garden",
       },

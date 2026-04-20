@@ -1,24 +1,10 @@
 "use client";
 
-import configProject from "@/data/configProject";
 import { PricingSection } from "@/components/sections/PricingSection";
+import { FeatureSection } from "@/components/sections/FeaturesSection";
 import Image from "next/image";
 
-type FeatureItem = {
-  title: string;
-  description: string;
-  icon: string;
-};
-
 export default function LandingPage() {
-  const features: FeatureItem[] = Object.values(configProject.navigation.ES)
-    .filter((item): item is typeof item & { href: string; icon: string } => Boolean(item.href && item.icon && item.label !== "Jardín"))
-    .map((item) => ({
-      title: item.label,
-      description: item.description,
-      icon: item.icon,
-    }));
-
   return (
     <div className="landing-container">
       {/* Hero Section */}
@@ -26,13 +12,17 @@ export default function LandingPage() {
         <div className="hero-content">
           <span className="hero-badge">Versión 1.0 — Beta</span>
           <h1>
-            La app más completa <span className="hero-break"><br /></span> que todo Plant Lover necesita.
+            El diario de cuidados
+            <span className="hero-break">
+              <br />
+            </span>
+            que todo Plant Lover necesita.
           </h1>
           <p className="text-[var(--text-brown)]">
-            En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
-            compañera ideal en tu camino como coleccionista, brindándote el control total sobre los cuidados, riegos y necesidades
-            específicas de cada una de tus joyas verdes. Organiza tu colección, registra su progreso y asegúrate de que siempre tengan
-            exactamente lo que necesitan.
+            Sabemos que cada hoja nueva cuenta una historia. PlantitasApp te ayuda a recordar cuándo fue el último riego, cómo va creciendo
+            ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfruta de tus plantas sin el estrés de olvidar cuándo tocaba regar
+            o fertilizar. Crea un espacio digital para tu colección, sigue el progreso de tus propagaciones y mantén tus insumos a la mano.
+            Tu única preocupación será verlas crecer.
           </p>
         </div>
         <div className="hero-visual">
@@ -78,31 +68,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How it Works / Plans */}
-      <PricingSection />
-
       {/* Features Grid */}
       <section className="info-section">
         <div className="section-title">
-          <h2>Todo lo que necesitas</h2>
-          <p className="text-[var(--text-brown)]">Herramientas diseñadas para el cuidado real de tus plantas.</p>
+          <h2> Simplificando el cuidado tus plantas</h2>
+          <p> Un espacio organizado para acompañarte en cada riego, brote y cambio de estación. </p>
         </div>
-
-        <div className="features-grid">
-          {features.map((f, i) => (
-            <div key={i} className="feature-item">
-              <div className="feature-icon">
-                <Image src={f.icon} alt="" width={28} height={28} className="object-contain" />
-                <h4>{f.title}</h4>
-              </div>
-              <p className="text-[var(--text-brown)]">{f.description}</p>
-            </div>
-          ))}
-        </div>
+        <FeatureSection />
       </section>
 
+      {/* How it Works / Plans */}
+      <PricingSection />
+
       {/* About Section */}
-      <section className="info-section bg-soft about-section">
+      <section className="info-section !mt-30 bg-soft about-section">
         <div className="section-title">
           <h2>Historia del Proyecto</h2>
         </div>
@@ -136,7 +115,6 @@ export default function LandingPage() {
           grid-template-columns: 1fr 1fr;
           gap: 4rem;
           align-items: center;
-          padding: 4rem 0;
         }
 
         @media (max-width: 900px) {
@@ -271,7 +249,7 @@ export default function LandingPage() {
         .info-section {
           padding: 6rem 2rem;
           border-radius: 2rem;
-          margin: 4rem 0;
+          margin: 1rem 0;
           min-width: 0;
         }
 
@@ -312,58 +290,6 @@ export default function LandingPage() {
           overflow-wrap: anywhere;
         }
 
-        .features-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-
-        @media (min-width: 700px) {
-          .features-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-        }
-
-        @media (min-width: 1100px) {
-          .features-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-          }
-        }
-
-        .feature-item {
-          padding: 2.5rem 2rem;
-          background: var(--input-bg);
-          border: 1px solid var(--border);
-          border-radius: 2rem;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-          transition:
-            transform 0.3s ease,
-            box-shadow 0.3s ease;
-        }
-
-        .feature-item:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-        }
-
-        .feature-icon {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .feature-item h4 {
-          font-size: 1.25rem;
-          margin-bottom: 0;
-          color: var(--primary);
-        }
-
-        .feature-item p {
-          color: var(--text-brown);
-          font-size: 0.95rem;
-        }
-
         @media (max-width: 700px) {
           .landing-container {
             padding-inline: 0.75rem;
@@ -377,7 +303,7 @@ export default function LandingPage() {
             height: auto;
             display: grid;
             gap: 1rem;
-            justify-Items: center;
+            justify-items: center;
           }
 
           .plant-card-mockup.secondary {
@@ -395,15 +321,6 @@ export default function LandingPage() {
 
           .section-title {
             margin-bottom: 2.5rem;
-          }
-
-          .feature-item {
-            padding: 1.5rem 1.25rem;
-            border-radius: 1.5rem;
-          }
-
-          .feature-icon {
-            align-Items: flex-start;
           }
 
           .about-section {
