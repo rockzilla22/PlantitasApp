@@ -1,30 +1,28 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const cspHeader = `
     default-src 'self';
     base-uri 'self';
     object-src 'none';
-    frame-ancestors 'self';
+    frame-ancestors 'none';
     upgrade-insecure-requests;
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://c.bing.com https://*.clarity.ms https://client.crisp.chat https://va.vercel-scripts.com;
+    script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://c.bing.com https://*.clarity.ms https://client.crisp.chat https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline' https://client.crisp.chat;
     img-src 'self' blob: data: https://*.google-analytics.com https://*.googletagmanager.com https://c.bing.com https://*.clarity.ms https://image.crisp.chat;
     font-src 'self' data: https://client.crisp.chat;
     connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.google-analytics.com https://*.clarity.ms https://c.bing.com https://wss.crisp.chat https://client.crisp.chat https://vitals.vercel-insights.com;
-    frame-src 'self' https://game.crisp.chat;
+    frame-src 'none';
 `;
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  reactStrictMode: true,
 
   // ── Image optimization ───────────────────────────────────────────
   images: {
     formats: ["image/avif", "image/webp"],
-    // Add remote image domains here when needed:
-    // remotePatterns: [
-    //   { protocol: "https", hostname: "lh3.googleusercontent.com" },
-    //   { protocol: "https", hostname: "avatars.githubusercontent.com" },
-    // ],
   },
 
   async headers() {
@@ -32,15 +30,16 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
-          // CORE — Hardening HTTP básico
+          // CORE — Hardening HTTP sólido
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Frame-Options", value: "DENY" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
 
           // Cross-Origin isolation
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
 
           // Extras
           { key: "X-DNS-Prefetch-Control", value: "off" },

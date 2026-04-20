@@ -13,9 +13,11 @@ import {
   getEffectiveMaxSlots,
   loadTrashFromSupabase,
   restoreTrashItem,
+  deleteTrashItemPermanently,
+  emptyTrashPermanently,
   type TrashItem,
 } from "@/libs/syncService";
-import { $store } from "@/store/plantStore";
+import { $store, $trashCount } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
 
@@ -48,6 +50,7 @@ export default function ProfilePage() {
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [trashLoading, setTrashLoading] = useState(false);
   const [restoringId, setRestoringId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [linkingProvider, setLinkingProvider] = useState<"google" | "discord" | null>(null);
   const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
@@ -62,11 +65,26 @@ export default function ProfilePage() {
   const handleToggleTrash = async () => {
     if (!showTrash && trashItems.length === 0) {
       setTrashLoading(true);
-      const items = await loadTrashFromSupabase(user!.id);
+      const items = await loadTrashFromSupabase(user!.id, planConfig.trashRetentionDays);
       setTrashItems(items);
+      $trashCount.set(items.length);
       setTrashLoading(false);
     }
     setShowTrash((v) => !v);
+  };
+
+  const handleEmptyTrash = async () => {
+    if (!confirm("¿Vaciar papelera permanentemente? Esta acción no se puede deshacer y liberará espacio en tu plan.")) return;
+    setTrashLoading(true);
+    try {
+      await emptyTrashPermanently(user!.id);
+      setTrashItems([]);
+      $trashCount.set(0);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTrashLoading(false);
+    }
   };
 
   const handleRestore = async (item: TrashItem) => {
@@ -78,6 +96,23 @@ export default function ProfilePage() {
       console.error(err);
     } finally {
       setRestoringId(null);
+    }
+  };
+
+  const handleDeletePermanent = async (item: TrashItem) => {
+    if (!confirm("¿Eliminar permanentemente? Esta acción no se puede deshacer.")) return;
+    setDeletingId(item.id);
+    try {
+      await deleteTrashItemPermanently(item.table, item.id, user!.id);
+      setTrashItems((prev) => {
+        const updated = prev.filter((i) => i.id !== item.id);
+        $trashCount.set(updated.length);
+        return updated;
+      });
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -369,6 +404,20 @@ export default function ProfilePage() {
 
               {showTrash && (
                 <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--warning-bg)]/50 p-3 rounded-xl border border-[var(--border-light)]">
+                    <p className="text-[10px] text-[var(--text-brown)] italic m-0 flex-1">
+                      💡 Los elementos en la papelera cuentan hacia tu límite de almacenamiento. 
+                      Se eliminan automáticamente según tu plan ({planConfig.trashRetentionDays} días).
+                    </p>
+                    {trashItems.length > 0 && (
+                      <button 
+                        onClick={handleEmptyTrash}
+                        className="btn-danger py-1.5 px-4 text-[10px] font-bold uppercase tracking-widest shrink-0"
+                      >
+                        Vaciar Papelera
+                      </button>
+                    )}
+                  </div>
                   {trashLoading ? (
                     <p className="text-center py-6 text-xs text-[var(--text-brown)] animate-pulse">Cargando...</p>
                   ) : trashItems.length === 0 ? (
@@ -398,15 +447,29 @@ export default function ProfilePage() {
                               >
                                 <div className="min-w-0">
                                   <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
-                                  {i.meta && <span className="text-xs text-[var(--text-brown)] truncate block">{i.meta}</span>}
+                                  <div className="flex flex-wrap gap-2 items-center mt-0.5">
+                                    {i.meta && <span className="text-[10px] text-[var(--text-brown)] truncate">{i.meta}</span>}
+                                    <span className={`text-[10px] font-bold ${i.days_left <= 5 ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
+                                      Vence en: {i.days_left} {i.days_left === 1 ? "día" : "días"}
+                                    </span>
+                                  </div>
                                 </div>
-                                <button
-                                  onClick={() => handleRestore(i)}
-                                  disabled={restoringId === i.id}
-                                  className="btn-primary py-1 px-3 text-xs ml-3 shrink-0 disabled:opacity-40"
-                                >
-                                  {restoringId === i.id ? "..." : "Restaurar"}
-                                </button>
+                                <div className="flex gap-2 ml-3 shrink-0">
+                                  <button
+                                    onClick={() => handleRestore(i)}
+                                    disabled={restoringId === i.id || deletingId === i.id}
+                                    className="btn-primary py-1 px-3 text-[10px] disabled:opacity-40"
+                                  >
+                                    {restoringId === i.id ? "..." : "Restaurar"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeletePermanent(i)}
+                                    disabled={restoringId === i.id || deletingId === i.id}
+                                    className="btn-danger py-1 px-3 text-[10px] disabled:opacity-40"
+                                  >
+                                    {deletingId === i.id ? "..." : "Borrar"}
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>

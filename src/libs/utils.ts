@@ -16,3 +16,9 @@ export function translateError(err: string): string {
   if (msg.includes("rate limit")) return "Demasiados intentos. Intentá más tarde.";
   return err; // Devuelve el original si no hay match
 }
+
+export function sanitizeString(str: string): string {
+  if (typeof str !== "string") return "";
+  // Eliminamos tags HTML básicos para evitar XSS simple
+  return str.replace(/<[^>]*>?/gm, "").trim();
+}

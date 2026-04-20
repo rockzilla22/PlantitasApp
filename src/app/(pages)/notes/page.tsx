@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, removeNote } from "@/store/plantStore";
+import { $store, removeNote, checkCapLimit } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
 import Image from "next/image";
 
@@ -9,7 +9,7 @@ export default function NotesPage() {
   const { globalNotes } = useStore($store);
 
   const handleAddNote = () => {
-    openModal("add-note");
+    if (checkCapLimit()) openModal("add-note");
   };
 
   return (

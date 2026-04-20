@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, removeSeasonTask } from "@/store/plantStore";
+import { $store, removeSeasonTask, checkCapLimit } from "@/store/plantStore";
 import { Season, SeasonTask } from "@/core/season/domain/SeasonTask";
 import { openModal } from "@/store/modalStore";
 import { useState } from "react";
@@ -19,7 +19,7 @@ export default function SeasonPage() {
   ];
 
   const handleAddTask = (season: Season) => {
-    openModal("add-season-task", { season });
+    if (checkCapLimit()) openModal("add-season-task", { season });
   };
 
   const getTaskIcon = (type: string) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, removeWish } from "@/store/plantStore";
+import { $store, removeWish, checkCapLimit } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
 import { useState, useMemo } from "react";
 import Image from "next/image";
@@ -18,7 +18,7 @@ export default function WishlistPage() {
   }, [wishlist, priorityFilter]);
 
   const handleAddWish = () => {
-    openModal("add-wish");
+    if (checkCapLimit()) openModal("add-wish");
   };
 
   return (

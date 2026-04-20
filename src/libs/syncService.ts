@@ -2,6 +2,18 @@ import { supabaseBrowser } from "./db";
 import type { AppData } from "@/store/plantStore";
 import type { User } from "@supabase/supabase-js";
 import configProject from "@/data/configProject";
+import { PlantSchema } from "@/core/plant/domain/Plant";
+import { PropagationSchema } from "@/core/nursery/domain/Propagation";
+import { GlobalNoteSchema } from "@/core/notes/domain/GlobalNote";
+import { WishlistItemSchema } from "@/core/wishlist/domain/WishlistItem";
+
+function parseValid<T>(schema: { safeParse: (v: unknown) => { success: boolean; data?: T } }, items: unknown[]): T[] {
+  return items.reduce<T[]>((acc, item) => {
+    const result = schema.safeParse(item);
+    if (result.success && result.data) acc.push(result.data);
+    return acc;
+  }, []);
+}
 
 export type PlanLevel = string;
 
@@ -39,8 +51,13 @@ export function getEffectiveMaxSlots(user: User | null): number {
 export async function syncToSupabase(data: AppData, userId: string): Promise<void> {
   const sb = supabaseBrowser();
 
+  const validPlants = parseValid(PlantSchema, data.plants);
+  const validProps = parseValid(PropagationSchema, data.propagations);
+  const validNotes = parseValid(GlobalNoteSchema, data.globalNotes);
+  const validWishlist = parseValid(WishlistItemSchema, data.wishlist);
+
   // Plants — upsert + delete orphans
-  const plantRows = data.plants.map((p) => ({
+  const plantRows = validPlants.map((p) => ({
     id: p.id,
     user_id: userId,
     type: p.type,
@@ -55,7 +72,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (plantRows.length > 0) {
     await sb.from("plants").upsert(plantRows, { onConflict: "id" });
   }
-  const plantIds = data.plants.map((p) => p.id);
+  const plantIds = validPlants.map((p) => p.id);
   if (plantIds.length > 0) {
     await sb.from("plants").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${plantIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -63,7 +80,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Plant logs — upsert + delete orphans
-  const logRows = data.plants.flatMap((p) =>
+  const logRows = validPlants.flatMap((p) =>
     p.logs.map((l) => ({
       id: l.id,
       user_id: userId,
@@ -84,7 +101,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Propagations — upsert + delete orphans
-  const propRows = data.propagations.map((p) => ({
+  const propRows = validProps.map((p) => ({
     id: p.id,
     user_id: userId,
     parent_id: p.parentId ?? null,
@@ -97,7 +114,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (propRows.length > 0) {
     await sb.from("propagations").upsert(propRows, { onConflict: "id" });
   }
-  const propIds = data.propagations.map((p) => p.id);
+  const propIds = validProps.map((p) => p.id);
   if (propIds.length > 0) {
     await sb.from("propagations").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${propIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -120,7 +137,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Global notes — upsert + delete orphans
-  const noteRows = data.globalNotes.map((n) => ({
+  const noteRows = validNotes.map((n) => ({
     id: n.id,
     user_id: userId,
     content: n.content,
@@ -128,7 +145,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (noteRows.length > 0) {
     await sb.from("global_notes").upsert(noteRows, { onConflict: "id" });
   }
-  const noteIds = data.globalNotes.map((n) => n.id);
+  const noteIds = validNotes.map((n) => n.id);
   if (noteIds.length > 0) {
     await sb.from("global_notes").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${noteIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -136,7 +153,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // wishlist — upsert + delete orphans
-  const wishRows = data.wishlist.map((w) => ({
+  const wishRows = validWishlist.map((w) => ({
     id: w.id,
     user_id: userId,
     name: w.name,
@@ -146,7 +163,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (wishRows.length > 0) {
     await sb.from("wishlist").upsert(wishRows, { onConflict: "id" });
   }
-  const wishIds = data.wishlist.map((w) => w.id);
+  const wishIds = validWishlist.map((w) => w.id);
   if (wishIds.length > 0) {
     await sb.from("wishlist").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${wishIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -174,9 +191,10 @@ export interface TrashItem {
   label: string;
   meta: string;
   deleted_at: string;
+  days_left: number;
 }
 
-export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]> {
+export async function loadTrashFromSupabase(userId: string, retentionDays: number): Promise<TrashItem[]> {
   const sb = supabaseBrowser();
   const [
     { data: plants },
@@ -191,12 +209,41 @@ export async function loadTrashFromSupabase(userId: string): Promise<TrashItem[]
   ]);
 
   const items: TrashItem[] = [];
-  (plants || []).forEach((p: any) => items.push({ id: p.id, table: "plants", label: p.name, meta: p.type, deleted_at: p.deleted_at }));
-  (propagations || []).forEach((p: any) => items.push({ id: p.id, table: "propagations", label: p.name, meta: p.method, deleted_at: p.deleted_at }));
-  (notes || []).forEach((n: any) => items.push({ id: n.id, table: "global_notes", label: n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), meta: "", deleted_at: n.deleted_at }));
-  (wishlist || []).forEach((w: any) => items.push({ id: w.id, table: "wishlist", label: w.name, meta: w.priority, deleted_at: w.deleted_at }));
+  const now = new Date();
+
+  const mapItem = (row: any, table: TrashItem["table"], label: string, meta: string): TrashItem => {
+    const deletedAt = new Date(row.deleted_at);
+    const diffTime = now.getTime() - deletedAt.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return {
+      id: row.id,
+      table,
+      label,
+      meta,
+      deleted_at: row.deleted_at,
+      days_left: Math.max(0, retentionDays - diffDays),
+    };
+  };
+
+  (plants || []).forEach((p: any) => items.push(mapItem(p, "plants", p.name, p.type)));
+  (propagations || []).forEach((p: any) => items.push(mapItem(p, "propagations", p.name, p.method)));
+  (notes || []).forEach((n: any) => items.push(mapItem(n, "global_notes", n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), "")));
+  (wishlist || []).forEach((w: any) => items.push(mapItem(w, "wishlist", w.name, w.priority)));
 
   return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
+}
+
+export async function emptyTrashPermanently(userId: string): Promise<void> {
+  const sb = supabaseBrowser();
+  // Borramos todo lo que tenga deleted_at no nulo para este usuario
+  await Promise.all([
+    sb.from("plants").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("propagations").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("global_notes").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    sb.from("wishlist").delete().eq("user_id", userId).not("deleted_at", "is", null),
+    // Los logs se borran solos si están vinculados o los borramos por las dudas:
+    sb.from("plant_logs").delete().eq("user_id", userId).not("deleted_at", "is", null),
+  ]);
 }
 
 export async function restoreTrashItem(table: TrashItem["table"], id: number, userId: string): Promise<void> {
@@ -204,6 +251,15 @@ export async function restoreTrashItem(table: TrashItem["table"], id: number, us
   await sb.from(table).update({ deleted_at: null }).eq("id", id).eq("user_id", userId);
   if (table === "plants") {
     await sb.from("plant_logs").update({ deleted_at: null }).eq("plant_id", id).eq("user_id", userId);
+  }
+}
+
+export async function deleteTrashItemPermanently(table: TrashItem["table"], id: number, userId: string): Promise<void> {
+  const sb = supabaseBrowser();
+  await sb.from(table).delete().eq("id", id).eq("user_id", userId);
+  // Los logs y otros se borran por cascade en BD o manualmente si no hay FK
+  if (table === "plants") {
+    await sb.from("plant_logs").delete().eq("plant_id", id).eq("user_id", userId);
   }
 }
 
