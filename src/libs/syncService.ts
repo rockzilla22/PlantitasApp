@@ -124,7 +124,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   // Inventory — full replace (no client-side IDs)
   await sb.from("inventory_Items").delete().eq("user_id", userId);
   const invRows = Object.entries(data.inventory).flatMap(([cat, registros]) =>
-    (Items as any[]).map((item) => ({
+    (registros as any[]).map((item) => ({
       user_id: userId,
       category: cat,
       name: item.name,

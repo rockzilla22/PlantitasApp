@@ -208,7 +208,7 @@ export default function AdminPanel() {
             <Image src="/icons/common/arrow_up.svg" alt="" width={12} height={12} className="rotate-[-90deg] object-contain" />
             <span>Perfil</span>
           </Link>
-          <div className="flex flex-col md:flex-row md:Items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-[var(--text)] leading-none">Panel de control</h1>
             </div>

@@ -135,7 +135,7 @@ export default function LandingPage() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 4rem;
-          align-Items: center;
+          align-items: center;
           padding: 4rem 0;
         }
 
@@ -181,7 +181,7 @@ export default function LandingPage() {
           display: flex;
           gap: 1rem;
           justify-content: center;
-          align-Items: center;
+          align-items: center;
           flex-wrap: wrap;
           margin-top: -1rem;
         }
@@ -348,7 +348,7 @@ export default function LandingPage() {
 
         .feature-icon {
           display: flex;
-          align-Items: center;
+          align-items: center;
           gap: 0.75rem;
           margin-bottom: 1.5rem;
         }

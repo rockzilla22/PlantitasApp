@@ -66,8 +66,8 @@ export default function ProfilePage() {
     if (!showTrash && trashItems.length === 0) {
       setTrashLoading(true);
       const registros = await loadTrashFromSupabase(user!.id, planConfig.trashRetentionDays);
-      setTrashItems(Items);
-      $trashCount.set(Items.length);
+      setTrashItems(registros);
+      $trashCount.set(registros.length);
       setTrashLoading(false);
     }
     setShowTrash((v) => !v);
@@ -404,7 +404,7 @@ export default function ProfilePage() {
 
               {showTrash && (
                 <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
-                  <div className="flex flex-col sm:flex-row sm:Items-center justify-between gap-3 bg-[var(--warning-bg)]/50 p-3 rounded-xl border border-[var(--border-light)]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--warning-bg)]/50 p-3 rounded-xl border border-[var(--border-light)]">
                     <p className="text-[10px] text-[var(--text-brown)] italic m-0 flex-1">
                       💡 Los elementos en la papelera cuentan hacia tu límite de almacenamiento. 
                       Se eliminan automáticamente según tu plan ({planConfig.trashRetentionDays} días).
@@ -430,24 +430,24 @@ export default function ProfilePage() {
                         global_notes: { label: "Notas", img: "/icons/common/notes.svg", registros: [] },
                         wishlist: { label: "Deseos", img: "/icons/common/wishlist.svg", registros: [] },
                       };
-                      trashItems.forEach((i) => groups[i.table]?.Items.push(i));
+                      trashItems.forEach((i) => groups[i.table]?.registros.push(i));
                       return Object.entries(groups).map(([k, g]) =>
-                        g.Items.length === 0 ? null : (
+                        g.registros.length === 0 ? null : (
                           <div key={k} className="flex flex-col gap-2">
-                            <div className="flex registros-center gap-2">
+                            <div className="flex items-center gap-2">
                               <NextImage src={g.img} alt={g.label} width={14} height={14} className="object-contain" />
                               <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)] m-0 font-semibold">
                                 {g.label}
                               </p>
                             </div>
-                            {g.Items.map((i) => (
+                            {g.registros.map((i) => (
                               <div
                                 key={i.id}
-                                className="flex registros-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]"
+                                className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]"
                               >
                                 <div className="min-w-0">
                                   <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
-                                  <div className="flex flex-wrap gap-2 registros-center mt-0.5">
+                                  <div className="flex flex-wrap gap-2 items-center mt-0.5">
                                     {i.meta && <span className="text-[10px] text-[var(--text-brown)] truncate">{i.meta}</span>}
                                     <span className={`text-[10px] font-bold ${i.days_left <= 5 ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
                                       Vence en: {i.days_left} {i.days_left === 1 ? "día" : "días"}

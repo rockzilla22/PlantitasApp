@@ -388,7 +388,7 @@ export function Modals() {
         {/* --- MODAL DE AGREGAR/EDITAR PLANTA --- */}
         {(type === "add-plant" || type === "edit-plant") && (
           <form method="dialog" onSubmit={handlePlantSubmit}>
-            <h3 className="flex registros-center gap-2">
+            <h3 className="flex items-center gap-2">
               {type === "edit-plant" ? (
                 <>
                   <Image src="/icons/common/pencil.svg" alt="Modificar Planta" width={18} height={18} className="object-contain" />
@@ -494,7 +494,7 @@ export function Modals() {
             </div>
             {/* --- Guardar o Cancelar --- */}
             <div className="mt-8 space-y-3">
-              <div className="modal-actions col-span-2 flex flex-col-reverse registros-center justify-center sm:flex-row sm:gap-4">
+              <div className="modal-actions col-span-2 flex flex-col-reverse items-center justify-center sm:flex-row sm:gap-4">
                 <button type="button" className="btn-text text-[var(--danger)] w-full max-w-[220px] sm:w-auto py-2" onClick={handleClose}>
                   Cancelar
                 </button>
@@ -571,7 +571,7 @@ export function Modals() {
               <button type="button" className="btn-text text-[var(--danger)] w-full sm:w-auto py-2" onClick={handleClose}>
                 Cancelar
               </button>
-              <span className="Items-center justify-center text-center text-sm">Todos los campos con * son Obligatorios.</span>
+              <span className="items-center justify-center text-center text-sm">Todos los campos con * son Obligatorios.</span>
               <button type="submit" className="btn-primary bg-[var(--primary-light)]/15 w-full sm:w-auto py-2">
                 {type === "edit-prop" ? "Actualizar" : "Iniciar"}
               </button>

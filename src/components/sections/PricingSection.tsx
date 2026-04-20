@@ -241,7 +241,7 @@ export function PricingSection() {
           font-weight: 500;
           color: var(--text-gray);
           display: flex;
-          align-Items: flex-start;
+          align-items: flex-start;
           gap: 0.5rem;
           overflow-wrap: anywhere;
         }

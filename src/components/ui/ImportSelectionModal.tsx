@@ -40,7 +40,7 @@ export function ImportSelectionModal({ incomingData, mode }: { incomingData: any
     normalized.wishlist.forEach(p => list.push({ id: `w-${p.id}`, type: "Deseo", name: p.name, originalData: p }));
     normalized.globalNotes.forEach(p => list.push({ id: `n-${p.id}`, type: "Nota", name: p.content.slice(0, 30), originalData: p }));
     Object.entries(normalized.inventory).forEach(([cat, registros]) => {
-      (Items as any[]).forEach((item, idx) => list.push({ id: `i-${cat}-${idx}`, type: `Insumo (${cat})`, name: item.name, originalCategory: cat, originalData: item }));
+      (registros as any[]).forEach((item, idx) => list.push({ id: `i-${cat}-${idx}`, type: `Insumo (${cat})`, name: item.name, originalCategory: cat, originalData: item }));
     });
     Object.entries(normalized.seasonalTasks).forEach(([season, tasks]) => {
       (tasks as any[]).forEach((task, idx) => list.push({ id: `s-${season}-${idx}`, type: `Temporada (${season})`, name: task.desc || task.type, originalSeason: season, originalData: task }));
