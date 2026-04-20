@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, removeSeasonTask } from "@/store/plantStore";
+import { $store, removeSeasonTask, checkCapLimit } from "@/store/plantStore";
 import { Season, SeasonTask } from "@/core/season/domain/SeasonTask";
 import { openModal } from "@/store/modalStore";
 import { useState } from "react";

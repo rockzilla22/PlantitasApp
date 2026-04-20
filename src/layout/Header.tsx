@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeData, forceSync, $trashCount, initialData } from "@/store/plantStore";
+import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeData, forceSync, clearLocalData } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus, $lastSyncTime } from "@/store/authStore";
@@ -129,10 +129,7 @@ export function Header() {
     const supabase = supabaseBrowser();
     await supabase.auth.signOut();
     $user.set(null);
-    $store.set(initialData);
-    $trashCount.set(0);
-    localStorage.removeItem("plantitas_db");
-    localStorage.removeItem("plantitas_last_sync");
+    clearLocalData();
     setIsProfileMenuOpen(false);
   };
 
@@ -186,7 +183,7 @@ export function Header() {
           </Link>
         </div>
 
-        <div className="h-search">
+        <div className="h-search" suppressHydrationWarning>
           <button
             type="button"
             className={`btn-backup rounded-full ${shouldFlash ? "flash-active" : ""}`}
@@ -242,10 +239,13 @@ export function Header() {
                   const importedRaw = JSON.parse(ev.target?.result as string);
                   const importedData = normalizeData(importedRaw);
                   
-                  // Calculamos cuántos ítems nuevos vienen
-                  const incomingCount = importedData.plants.length + importedData.propagations.length + 
-                    importedData.wishlist.length + importedData.globalNotes.length + 
-                    Object.values(importedData.inventory).reduce((s: number, a: any[]) => s + a.length, 0);
+                  const incomingCount =
+                    importedData.plants.length +
+                    importedData.propagations.length +
+                    importedData.wishlist.length +
+                    importedData.globalNotes.length +
+                    Object.values(importedData.inventory).reduce((s: number, a: any[]) => s + a.length, 0) +
+                    Object.values(importedData.seasonalTasks).reduce((s: number, a: any[]) => s + a.length, 0);
 
                   const totalPotential = usedSlots + incomingCount;
 
@@ -313,51 +313,54 @@ export function Header() {
                   )}
 
                   {user && (
-                    <>
-                      <div className="p-4 border-b border-[var(--border-light)] opacity-95">
-                        <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Plan Actual</p>
-                        <div className="flex items-center justify-between mt-1">
-                          <p className="text-sm font-bold text-[var(--text)] m-0">{planConfig.label}</p>
-                          {(() => {
-                            const isExpired = premiumExpiresAt && new Date() > new Date(premiumExpiresAt);
-                            return (
-                              <span
-                                className={`text-[0.6rem] px-2 py-0.5 rounded-full text-white font-bold uppercase tracking-tighter ${isExpired ? "bg-red-500" : "bg-[var(--primary)]"}`}
-                              >
-                                {isExpired ? "Vencido" : "Activo"}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        <p className="text-[0.7rem] text-[var(--text-gray)] mt-1 italic font-medium">
-                          {premiumExpiresAt
-                            ? (() => {
-                                const isExpired = new Date() > new Date(premiumExpiresAt);
-                                return (
-                                  <span className={isExpired ? "text-red-500 font-bold" : ""}>
-                                    {isExpired ? "Venció el " : "Vence el "} {expirationDate}
-                                  </span>
-                                );
-                              })()
-                            : "Vigencia: Ilimitada"}
-                        </p>
+                    <div className="p-4 border-b border-[var(--border-light)] opacity-95">
+                      <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Plan Actual</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-sm font-bold text-[var(--text)] m-0">{planConfig.label}</p>
+                        {(() => {
+                          const isExpired = premiumExpiresAt && new Date() > new Date(premiumExpiresAt);
+                          return (
+                            <span
+                              className={`text-[0.6rem] px-2 py-0.5 rounded-full text-white font-bold uppercase tracking-tighter ${isExpired ? "bg-red-500" : "bg-[var(--primary)]"}`}
+                            >
+                              {isExpired ? "Vencido" : "Activo"}
+                            </span>
+                          );
+                        })()}
                       </div>
-
-                      <div className="p-4 bg-[var(--bg-faint)]/50">
-                        <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Almacenamiento</p>
-                        <div className="mt-2 flex items-baseline gap-1">
-                          <span className="text-xl font-bold text-[var(--text)]">{usedSlots}</span>
-                          <span className="text-sm text-[var(--text-gray)] opacity-60">/ {maxSlotsLabel} items</span>
-                        </div>
-                        <div className="w-full bg-[var(--border-light)] h-2 rounded-full mt-2 overflow-hidden border border-[var(--border-light)]">
-                          <div
-                            className={`h-full transition-all duration-700 ${usedSlots >= maxSlots ? "bg-red-500" : "bg-[var(--primary)]"}`}
-                            style={{ width: `${isMasterAdmin ? 100 : Math.min(100, (usedSlots / (maxSlots || 1)) * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    </>
+                      <p className="text-[0.7rem] text-[var(--text-gray)] mt-1 italic font-medium">
+                        {premiumExpiresAt
+                          ? (() => {
+                              const isExpired = new Date() > new Date(premiumExpiresAt);
+                              return (
+                                <span className={isExpired ? "text-red-500 font-bold" : ""}>
+                                  {isExpired ? "Venció el " : "Vence el "} {expirationDate}
+                                </span>
+                              );
+                            })()
+                          : "Vigencia: Ilimitada"}
+                      </p>
+                    </div>
                   )}
+
+                  <div className="p-4 bg-[var(--bg-faint)]/50">
+                    <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Almacenamiento</p>
+                    <div className="mt-2 flex items-baseline gap-1">
+                      <span className="text-xl font-bold text-[var(--text)]">{usedSlots}</span>
+                      <span className="text-sm text-[var(--text-gray)] opacity-60">/ {maxSlotsLabel} items</span>
+                    </div>
+                    <div className="w-full bg-[var(--border-light)] h-2 rounded-full mt-2 overflow-hidden border border-[var(--border-light)]">
+                      <div
+                        className={`h-full transition-all duration-700 ${usedSlots >= (maxSlots as number) ? "bg-red-500" : "bg-[var(--primary)]"}`}
+                        style={{ width: `${isMasterAdmin ? 100 : Math.min(100, (usedSlots / ((maxSlots as number) || 1)) * 100)}%` }}
+                      />
+                    </div>
+                    {!user && (
+                      <p className="text-[9px] text-[var(--text-gray)] mt-2 italic leading-tight">
+                        ⚠️ Modo invitado: Datos locales. Creá una cuenta para aumentar espacio y/o sincronizar datos en la nube.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {!user && (

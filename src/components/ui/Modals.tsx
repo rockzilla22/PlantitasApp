@@ -281,10 +281,10 @@ export function Modals() {
 
     if (type === "edit-plant") {
       updatePlant(props.id, data);
+      handleClose();
     } else {
-      addPlant(data);
+      if (addPlant(data)) handleClose();
     }
-    handleClose();
   };
 
   const handlePropSubmit = (e: React.FormEvent<HTMLFormElement>) => {

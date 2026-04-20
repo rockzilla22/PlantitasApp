@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, updateItemQty, removeInventoryItem } from "@/store/plantStore";
+import { $store, updateItemQty, removeInventoryItem, checkCapLimit } from "@/store/plantStore";
 import { InventoryCategory } from "@/core/inventory/domain/InventoryItem";
 import { openModal } from "@/store/modalStore";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function InventoryPage() {
   const categories = INVENTORY_CATEGORIES;
 
   const handleAddItem = () => {
-    openModal("add-item");
+    if (checkCapLimit()) openModal("add-item");
   };
 
   const getSortedItems = (catId: InventoryCategory) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@nanostores/react";
-import { $store, removeProp, updatePropStatus } from "@/store/plantStore";
+import { $store, removeProp, updatePropStatus, checkCapLimit } from "@/store/plantStore";
 import { useState } from "react";
 import { openModal } from "@/store/modalStore";
 import Image from "next/image";
@@ -11,7 +11,7 @@ export default function NurseryPage() {
   const [filter, setFilter] = useState("TODOS");
 
   const handleAddProp = () => {
-    openModal("add-prop");
+    if (checkCapLimit()) openModal("add-prop");
   };
 
   const getMethodIcon = (method: string) => {

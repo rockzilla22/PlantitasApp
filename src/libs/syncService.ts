@@ -2,6 +2,18 @@ import { supabaseBrowser } from "./db";
 import type { AppData } from "@/store/plantStore";
 import type { User } from "@supabase/supabase-js";
 import configProject from "@/data/configProject";
+import { PlantSchema } from "@/core/plant/domain/Plant";
+import { PropagationSchema } from "@/core/nursery/domain/Propagation";
+import { GlobalNoteSchema } from "@/core/notes/domain/GlobalNote";
+import { WishlistItemSchema } from "@/core/wishlist/domain/WishlistItem";
+
+function parseValid<T>(schema: { safeParse: (v: unknown) => { success: boolean; data?: T } }, items: unknown[]): T[] {
+  return items.reduce<T[]>((acc, item) => {
+    const result = schema.safeParse(item);
+    if (result.success && result.data) acc.push(result.data);
+    return acc;
+  }, []);
+}
 
 export type PlanLevel = string;
 
@@ -39,8 +51,13 @@ export function getEffectiveMaxSlots(user: User | null): number {
 export async function syncToSupabase(data: AppData, userId: string): Promise<void> {
   const sb = supabaseBrowser();
 
+  const validPlants = parseValid(PlantSchema, data.plants);
+  const validProps = parseValid(PropagationSchema, data.propagations);
+  const validNotes = parseValid(GlobalNoteSchema, data.globalNotes);
+  const validWishlist = parseValid(WishlistItemSchema, data.wishlist);
+
   // Plants — upsert + delete orphans
-  const plantRows = data.plants.map((p) => ({
+  const plantRows = validPlants.map((p) => ({
     id: p.id,
     user_id: userId,
     type: p.type,
@@ -55,7 +72,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (plantRows.length > 0) {
     await sb.from("plants").upsert(plantRows, { onConflict: "id" });
   }
-  const plantIds = data.plants.map((p) => p.id);
+  const plantIds = validPlants.map((p) => p.id);
   if (plantIds.length > 0) {
     await sb.from("plants").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${plantIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -63,7 +80,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Plant logs — upsert + delete orphans
-  const logRows = data.plants.flatMap((p) =>
+  const logRows = validPlants.flatMap((p) =>
     p.logs.map((l) => ({
       id: l.id,
       user_id: userId,
@@ -84,7 +101,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Propagations — upsert + delete orphans
-  const propRows = data.propagations.map((p) => ({
+  const propRows = validProps.map((p) => ({
     id: p.id,
     user_id: userId,
     parent_id: p.parentId ?? null,
@@ -97,7 +114,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (propRows.length > 0) {
     await sb.from("propagations").upsert(propRows, { onConflict: "id" });
   }
-  const propIds = data.propagations.map((p) => p.id);
+  const propIds = validProps.map((p) => p.id);
   if (propIds.length > 0) {
     await sb.from("propagations").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${propIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -120,7 +137,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Global notes — upsert + delete orphans
-  const noteRows = data.globalNotes.map((n) => ({
+  const noteRows = validNotes.map((n) => ({
     id: n.id,
     user_id: userId,
     content: n.content,
@@ -128,7 +145,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (noteRows.length > 0) {
     await sb.from("global_notes").upsert(noteRows, { onConflict: "id" });
   }
-  const noteIds = data.globalNotes.map((n) => n.id);
+  const noteIds = validNotes.map((n) => n.id);
   if (noteIds.length > 0) {
     await sb.from("global_notes").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${noteIds.join(",")})`).is("deleted_at", null);
   } else {
@@ -136,7 +153,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // wishlist — upsert + delete orphans
-  const wishRows = data.wishlist.map((w) => ({
+  const wishRows = validWishlist.map((w) => ({
     id: w.id,
     user_id: userId,
     name: w.name,
@@ -146,7 +163,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   if (wishRows.length > 0) {
     await sb.from("wishlist").upsert(wishRows, { onConflict: "id" });
   }
-  const wishIds = data.wishlist.map((w) => w.id);
+  const wishIds = validWishlist.map((w) => w.id);
   if (wishIds.length > 0) {
     await sb.from("wishlist").update({ deleted_at: new Date().toISOString() }).eq("user_id", userId).not("id", "in", `(${wishIds.join(",")})`).is("deleted_at", null);
   } else {

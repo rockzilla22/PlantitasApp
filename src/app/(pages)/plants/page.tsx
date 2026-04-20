@@ -5,7 +5,7 @@ import { Resizer } from "@/components/sections/Resizer";
 import { PlantDetailPanel } from "@/components/sections/PlantDetailPanel";
 import { PlantGrid } from "@/components/sections/PlantGrid";
 import { useStore } from "@nanostores/react";
-import { $selectedPlantId, $store } from "@/store/plantStore";
+import { $selectedPlantId, $store, checkCapLimit } from "@/store/plantStore";
 import { openModal } from "@/store/modalStore";
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
   }, []);
 
   const handleAddPlant = () => {
-    openModal("add-plant");
+    if (checkCapLimit()) openModal("add-plant");
   };
 
   return (
