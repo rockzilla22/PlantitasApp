@@ -8,6 +8,7 @@ import { GlobalNote } from "@/core/notes/domain/GlobalNote";
 import { triggerExportFlash, setDirty } from "./uiStore";
 import { $user, $syncStatus, $lastSyncTime } from "./authStore";
 import { hasPremium, getEffectiveMaxSlots, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
+import { sanitizeString } from "@/libs/utils";
 
 export interface AppData {
   plants: Plant[];
@@ -18,7 +19,7 @@ export interface AppData {
   globalNotes: GlobalNote[];
 }
 
-const initialData: AppData = {
+export const initialData: AppData = {
   plants: [],
   propagations: [],
   inventory: {
@@ -66,43 +67,47 @@ export const normalizeData = (d: any): AppData => {
     const rawSeasonal = d.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] };
     return {
         inventory: {
-            substrates: dedupeByName(inv.substrates),
-            fertilizers: dedupeByName(inv.fertilizers),
-            powders: dedupeByName(inv.powders),
-            liquids: dedupeByName(inv.liquids),
-            meds: dedupeByName(inv.meds),
-            others: dedupeByName(inv.others),
+            substrates: dedupeByName(inv.substrates).map(i => ({ ...i, name: sanitizeString(i.name) })),
+            fertilizers: dedupeByName(inv.fertilizers).map(i => ({ ...i, name: sanitizeString(i.name) })),
+            powders: dedupeByName(inv.powders).map(i => ({ ...i, name: sanitizeString(i.name) })),
+            liquids: dedupeByName(inv.liquids).map(i => ({ ...i, name: sanitizeString(i.name) })),
+            meds: dedupeByName(inv.meds).map(i => ({ ...i, name: sanitizeString(i.name) })),
+            others: dedupeByName(inv.others).map(i => ({ ...i, name: sanitizeString(i.name) })),
         },
         plants: (d.plants || []).map((p: any) => ({
             ...p,
+            name: sanitizeString(p.name || ""),
+            subtype: sanitizeString(p.subtype || ""),
             icon: p.icon || '/icons/environment/plants/generic.svg',
             type: p.type || 'Planta',
-            location: p.location || 'No especificada',
+            location: sanitizeString(p.location || 'No especificada'),
             light: p.light || 'Media',
             potType: p.potType || 'Plástico',
             dormancy: p.dormancy || 'Ninguna',
             logs: (p.logs || []).map((l: any) => ({
                 ...l,
+                detail: sanitizeString(l.detail || ""),
                 actionType: l.actionType === 'Initial' ? 'Registro Nuevo' : l.actionType
             }))
         })),
-        globalNotes: d.globalNotes || [],
+        globalNotes: (d.globalNotes || []).map((n: any) => ({ ...n, content: sanitizeString(n.content || "") })),
         propagations: (d.propagations || []).map((pr: any) => ({
             ...pr,
+            name: sanitizeString(pr.name || ""),
             status: pr.status || 'Activo',
-            notes: pr.notes || ''
+            notes: sanitizeString(pr.notes || '')
         })),
         wishlist: (d.wishlist || []).map((w: any) => ({
             id: w.id,
-            name: w.name || "Sin nombre",
+            name: sanitizeString(w.name || "Sin nombre"),
             priority: w.priority || "Media",
-            notes: w.notes || ""
+            notes: sanitizeString(w.notes || "")
         })),
         seasonalTasks: {
-            Primavera: dedupeSeasonTasks(rawSeasonal.Primavera),
-            Verano:    dedupeSeasonTasks(rawSeasonal.Verano),
-            Otoño:     dedupeSeasonTasks(rawSeasonal.Otoño),
-            Invierno:  dedupeSeasonTasks(rawSeasonal.Invierno),
+            Primavera: dedupeSeasonTasks(rawSeasonal.Primavera).map(t => ({ ...t, desc: sanitizeString(t.desc || "") })),
+            Verano:    dedupeSeasonTasks(rawSeasonal.Verano).map(t => ({ ...t, desc: sanitizeString(t.desc || "") })),
+            Otoño:     dedupeSeasonTasks(rawSeasonal.Otoño).map(t => ({ ...t, desc: sanitizeString(t.desc || "") })),
+            Invierno:  dedupeSeasonTasks(rawSeasonal.Invierno).map(t => ({ ...t, desc: sanitizeString(t.desc || "") })),
         },
     };
 };

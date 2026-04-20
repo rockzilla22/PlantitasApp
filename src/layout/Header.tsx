@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { $searchQuery, $shouldFlashExport, $isDirty, setDirty, triggerExportFlash } from "@/store/uiStore";
-import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeData, forceSync } from "@/store/plantStore";
+import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeData, forceSync, $trashCount, initialData } from "@/store/plantStore";
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus, $lastSyncTime } from "@/store/authStore";
@@ -129,6 +129,10 @@ export function Header() {
     const supabase = supabaseBrowser();
     await supabase.auth.signOut();
     $user.set(null);
+    $store.set(initialData);
+    $trashCount.set(0);
+    localStorage.removeItem("plantitas_db");
+    localStorage.removeItem("plantitas_last_sync");
     setIsProfileMenuOpen(false);
   };
 
