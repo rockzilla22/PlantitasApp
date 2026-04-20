@@ -56,7 +56,7 @@ export default function SeasonPage() {
       <div className="view-header">
         <h2 className="text-[var(--primary)] font-bold">Planeación</h2>
       </div>
-      <div className="flex items-center gap-3 flex-wrap mb-6">
+      <div className="flex registros-center gap-3 flex-wrap mb-6">
         <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === "type" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
@@ -79,8 +79,8 @@ export default function SeasonPage() {
             key={s.name}
             className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)] flex flex-col"
           >
-            <div className="flex justify-between items-center border-b border-[var(--primary)]/10 pb-4 mb-6">
-              <h3 className="m-0 text-xl flex items-center gap-3 text-[var(--primary)] font-bold">
+            <div className="flex justify-between registros-center border-b border-[var(--primary)]/10 pb-4 mb-6">
+              <h3 className="m-0 text-xl flex registros-center gap-3 text-[var(--primary)] font-bold">
                 <Image src={s.icon} alt={s.name} width={32} height={32} /> {s.name}
               </h3>
               <button className="btn-primary h-9 min-h-[36px] px-4 text-xs uppercase tracking-widest" onClick={() => handleAddTask(s.name)}>
@@ -95,10 +95,10 @@ export default function SeasonPage() {
               {getSortedTasks(s.name).map((t, idx) => (
                 <li
                   key={`${t.type}-${idx}`}
-                  className="inventory-item hover:bg-[var(--primary)]/[0.08] bg-[var(--input-bg)] border border-[var(--primary)]/10 transition-all py-4 px-4 rounded-[1.5rem] flex items-center justify-between gap-4"
+                  className="inventory-item hover:bg-[var(--primary)]/[0.08] bg-[var(--input-bg)] border border-[var(--primary)]/10 transition-all py-4 px-4 rounded-[1.5rem] flex registros-center justify-between gap-4"
                 >
                   {/* Info Tarea */}
-                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                  <div className="flex registros-center gap-4 min-w-0 flex-1">
                     <span className="shrink-0" title={t.type}>
                       <Image src={getTaskIcon(t.type)} alt={t.type} width={24} height={24} />
                     </span>
@@ -108,7 +108,7 @@ export default function SeasonPage() {
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex items-center gap-2 shrink-0 ml-2 pl-4">
+                  <div className="flex registros-center gap-2 shrink-0 ml-2 pl-4">
                     <button
                       className="p-2 transition-transform hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl"
                       title="Agendar"

@@ -13,12 +13,12 @@ Convert arrays to Set/Map for repeated membership checks.
 
 ```typescript
 const allowedIds = ['a', 'b', 'c', ...]
-items.filter(item => allowedIds.includes(item.id))
+Items.filter(item => allowedIds.includes(item.id))
 ```
 
 **Correct (O(1) per check):**
 
 ```typescript
 const allowedIds = new Set(['a', 'b', 'c', ...])
-items.filter(item => allowedIds.has(item.id))
+Items.filter(item => allowedIds.has(item.id))
 ```

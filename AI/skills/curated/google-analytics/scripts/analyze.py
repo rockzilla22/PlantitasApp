@@ -275,7 +275,7 @@ class AnalyticsAnalyzer:
         """Generate insights from metric comparisons."""
         insights = []
 
-        for metric, data in metrics.items():
+        for metric, data in metrics.Items():
             change_pct = data["change_percent"]
 
             if abs(change_pct) < 2:

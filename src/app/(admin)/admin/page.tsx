@@ -189,7 +189,7 @@ export default function AdminPanel() {
 
   if (loading && users.length === 0 && feedback.length === 0)
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex registros-center justify-center">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Cargando sistema...</p>
       </div>
     );
@@ -201,12 +201,12 @@ export default function AdminPanel() {
         <header className="flex flex-col gap-4">
           <Link
             href="/profile"
-            className="self-start no-underline text-[var(--text)] text-x uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1"
+            className="self-start no-underline text-[var(--text)] text-x uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex registros-center gap-1"
           >
             <Image src="/icons/common/arrow_up.svg" alt="" width={12} height={12} className="rotate-[-90deg] object-contain" />
             <span>Perfil</span>
           </Link>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:Items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-[var(--text)] leading-none">Panel de control</h1>
             </div>
@@ -245,31 +245,31 @@ export default function AdminPanel() {
         {activeTab === "users" && (
           <>
             {/* Stats chips */}
-            <div className="flex gap-3 flex-wrap items-center justify-center">
-              <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
+            <div className="flex gap-3 flex-wrap registros-center justify-center">
+              <div className="flex registros-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--text)]">{users.length}</span>
                 <span className="text-xs text-[var(--text)] uppercase tracking-wider">Total</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalUsers}</span>
                 <span className="text-xs text-[var(--info-dark)]uppercase tracking-wider">Usuarios</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--primary)]">{totalPro}</span>
                 <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Pro</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalPremium}</span>
                 <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Premium</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
                 <span className="text-xs text-[var(--warning-dark)]uppercase tracking-wider">Masters</span>
               </div>
             </div>
 
             {/* FILTERS */}
-            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 items-end shadow-sm">
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 registros-end shadow-sm">
               <div className="flex-1 min-w-0">
                 <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Buscar</label>
                 <input
@@ -308,7 +308,7 @@ export default function AdminPanel() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-end">
+                <div className="flex registros-end">
                   <button
                     title="Recargar"
                     onClick={loadData}
@@ -357,8 +357,8 @@ export default function AdminPanel() {
                         >
                           {/* Usuario */}
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xs font-bold flex items-center justify-center shrink-0">
+                            <div className="flex registros-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xs font-bold flex registros-center justify-center shrink-0">
                                 {(u.name || u.email || "?")[0].toUpperCase()}
                               </div>
                               <div className="min-w-0">
@@ -386,7 +386,7 @@ export default function AdminPanel() {
                               
                               return (
                                 <div className="flex flex-col gap-2">
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex registros-center gap-2">
                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
                                       plan.id === configProject.plans.MASTER.id ? "bg-[var(--danger)] text-white" :
                                       plan.id === configProject.plans.PREMIUM.id ? "bg-[var(--primary)] text-white" :
@@ -434,7 +434,7 @@ export default function AdminPanel() {
 
                           {/* Acciones */}
                           <td className="px-6 py-4 pr-8">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex registros-center justify-end gap-2">
                               <button
                                 disabled={busyId === u.id || u.id === ROOT_MASTER_ID}
                                 onClick={() => handleManageMaster(u)}
@@ -483,27 +483,27 @@ export default function AdminPanel() {
         {activeTab === "feedback" && (
           <>
             {/* Stats chips */}
-            <div className="flex gap-3 flex-wrap items-center justify-center">
-              <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
+            <div className="flex gap-3 flex-wrap registros-center justify-center">
+              <div className="flex registros-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--text)]">{feedback.length}</span>
                 <span className="text-xs text-[var(--text)] uppercase tracking-wider">Total</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalBug}</span>
                 <span className="text-xs text-[var(--info-dark)]uppercase tracking-wider">Bugs</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--primary)]">{totalIdea}</span>
                 <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Propuestas</span>
               </div>
-              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalComentario}</span>
                 <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Comentarios</span>
               </div>
             </div>
 
             {/* FILTERS FEEDBACK */}
-            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 items-end shadow-sm">
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 registros-end shadow-sm">
               <div className="flex-1 min-w-0">
                 <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Buscar Reporte</label>
                 <input
@@ -529,7 +529,7 @@ export default function AdminPanel() {
                     <option value="cerrado">Cerrado</option>
                   </select>
                 </div>
-                <div className="flex items-end">
+                <div className="flex registros-end">
                   <button
                     title="Recargar"
                     onClick={loadData}
@@ -588,7 +588,7 @@ export default function AdminPanel() {
                                   configProject.feedback.types.Comentario;
                                 return (
                                   <span
-                                    className="text-[10px] font-black uppercase tracking-tighter w-fit px-2 py-1 rounded flex items-center gap-1.5"
+                                    className="text-[10px] font-black uppercase tracking-tighter w-fit px-2 py-1 rounded flex registros-center gap-1.5"
                                     style={{ backgroundColor: typeCfg.bgColor, color: typeCfg.color }}
                                   >
                                     <Image src={typeCfg.icon} alt={typeCfg.label} width={12} height={12} className="object-contain" />
@@ -601,7 +601,7 @@ export default function AdminPanel() {
                               <div className="text-[10px]">
                                 {f.user_name} ({f.user_email})
                               </div>
-                              <div className="flex items-center gap-1 text-[10px] italic">
+                              <div className="flex registros-center gap-1 text-[10px] italic">
                                 <Image src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain" />
                                 <span>{new Date(f.created_at).toLocaleString()}</span>
                               </div>
@@ -615,7 +615,7 @@ export default function AdminPanel() {
                                 target="_blank"
                                 className="text-[10px] text-[var(--primary)] hover:underline truncate block"
                               >
-                                <span className="inline-flex items-center gap-1">
+                                <span className="inline-flex registros-center gap-1">
                                   <Image src="/icons/common/map.svg" width={11} height={11} alt="" className="object-contain" />
                                   <span>{f.attachment_url}</span>
                                 </span>
@@ -626,7 +626,7 @@ export default function AdminPanel() {
                                 }
                                 className="btn-text p-0 text-[10px] text-left hover:text-[var(--primary)]"
                               >
-                                <span className="inline-flex items-center gap-1">
+                                <span className="inline-flex registros-center gap-1">
                                   <Image src="/icons/common/search.svg" width={11} height={11} alt="" className="object-contain" />
                                   <span>Ver Metadata JSON</span>
                                 </span>
@@ -698,10 +698,10 @@ export default function AdminPanel() {
                             <button
                               onClick={() => handleRemoveFeedback(f.id)}
                               disabled={busyId === f.id}
-                              className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--danger-border)] bg-[var(--danger-bg)] text-[var(--danger)] shadow-sm transition-all hover:bg-[var(--danger)] hover:text-white disabled:opacity-40"
+                              className="mx-auto flex h-10 w-10 registros-center justify-center rounded-xl border border-[var(--danger-border)] bg-[var(--danger-bg)] text-[var(--danger)] shadow-sm transition-all hover:bg-[var(--danger)] hover:text-white disabled:opacity-40"
                               title="Eliminar permanentemente"
                             >
-                              <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                              <div className="w-5 h-5 flex registros-center justify-center shrink-0">
                                 <Image src="/icons/common/trash.svg" alt="Eliminar" width={20} height={20} className="object-contain" />
                               </div>
                             </button>

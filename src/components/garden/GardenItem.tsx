@@ -31,7 +31,7 @@ export function GardenItem({ icon, label, type, onClick, subLabel }: GardenItemP
 
   return (
     <div 
-      className={`${getContainerStyle()} cursor-pointer transition-all flex flex-col items-center justify-center gap-2 group animate-in zoom-in duration-500`}
+      className={`${getContainerStyle()} cursor-pointer transition-all flex flex-col registros-center justify-center gap-2 group animate-in zoom-in duration-500`}
       onClick={onClick}
       title={label}
     >

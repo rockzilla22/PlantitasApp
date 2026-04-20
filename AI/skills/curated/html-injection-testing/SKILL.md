@@ -240,7 +240,7 @@ Website appearance manipulation:
 <!-- Full page overlay -->
 <div style="position:fixed;top:0;left:0;width:100%;height:100%;
             background:#000;color:#0f0;z-index:9999;
-            display:flex;justify-content:center;align-items:center;">
+            display:flex;justify-content:center;align-Items:center;">
     <h1>HACKED BY SECURITY TESTER</h1>
 </div>
 

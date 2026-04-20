@@ -29,11 +29,14 @@ export default function NurseryPage() {
   const filteredList = propagations.filter((p) => filter === "TODOS" || p.status === filter);
 
   const handleGraduate = (prop: any) => {
-    updatePropStatus(prop.id, "Trasplantada");
-    const parentName = prop.parentId ? plants.find((p: any) => p.id === prop.parentId)?.name : null;
+    const parent = prop.parentId ? plants.find((p: any) => p.id === prop.parentId) : null;
     openModal("add-plant", {
-      initialName: parentName ? `Hija de ${parentName}` : `Hija de ${prop.name}`,
+      initialName: parent ? `Hija de ${parent.name}` : `Hija de ${prop.name}`,
       propId: prop.id,
+      type: parent?.type,
+      subtype: parent?.subtype,
+      light: parent?.light,
+      dormancy: parent?.dormancy,
     });
   };
 
@@ -55,7 +58,7 @@ export default function NurseryPage() {
       </div>
 
       {/* FILTROS: Estilo Nursery Pro con botones tipo "badge" y estado activo resaltado */}
-      <div className="flex items-center gap-3 flex-wrap mb-6">
+      <div className="flex registros-center gap-3 flex-wrap mb-6">
         <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "TODOS" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
@@ -122,21 +125,21 @@ export default function NurseryPage() {
                 }}
               >
                 {/* HEADER: Estilo Nursery Pro */}
-                <div className="grid grid-cols-[1fr_auto] gap-3 items-start mb-4">
+                <div className="grid grid-cols-[1fr_auto] gap-3 registros-start mb-4">
                   <div>
-                    <h3 className="text-[var(--primary)] mb-4 flex items-center gap-3 text-lg font-bold">
+                    <h3 className="text-[var(--primary)] mb-4 flex registros-center gap-3 text-lg font-bold">
                       <Image src="/icons/environment/methods/layering.svg" alt="" width={24} height={24} /> {prop.name}
                     </h3>
-                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                    <p className="m-0 inline-flex registros-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
                       <Image src={getMethodIcon(prop.method)} alt="" width={16} height={16} className="shrink-0 object-contain" />
                       <span>{prop.method}</span>
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className={`badge ${badgeClass} !text-[0.7rem] !px-2 flex items-center gap-1 mb-4`}>
+                  <div className="flex flex-col registros-end gap-1.5 shrink-0">
+                    <span className={`badge ${badgeClass} !text-[0.7rem] !px-2 flex registros-center gap-1 mb-4`}>
                       <Image src={iconSrc} alt="" width={12} height={12} /> {prop.status}
                     </span>
-                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                    <p className="m-0 inline-flex registros-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
                       <Image src="/icons/common/calendar.svg" alt="" width={10} height={10} /> {formatDate(prop.startDate)}
                     </p>
                   </div>
@@ -150,7 +153,7 @@ export default function NurseryPage() {
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-brown)]">
+                <div className="flex registros-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-brown)]">
                   <div className="flex gap-2">
                     {prop.status === "Activo" ? (
                       <>
@@ -172,7 +175,7 @@ export default function NurseryPage() {
                         className="btn-primary h-8 min-h-[32px] px-3 text-[0.7rem] bg-[var(--secondary)]"
                         onClick={() => handleGraduate(prop)}
                       >
-                        Graduar
+                        Plantar
                       </button>
                     ) : null}
                   </div>

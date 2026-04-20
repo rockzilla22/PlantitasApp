@@ -1,12 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useStore } from "@nanostores/react";
-import { $user } from "@/store/authStore";
 import configProject from "@/data/configProject";
 import { PricingSection } from "@/components/sections/PricingSection";
 import Image from "next/image";
-import toast from "react-hot-toast";
 
 type FeatureItem = {
   title: string;
@@ -15,9 +11,6 @@ type FeatureItem = {
 };
 
 export default function LandingPage() {
-  const router = useRouter();
-  const user = useStore($user);
-
   const features: FeatureItem[] = Object.values(configProject.navigation.ES)
     .filter((item): item is typeof item & { href: string; icon: string } => Boolean(item.href && item.icon && item.label !== "Jardín"))
     .map((item) => ({
@@ -33,7 +26,7 @@ export default function LandingPage() {
         <div className="hero-content">
           <span className="hero-badge">Versión 1.0 — Beta</span>
           <h1>
-            La app más completa <br /> que todo Plant Lover necesita.
+            La app más completa <span className="hero-break"><br /></span> que todo Plant Lover necesita.
           </h1>
           <p className="text-[var(--text-brown)]">
             En PlantitasApp sabemos que cada hoja nueva es un logro y cada brote cuenta una historia. Esta aplicación nace para ser la
@@ -109,14 +102,11 @@ export default function LandingPage() {
       </section>
 
       {/* About Section */}
-      <section
-        className="info-section bg-soft"
-        style={{ textAlign: "center", maxWidth: "900px", margin: "2rem auto", padding: "4rem 4rem" }}
-      >
+      <section className="info-section bg-soft about-section">
         <div className="section-title">
           <h2>Historia del Proyecto</h2>
         </div>
-        <p style={{ fontSize: "1.15rem", lineHeight: "1.8", color: "var(--text-brown)", fontStyle: "italic" }}>
+        <p className="about-copy">
           Esta app germinó como una visión de <strong className="text-[var(--primary)]">Erzu</strong> por simplificar el cuidado botánico.
           Fue cultivada tecla a tecla por{" "}
           <a href="https://github.com/JFEspanolito" target="_blank" rel="noopener noreferrer">
@@ -136,14 +126,16 @@ export default function LandingPage() {
         .landing-container {
           max-width: 1400px;
           margin: 0 auto;
-          padding: 2rem 1rem;
+          width: 100%;
+          padding: 2rem 1rem 3rem;
+          overflow-x: clip;
         }
 
         .hero-section {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 4rem;
-          align-items: center;
+          align-Items: center;
           padding: 4rem 0;
         }
 
@@ -152,6 +144,7 @@ export default function LandingPage() {
             grid-template-columns: 1fr;
             text-align: center;
             padding: 2rem 0;
+            gap: 2.5rem;
           }
         }
 
@@ -167,15 +160,20 @@ export default function LandingPage() {
         }
 
         .hero-content h1 {
-          font-size: 3.5rem;
+          font-size: clamp(2.5rem, 8vw, 3.5rem);
           line-height: 1.1;
           color: var(--primary);
           margin-bottom: 1.5rem;
+          text-wrap: balance;
         }
 
         .hero-content p {
-          font-size: 1.25rem;
+          font-size: clamp(1rem, 4vw, 1.25rem);
           color: var(--text-brown);
+        }
+
+        .hero-break {
+          display: inline;
         }
 
         .hero-actions-row {
@@ -183,7 +181,7 @@ export default function LandingPage() {
           display: flex;
           gap: 1rem;
           justify-content: center;
-          align-items: center;
+          align-Items: center;
           flex-wrap: wrap;
           margin-top: -1rem;
         }
@@ -231,6 +229,7 @@ export default function LandingPage() {
         .hero-visual {
           position: relative;
           height: 300px;
+          min-width: 0;
         }
 
         .plant-card-mockup {
@@ -238,7 +237,7 @@ export default function LandingPage() {
           padding: 1.5rem;
           border-radius: var(--radius);
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          width: 280px;
+          width: min(100%, 280px);
           border: 1px solid var(--border);
         }
 
@@ -273,6 +272,7 @@ export default function LandingPage() {
           padding: 6rem 2rem;
           border-radius: 2rem;
           margin: 4rem 0;
+          min-width: 0;
         }
 
         .bg-soft {
@@ -286,14 +286,30 @@ export default function LandingPage() {
         }
 
         .section-title h2 {
-          font-size: 2.5rem;
+          font-size: clamp(2rem, 7vw, 2.5rem);
           color: var(--primary);
           margin-bottom: 1rem;
+          text-wrap: balance;
         }
 
         .section-title p {
-          font-size: 1.1rem;
+          font-size: clamp(1rem, 4vw, 1.1rem);
           color: var(--text-brown);
+        }
+
+        .about-section {
+          text-align: center;
+          max-width: 900px;
+          margin: 2rem auto;
+          padding: 4rem;
+        }
+
+        .about-copy {
+          font-size: 1.15rem;
+          line-height: 1.8;
+          color: var(--text-brown);
+          font-style: italic;
+          overflow-wrap: anywhere;
         }
 
         .features-grid {
@@ -332,7 +348,7 @@ export default function LandingPage() {
 
         .feature-icon {
           display: flex;
-          align-items: center;
+          align-Items: center;
           gap: 0.75rem;
           margin-bottom: 1.5rem;
         }
@@ -346,6 +362,58 @@ export default function LandingPage() {
         .feature-item p {
           color: var(--text-brown);
           font-size: 0.95rem;
+        }
+
+        @media (max-width: 700px) {
+          .landing-container {
+            padding-inline: 0.75rem;
+          }
+
+          .hero-break {
+            display: none;
+          }
+
+          .hero-visual {
+            height: auto;
+            display: grid;
+            gap: 1rem;
+            justify-Items: center;
+          }
+
+          .plant-card-mockup.secondary {
+            position: relative;
+            right: auto;
+            bottom: auto;
+            transform: rotate(0deg);
+          }
+
+          .info-section {
+            padding: 3rem 1.15rem;
+            margin: 2.5rem 0;
+            border-radius: 1.5rem;
+          }
+
+          .section-title {
+            margin-bottom: 2.5rem;
+          }
+
+          .feature-item {
+            padding: 1.5rem 1.25rem;
+            border-radius: 1.5rem;
+          }
+
+          .feature-icon {
+            align-Items: flex-start;
+          }
+
+          .about-section {
+            padding: 2.5rem 1.25rem;
+          }
+
+          .about-copy {
+            font-size: 1rem;
+            line-height: 1.7;
+          }
         }
       `}</style>
     </div>

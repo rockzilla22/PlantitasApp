@@ -659,8 +659,8 @@ export default async function Page() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 ```
 
@@ -673,8 +673,8 @@ async function Header() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 export default function Page() {
@@ -696,8 +696,8 @@ async function Header() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 function Layout({ children }: { children: ReactNode }) {
@@ -1258,29 +1258,29 @@ When updating state based on the current state value, use the functional update 
 
 ```tsx
 function TodoList() {
-  const [items, setItems] = useState(initialItems)
+  const [Items, setItems] = useState(initialItems)
   
-  // Callback must depend on items, recreated on every items change
+  // Callback must depend on registros, recreated on every registros change
   const addItems = useCallback((newItems: Item[]) => {
-    setItems([...items, ...newItems])
-  }, [items])  // ❌ items dependency causes recreations
+    setItems([...Items, ...newItems])
+  }, [Items])  // ❌ registros dependency causes recreations
   
   // Risk of stale closure if dependency is forgotten
   const removeItem = useCallback((id: string) => {
-    setItems(items.filter(item => item.id !== id))
-  }, [])  // ❌ Missing items dependency - will use stale items!
+    setItems(Items.filter(item => item.id !== id))
+  }, [])  // ❌ Missing registros dependency - will use stale registros!
   
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
+  return <ItemsEditor registros={Items} onAdd={addItems} onRemove={removeItem} />
 }
 ```
 
-The first callback is recreated every time `items` changes, which can cause child components to re-render unnecessarily. The second callback has a stale closure bug—it will always reference the initial `items` value.
+The first callback is recreated every time `Items` changes, which can cause child components to re-render unnecessarily. The second callback has a stale closure bug—it will always reference the initial `Items` value.
 
 **Correct: stable callbacks, no stale closures**
 
 ```tsx
 function TodoList() {
-  const [items, setItems] = useState(initialItems)
+  const [Items, setItems] = useState(initialItems)
   
   // Stable callback, never recreated
   const addItems = useCallback((newItems: Item[]) => {
@@ -1292,7 +1292,7 @@ function TodoList() {
     setItems(curr => curr.filter(item => item.id !== id))
   }, [])  // ✅ Safe and stable
   
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
+  return <ItemsEditor registros={Items} onAdd={addItems} onRemove={removeItem} />
 }
 ```
 
@@ -1335,9 +1335,9 @@ Pass a function to `useState` for expensive initial values. Without the function
 **Incorrect: runs on every render**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs on EVERY render, even after initialization
-  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(Items))
   const [query, setQuery] = useState('')
   
   // When query changes, buildSearchIndex runs again unnecessarily
@@ -1357,9 +1357,9 @@ function UserProfile() {
 **Correct: runs only once**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs ONLY on initial render
-  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(Items))
   const [query, setQuery] = useState('')
   
   return <SearchResults index={searchIndex} query={query} />
@@ -1499,7 +1499,7 @@ function MessageList({ messages }: { messages: Message[] }) {
 }
 ```
 
-For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).
+For 1000 messages, browser skips layout/paint for ~990 off-screen registros (10× faster initial render).
 
 ### 6.3 Hoist Static JSX Elements
 
@@ -2072,7 +2072,7 @@ This new approach is more efficient because:
 
 Return early when result is determined to skip unnecessary processing.
 
-**Incorrect: processes all items even after finding answer**
+**Incorrect: processes all registros even after finding answer**
 
 ```typescript
 function validateUsers(users: User[]) {
@@ -2241,14 +2241,14 @@ Convert arrays to Set/Map for repeated membership checks.
 
 ```typescript
 const allowedIds = ['a', 'b', 'c', ...]
-items.filter(item => allowedIds.includes(item.id))
+Items.filter(item => allowedIds.includes(item.id))
 ```
 
 **Correct (O(1) per check):**
 
 ```typescript
 const allowedIds = new Set(['a', 'b', 'c', ...])
-items.filter(item => allowedIds.has(item.id))
+Items.filter(item => allowedIds.has(item.id))
 ```
 
 ### 7.12 Use toSorted() Instead of sort() for Immutability
@@ -2293,7 +2293,7 @@ function UserList({ users }: { users: User[] }) {
 
 ```typescript
 // Fallback for older browsers
-const sorted = [...items].sort((a, b) => a.value - b.value)
+const sorted = [...Items].sort((a, b) => a.value - b.value)
 ```
 
 `.toSorted()` is available in all modern browsers (Chrome 110+, Safari 16+, Firefox 115+, Node.js 20+). For older environments, use spread operator:

@@ -96,7 +96,7 @@ Dependency analysis:
 Technical debt:
 - Code smells
 - Outdated patterns
-- TODO items
+- TODO registros
 - Deprecated usage
 - Refactoring needs
 - Modernization opportunities

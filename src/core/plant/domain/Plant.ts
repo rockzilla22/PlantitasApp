@@ -9,6 +9,7 @@ export const LogActionTypeSchema = z.enum([
   "Líquidos",
   "Insecticidas/Medicinas",
   "Trasplante",
+  "Poda",
   "Plaga/Enfermedad",
   "Nota",
   "Registro Nuevo",

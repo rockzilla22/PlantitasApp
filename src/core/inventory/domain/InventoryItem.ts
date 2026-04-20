@@ -10,7 +10,7 @@ export const InventoryCategorySchema = z.enum([
 ]);
 export type InventoryCategory = z.infer<typeof InventoryCategorySchema>;
 
-export const InventoryItemSchema = z.object({
+export const InventoryItemschema = z.object({
   id: z.string().uuid().optional(), // Using UUID for database records
   user_id: z.string().uuid().optional(),
   category: InventoryCategorySchema,
@@ -19,4 +19,4 @@ export const InventoryItemSchema = z.object({
   unit: z.enum(["L", "Kg", "g", "u.", "Paq."]).default("u."),
 });
 
-export type InventoryItem = z.infer<typeof InventoryItemSchema>;
+export type InventoryItem = z.infer<typeof InventoryItemschema>;

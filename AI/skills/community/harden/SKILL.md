@@ -19,7 +19,7 @@ Identify weaknesses and edge cases:
    - Very short text (empty, single character)
    - Special characters (emoji, RTL text, accents)
    - Large numbers (millions, billions)
-   - Many items (1000+ list items, 50+ options)
+   - Many registros (1000+ list registros, 50+ options)
    - No data (empty states)
 
 2. **Test error scenarios**:
@@ -73,13 +73,13 @@ Systematically improve resilience:
 
 **Flex/Grid overflow**:
 ```css
-/* Prevent flex items from overflowing */
+/* Prevent flex registros from overflowing */
 .flex-item {
   min-width: 0; /* Allow shrinking below content size */
   overflow: hidden;
 }
 
-/* Prevent grid items from overflowing */
+/* Prevent grid registros from overflowing */
 .grid-item {
   min-width: 0;
   min-height: 0;
@@ -143,7 +143,7 @@ new Intl.NumberFormat('en-US', {
 `${count} item${count !== 1 ? 's' : ''}`
 
 // ✅ Good: Use proper i18n library
-t('items', { count }) // Handles complex plural rules
+t('Items', { count }) // Handles complex plural rules
 ```
 
 ### Error Handling
@@ -190,7 +190,7 @@ t('items', { count }) // Handles complex plural rules
 ### Edge Cases & Boundary Conditions
 
 **Empty states**:
-- No items in list
+- No registros in list
 - No search results
 - No notifications
 - No data to display
@@ -207,7 +207,7 @@ t('items', { count }) // Handles complex plural rules
 - Pagination or virtual scrolling
 - Search/filter capabilities
 - Performance optimization
-- Don't load all 10,000 items at once
+- Don't load all 10,000 registros at once
 
 **Concurrent operations**:
 - Prevent double-submission (disable button while loading)
@@ -349,7 +349,7 @@ Test thoroughly with edge cases:
 - **RTL**: Test with Arabic or Hebrew
 - **CJK**: Test with Chinese/Japanese/Korean
 - **Network issues**: Disable internet, throttle connection
-- **Large datasets**: Test with 1000+ items
+- **Large datasets**: Test with 1000+ registros
 - **Concurrent actions**: Click submit 10 times rapidly
 - **Errors**: Force API errors, test all error states
 - **Empty**: Remove all data, test empty states

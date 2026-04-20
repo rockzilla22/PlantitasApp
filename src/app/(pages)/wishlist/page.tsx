@@ -32,7 +32,7 @@ export default function WishlistPage() {
       </div>
 
       {/* Filtros de prioridad */}
-      <div className="flex items-center gap-3 flex-wrap mb-6">
+      <div className="flex registros-center gap-3 flex-wrap mb-6">
         <div className="group flex bg-[var(--black-soft)] p-1.5 rounded-2xl gap-1.5 shadow-sm">
           {["Todas", "Alta", "Media", "Baja"].map((p) => (
             <button
@@ -68,15 +68,15 @@ export default function WishlistPage() {
                 }}
               >
                 {/* HEADER: Grid 2 columnas estilo Nursery */}
-                <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+                <div className="grid grid-cols-[1fr_auto] gap-4 registros-start">
                   <div className="flex flex-col gap-y-2 min-w-0">
-                    <h3 className="text-[var(--primary)] flex items-center gap-3 text-lg font-bold">
+                    <h3 className="text-[var(--primary)] flex registros-center gap-3 text-lg font-bold">
                       <Image src="/icons/common/stars.svg" alt="" width={24} height={24} /> {name}
                     </h3>
                   </div>
-                  <div className="flex flex-col items-end gap-y-2">
+                  <div className="flex flex-col registros-end gap-y-2">
                     <span
-                      className={`badge shrink-0 inline-flex items-center gap-1 ${priority === "Alta" ? "badge-danger" : priority === "Media" ? "badge-warning" : "badge-primary"}`}
+                      className={`badge shrink-0 inline-flex registros-center gap-1 ${priority === "Alta" ? "badge-danger" : priority === "Media" ? "badge-warning" : "badge-primary"}`}
                     >
                       <Image
                         src={`/icons/common/prio_${priority === "Alta" ? 1 : priority === "Media" ? 2 : 3}.svg`}
@@ -97,7 +97,7 @@ export default function WishlistPage() {
                 </div>
 
                 {/* FOOTER: Acciones con separador */}
-                <div className="flex items-center justify-between border-t border-[var(--border-light)] mt-auto text-[var(--footer-bg)]">
+                <div className="flex registros-center justify-between border-t border-[var(--border-light)] mt-auto text-[var(--footer-bg)]">
                   <button className="btn-primary h-8 min-h-[32px] px-4 text-[0.7rem] font-black" onClick={() => removeWish(id)}>
                     ¡Comprado!
                   </button>

@@ -12,9 +12,9 @@ Pass a function to `useState` for expensive initial values. Without the function
 **Incorrect (runs on every render):**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs on EVERY render, even after initialization
-  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(Items))
   const [query, setQuery] = useState('')
   
   // When query changes, buildSearchIndex runs again unnecessarily
@@ -34,9 +34,9 @@ function UserProfile() {
 **Correct (runs only once):**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs ONLY on initial render
-  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(Items))
   const [query, setQuery] = useState('')
   
   return <SearchResults index={searchIndex} query={query} />

@@ -11,14 +11,14 @@
 
 ### Detalles de Slots
 - **Contaje**: Total agregado entre todas las entidades
-  - plants + propagations + wishlist + notes + inventoryitems + seasonaltasks
-- **Límite Free**: 50 items global
+  - plants + propagations + wishlist + notes + inventoryItems + seasonaltasks
+- **Límite Free**: 50 registros global
 - **Límite Pro**: Máximo 200 slots comprados (50 × 4 compras)
 - **Límite Premium**: Ilimitado mientras la subscripción esté activa
 
 ### Flujo de Usuario
 ```
-Usuario Free (50 items) → Intenta agregar #51
+Usuario Free (50 registros) → Intenta agregar #51
     → ❌ Bloqueado → Modal Upsell ("Compra Pro o Premium")
     
 Usuario Pro (100 slots) → Intenta agregar #101
@@ -223,7 +223,7 @@ async function activatePremium(userId: string, productType: string) {
 ├─────────────────────────────────────────┤
 │  🌱 Free   │   ☁️ Premium   │  💎 Pro   │
 │   $0/mes   │   $3/mes      │  $3-15    │
-│  50 items  │   Unlimited  │  +50/item │
+│  50 registros  │   Unlimited  │  +50/item │
 │           │   + Cloud    │  (one-time)│
 ├─────────────────────────────────────────┤
 │  ✅ Todo   │  ✅ Todo    │  ✅ Todo   │
@@ -286,8 +286,8 @@ if (!check.allowed) {
 ```tsx
 // Modals.tsx
 <Modal name="upsell">
-  <h2>💎 ¡Espacio agotado!</h2>
-  <p>Tenés {used}/{limit} items usados</p>
+  <h2>¡Espacio agotado!</h2>
+  <p>Tienes {used}/{limit} registros usados</p>
   
   <button onClick={() => router.push('/pricing')}>
     Ver Planes
@@ -305,8 +305,6 @@ const getUserStatus = () => {
   if (meta.purchased_slots > 0) return 'pro';
   return 'free';
 };
-
-// Mostrar: 🌱 / ☁️ / 💎 según estado
 ```
 
 ---

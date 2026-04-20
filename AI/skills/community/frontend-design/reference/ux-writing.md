@@ -14,7 +14,7 @@
 
 **For destructive actions**, name the destruction:
 - "Delete" not "Remove" (delete is permanent, remove implies recoverable)
-- "Delete 5 items" not "Delete selected" (show the count)
+- "Delete 5 registros" not "Delete selected" (show the count)
 
 ## Error Messages: The Formula
 
@@ -36,7 +36,7 @@ Reframe errors: "Please enter a date in MM/DD/YYYY format" not "You entered an i
 
 ## Empty States Are Opportunities
 
-Empty states are onboarding moments: (1) Acknowledge briefly, (2) Explain the value of filling it, (3) Provide a clear action. "No projects yet. Create your first one to get started." not just "No items".
+Empty states are onboarding moments: (1) Acknowledge briefly, (2) Explain the value of filling it, (3) Provide a clear action. "No projects yet. Create your first one to get started." not just "No registros".
 
 ## Voice vs Tone
 

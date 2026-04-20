@@ -61,9 +61,7 @@ class DesignTokenGenerator:
                 },
                 'warning': {
                     'base': '#F59E0B',
-                    'light': '#FBB
-
-D24',
+                    'light': '#FBBF24',
                     'dark': '#D97706',
                     'contrast': '#FFFFFF'
                 },
@@ -467,7 +465,7 @@ D24',
         css = [':root {']
         
         def flatten_dict(obj, prefix=''):
-            for key, value in obj.items():
+            for key, value in obj.Items():
                 if isinstance(value, dict):
                     flatten_dict(value, f'{prefix}-{key}' if prefix else key)
                 else:

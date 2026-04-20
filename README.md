@@ -10,14 +10,14 @@ Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JS
 
 ### Sin cuenta — Plan Gratuito 🌱
 
-Podés usar PlantitasApp al 100% sin registrarte. No hay límite de plantas ni funciones bloqueadas.
+Puedes usar PlantitasApp al 100% sin registrarte. No hay límite de plantas ni funciones bloqueadas.
 
 - Todo se guarda en `localStorage` del navegador
 - Exportá tus datos como `.json` cuando quieras (botón **Exportar** en el header)
 - Importá un JSON anterior para restaurar o migrar datos entre dispositivos
 - Si el botón muestra **⚠ Cambios pendientes**, es hora de hacer una copia
 
-> Los datos son tuyos. PlantitasApp no envía nada a ningún servidor si no tenés una cuenta activa.
+> Los datos son tuyos. PlantitasApp no envía nada a ningún servidor si no tienes una cuenta activa.
 
 ### Con cuenta — Planes de Pago
 
@@ -32,7 +32,7 @@ Al iniciar sesión con una cuenta, según tu plan podrás acceder a diferentes n
 | Acceso multi-dispositivo | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Papelera de registros eliminados | ❌ | ❌ | ✅ | ✅ | ✅ |
 | Perfil editable (nombre, teléfono) | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Límite de items (plantas, notas, etc.) | 25 | 50 | 250* | Ilimitado | Ilimitado |
+| Límite de registros (plantas, notas, etc.) | 25 | 50 | 250* | Ilimitado | Ilimitado |
 | Tipo de pago | Gratis | Gratis | Pago único | Suscripción | Sistema |
 
 *El plan Pro incluye 50 slots base + 200 slots adicionales = 250 total
@@ -81,7 +81,7 @@ Buscador en tiempo real en el header que encuentra plantas, propagaciones e insu
 
 ## Perfil y cuenta
 
-Desde `/profile` podés:
+Desde `/profile` puedes:
 
 - Editar tu nombre y teléfono
 - Ver tu plan actual (Gratuito / Pro / Premium / Master Admin)
@@ -126,9 +126,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 
 ## Respaldo de datos
 
-Aunque uses el plan gratuito, siempre podés exportar todo tu jardín como JSON desde el botón **Exportar** en el header. El archivo incluye plantas, logs, propagaciones, inventario, wishlist, notas y tareas estacionales.
+Aunque uses el plan gratuito, siempre puedes exportar todo tu jardín como JSON desde el botón **Exportar** en el header. El archivo incluye plantas, logs, propagaciones, inventario, wishlist, notas y tareas estacionales.
 
-Para restaurar: usá el botón **Importar JSON** y elegí tu archivo. Podés elegir entre reemplazar los datos actuales o fusionarlos con los existentes.
+Para restaurar: usá el botón **Importar JSON** y elegí tu archivo. Puedes elegir entre reemplazar los datos actuales o fusionarlos con los existentes.
 
 ---
 

@@ -73,7 +73,7 @@ Create 10 human-readable questions requiring ONLY READ-ONLY, INDEPENDENT, NON-DE
 7. **Questions must not be solvable with straightforward keyword search**
    - Do not include specific keywords from the target content
    - Use synonyms, related concepts, or paraphrases
-   - Require multiple searches, analyzing multiple related items, extracting context, then deriving the answer
+   - Require multiple searches, analyzing multiple related registros, extracting context, then deriving the answer
 
 ### Tool Testing
 

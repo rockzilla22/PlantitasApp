@@ -63,8 +63,8 @@ export const generateFullReport = (data: AppData, userName: string) => {
   doc.text("3. Auditoría de Inventario", 14, currentY);
 
   const inventoryRows: any[] = [];
-  Object.entries(data.inventory).forEach(([cat, items]) => {
-    items.forEach((i) => {
+  Object.entries(data.inventory).forEach(([cat, registros]) => {
+    registros.forEach((i) => {
       inventoryRows.push([cat.toUpperCase(), i.name, `${i.qty} ${i.unit}`]);
     });
   });

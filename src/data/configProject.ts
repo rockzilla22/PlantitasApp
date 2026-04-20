@@ -77,7 +77,7 @@ export interface ConfigProject {
     testimonials: {
       headline: string;
       subhead: string;
-      items: unknown[];
+      registros: unknown[];
     };
   };
 
@@ -94,7 +94,7 @@ export interface ConfigProject {
       label: string;
       color: string;
       description: string;
-      maxSlots: number; // Límite de items (plantas + notas + etc)
+      maxSlots: number; // Límite de registros (plantas + notas + etc)
       trashRetentionDays: number; // Días de vigencia en papelera
       hasCloud: boolean; // Sincronización en la nube activa
       billingType: "free" | "one-time" | "subscription" | "system";
@@ -189,7 +189,7 @@ const configProject: ConfigProject = {
     testimonials: {
       headline: "Lo que dicen los amantes de las plantas",
       subhead: "Unite a la comunidad botánica digital.",
-      items: [],
+      registros: [],
     },
   },
 

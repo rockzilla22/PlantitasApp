@@ -575,8 +575,8 @@ export default async function Page() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 ```
 
@@ -589,8 +589,8 @@ async function Header() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 export default function Page() {
@@ -617,8 +617,8 @@ async function Layout({ children }: { children: ReactNode }) {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 export default function Page() {
@@ -922,9 +922,9 @@ Pass a function to `useState` for expensive initial values. Without the function
 **Incorrect: runs on every render**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs on EVERY render, even after initialization
-  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(Items))
   const [query, setQuery] = useState('')
 
   // When query changes, buildSearchIndex runs again unnecessarily
@@ -944,9 +944,9 @@ function UserProfile() {
 **Correct: runs only once**
 
 ```tsx
-function FilteredList({ items }: { items: Item[] }) {
+function FilteredList({ registros }: { registros: Item[] }) {
   // buildSearchIndex() runs ONLY on initial render
-  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(items))
+  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(Items))
   const [query, setQuery] = useState('')
 
   return <SearchResults index={searchIndex} query={query} />
@@ -1080,7 +1080,7 @@ function MessageList({ messages }: { messages: Message[] }) {
 }
 ```
 
-For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).
+For 1000 messages, browser skips layout/paint for ~990 off-screen registros (10× faster initial render).
 
 ### 6.3 Hoist Static JSX Elements
 
@@ -1600,7 +1600,7 @@ This approach avoids sorting when lengths differ, avoiding both computational ov
 
 Return early when result is determined to skip unnecessary processing.
 
-**Incorrect: processes all items even after finding answer**
+**Incorrect: processes all registros even after finding answer**
 
 ```typescript
 function validateUsers(users: User[]) {
@@ -1723,14 +1723,14 @@ Convert arrays to Set/Map for repeated membership checks.
 
 ```typescript
 const allowedIds = ['a', 'b', 'c', ...]
-items.filter(item => allowedIds.includes(item.id))
+Items.filter(item => allowedIds.includes(item.id))
 ```
 
 **Correct (O(1) per check):**
 
 ```typescript
 const allowedIds = new Set(['a', 'b', 'c', ...])
-items.filter(item => allowedIds.has(item.id))
+Items.filter(item => allowedIds.has(item.id))
 ```
 
 ### 7.12 Use toSorted() Instead of sort() for Immutability
@@ -1766,7 +1766,7 @@ function UserList({ users }: { users: User[] }) {
 **Browser support fallback:**
 
 ```typescript
-const sorted = [...items].sort((a, b) => a.value - b.value)
+const sorted = [...Items].sort((a, b) => a.value - b.value)
 ```
 
 ---

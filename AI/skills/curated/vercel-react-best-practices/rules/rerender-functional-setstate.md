@@ -13,29 +13,29 @@ When updating state based on the current state value, use the functional update 
 
 ```tsx
 function TodoList() {
-  const [items, setItems] = useState(initialItems)
+  const [Items, setItems] = useState(initialItems)
   
-  // Callback must depend on items, recreated on every items change
+  // Callback must depend on registros, recreated on every registros change
   const addItems = useCallback((newItems: Item[]) => {
-    setItems([...items, ...newItems])
-  }, [items])  // ❌ items dependency causes recreations
+    setItems([...Items, ...newItems])
+  }, [Items])  // ❌ registros dependency causes recreations
   
   // Risk of stale closure if dependency is forgotten
   const removeItem = useCallback((id: string) => {
-    setItems(items.filter(item => item.id !== id))
-  }, [])  // ❌ Missing items dependency - will use stale items!
+    setItems(Items.filter(item => item.id !== id))
+  }, [])  // ❌ Missing registros dependency - will use stale registros!
   
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
+  return <ItemsEditor registros={Items} onAdd={addItems} onRemove={removeItem} />
 }
 ```
 
-The first callback is recreated every time `items` changes, which can cause child components to re-render unnecessarily. The second callback has a stale closure bug—it will always reference the initial `items` value.
+The first callback is recreated every time `Items` changes, which can cause child components to re-render unnecessarily. The second callback has a stale closure bug—it will always reference the initial `Items` value.
 
 **Correct (stable callbacks, no stale closures):**
 
 ```tsx
 function TodoList() {
-  const [items, setItems] = useState(initialItems)
+  const [Items, setItems] = useState(initialItems)
   
   // Stable callback, never recreated
   const addItems = useCallback((newItems: Item[]) => {
@@ -47,7 +47,7 @@ function TodoList() {
     setItems(curr => curr.filter(item => item.id !== id))
   }, [])  // ✅ Safe and stable
   
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
+  return <ItemsEditor registros={Items} onAdd={addItems} onRemove={removeItem} />
 }
 ```
 

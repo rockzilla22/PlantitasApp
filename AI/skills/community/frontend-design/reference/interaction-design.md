@@ -92,7 +92,7 @@ For tooltips, dropdowns, and non-modal overlays, use native popovers:
 
 ### Roving Tabindex
 
-For component groups (tabs, menu items, radio groups), one item is tabbable; arrow keys move within:
+For component groups (tabs, menu registros, radio groups), one item is tabbable; arrow keys move within:
 
 ```html
 <div role="tablist">
@@ -102,7 +102,7 @@ For component groups (tabs, menu items, radio groups), one item is tabbable; arr
 </div>
 ```
 
-Arrow keys move `tabindex="0"` between items. Tab moves to the next component entirely.
+Arrow keys move `tabindex="0"` between registros. Tab moves to the next component entirely.
 
 ### Skip Links
 

@@ -142,16 +142,16 @@ const createUserSlice = (set): UserSlice => ({
 
 // cartSlice.ts
 interface CartSlice {
-  items: CartItem[];
+  registros: CartItem[];
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
 }
 
 const createCartSlice = (set): CartSlice => ({
-  items: [],
-  addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+  registros: [],
+  addItem: (item) => set((state) => ({ registros: [...state.Items, item] })),
   removeItem: (id) => set((state) => ({
-    items: state.items.filter(i => i.id !== id)
+    registros: state.Items.filter(i => i.id !== id)
   })),
 });
 

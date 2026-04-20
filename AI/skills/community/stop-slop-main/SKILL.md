@@ -25,7 +25,7 @@ Eliminate predictable AI writing patterns from prose.
 
 5. **Put the reader in the room.** No narrator-from-a-distance voice. "You" beats "People." Specifics beat abstractions.
 
-6. **Vary rhythm.** Mix sentence lengths. Two items beat three. End paragraphs differently. No em dashes.
+6. **Vary rhythm.** Mix sentence lengths. Two registros beat three. End paragraphs differently. No em dashes.
 
 7. **Trust readers.** State facts directly. Skip softening, justification, hand-holding.
 
