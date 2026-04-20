@@ -145,7 +145,7 @@ export default function AdminPanel() {
           role: data.role,
           gift_slots: data.gift_slots,
           extra_slots: data.extra_slots,
-          premium_expires_at: data.premium_expires_at
+          premium_expires_at: data.premium_expires_at,
         });
       },
     });
@@ -189,13 +189,13 @@ export default function AdminPanel() {
 
   if (loading && users.length === 0 && feedback.length === 0)
     return (
-      <div className="min-h-screen flex registros-center justify-center">
+      <div className="flex registros-center justify-center py-20">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Cargando sistema...</p>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+    <div className="bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[1400px] mx-auto w-full flex flex-col gap-8">
         {/* HEADER */}
         <header className="flex flex-col gap-4">
@@ -245,24 +245,24 @@ export default function AdminPanel() {
         {activeTab === "users" && (
           <>
             {/* Stats chips */}
-            <div className="flex gap-3 flex-wrap registros-center justify-center">
-              <div className="flex registros-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
+            <div className="flex gap-3 flex-wrap items-center justify-center">
+              <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--text)]">{users.length}</span>
                 <span className="text-xs text-[var(--text)] uppercase tracking-wider">Total</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalUsers}</span>
                 <span className="text-xs text-[var(--info-dark)]uppercase tracking-wider">Usuarios</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--primary)]">{totalPro}</span>
                 <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Pro</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalPremium}</span>
                 <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Premium</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--warning-bg)] border border-[var(--secondary)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--warning-dark)]">{totalMasters}</span>
                 <span className="text-xs text-[var(--warning-dark)]uppercase tracking-wider">Masters</span>
               </div>
@@ -313,7 +313,7 @@ export default function AdminPanel() {
                     title="Recargar"
                     onClick={loadData}
                     disabled={loading}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
                     <Image
                       src="/icons/common/refresh.svg"
@@ -358,9 +358,6 @@ export default function AdminPanel() {
                           {/* Usuario */}
                           <td className="px-6 py-4">
                             <div className="flex registros-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xs font-bold flex registros-center justify-center shrink-0">
-                                {(u.name || u.email || "?")[0].toUpperCase()}
-                              </div>
                               <div className="min-w-0">
                                 <div className="font-semibold text-[var(--text)] truncate">{u.name || "Sin nombre"}</div>
                                 <div className="text-xs text-[var(--text)] truncate">{u.email}</div>
@@ -370,9 +367,27 @@ export default function AdminPanel() {
 
                           {/* Rol */}
                           <td className="px-6 py-4">
-                            <span className={`badge ${u.role === configProject.plans.MASTER.id ? "badge-danger" : "badge-warning"}`}>
-                              {u.role === configProject.plans.MASTER.id ? configProject.plans.MASTER.label : configProject.plans.FREE.label}
-                            </span>
+                            {(() => {
+                              const plan = getPlanConfig(u);
+
+                              return (
+                                <div className="flex registros-center gap-2">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                                      plan.id === configProject.plans.MASTER.id
+                                        ? "bg-[var(--danger)] text-white"
+                                        : plan.id === configProject.plans.PREMIUM.id
+                                          ? "bg-[var(--primary)] text-white"
+                                          : plan.id === configProject.plans.PRO.id
+                                            ? "bg-[var(--secondary)] text-white"
+                                            : "bg-[var(--border)] text-[var(--text)]"
+                                    }`}
+                                  >
+                                    {plan.label}
+                                  </span>
+                                </div>
+                              );
+                            })()}
                           </td>
 
                           {/* Plan */}
@@ -383,20 +398,9 @@ export default function AdminPanel() {
                               const eSlots = u.extra_slots || 0;
                               const exp = u.premium_expires_at;
                               const start = u.premium_started_at;
-                              
+
                               return (
                                 <div className="flex flex-col gap-2">
-                                  <div className="flex registros-center gap-2">
-                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                                      plan.id === configProject.plans.MASTER.id ? "bg-[var(--danger)] text-white" :
-                                      plan.id === configProject.plans.PREMIUM.id ? "bg-[var(--primary)] text-white" :
-                                      plan.id === configProject.plans.PRO.id ? "bg-[var(--secondary)] text-white" :
-                                      "bg-[var(--border)] text-[var(--text)]"
-                                    }`}>
-                                      {plan.label}
-                                    </span>
-                                  </div>
-
                                   {/* INFO EXTRA */}
                                   <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                                     <div className="flex flex-col">
@@ -415,16 +419,24 @@ export default function AdminPanel() {
                                         const isExpired = new Date() > new Date(exp);
                                         return (
                                           <>
-                                            <span className={`text-[9px] uppercase font-bold opacity-80 ${isExpired ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
+                                            <span
+                                              className={`text-[9px] uppercase font-bold opacity-80 ${isExpired ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}
+                                            >
                                               {isExpired ? "Membresía Vencida" : "Membresía Premium"}
                                             </span>
-                                            <span className={`text-xs font-bold ${isExpired ? "text-[var(--danger)]" : "text-[var(--text)]"}`}>
+                                            <span
+                                              className={`text-xs font-bold ${isExpired ? "text-[var(--danger)]" : "text-[var(--text)]"}`}
+                                            >
                                               {isExpired ? "Venció: " : "Vence: "} {new Date(exp).toLocaleDateString()}
                                             </span>
                                           </>
                                         );
                                       })()}
-                                      {start && <span className="text-[8px] text-[var(--text-gray)]">Inicio: {new Date(start).toLocaleDateString()}</span>}
+                                      {start && (
+                                        <span className="text-[8px] text-[var(--text-gray)]">
+                                          Inicio: {new Date(start).toLocaleDateString()}
+                                        </span>
+                                      )}
                                     </div>
                                   )}
                                 </div>
@@ -483,20 +495,20 @@ export default function AdminPanel() {
         {activeTab === "feedback" && (
           <>
             {/* Stats chips */}
-            <div className="flex gap-3 flex-wrap registros-center justify-center">
-              <div className="flex registros-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
+            <div className="flex gap-3 flex-wrap items-center justify-center">
+              <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--text)]">{feedback.length}</span>
                 <span className="text-xs text-[var(--text)] uppercase tracking-wider">Total</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalBug}</span>
                 <span className="text-xs text-[var(--info-dark)]uppercase tracking-wider">Bugs</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--success-bg)] border border-[var(--primary-light)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--primary)]">{totalIdea}</span>
                 <span className="text-xs text-[var(--primary)] uppercase tracking-wider">Propuestas</span>
               </div>
-              <div className="flex registros-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
+              <div className="flex items-center gap-2 bg-[var(--info-bg)] border border-[var(--info)]/30 rounded-xl px-4 py-2 shadow-sm">
                 <span className="text-lg font-bold text-[var(--info-dark)]">{totalComentario}</span>
                 <span className="text-xs text-[var(--info-dark)] uppercase tracking-wider">Comentarios</span>
               </div>
@@ -534,7 +546,7 @@ export default function AdminPanel() {
                     title="Recargar"
                     onClick={loadData}
                     disabled={loading}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
                     <Image
                       src="/icons/common/refresh.svg"

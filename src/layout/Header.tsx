@@ -283,7 +283,7 @@ export function Header() {
             </button>
 
             {isNotifyMenuOpen && (
-              <div className="absolute right-[-100px] sm:right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-[320px] sm:w-72 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="fixed left-4 right-4 top-20 w-auto bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72 sm:max-w-[320px]">
                 <h3 className="p-4 text-center text-sm font-bold text-[var(--text)] border-b border-[var(--border-light)]">
                   Notificaciones
                 </h3>

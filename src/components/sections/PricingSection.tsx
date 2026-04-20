@@ -64,9 +64,9 @@ export function PricingSection() {
             <button
               className="btn-primary-large"
               style={{ marginTop: "2rem", width: "100%" }}
-              onClick={() => router.push(user ? "/plants" : "/login")}
+              onClick={() => router.push(isMounted && user ? "/plants" : "/login")}
             >
-              {user ? "Ir a mis plantas" : "Crear Cuenta"}
+              {isMounted && user ? "Ir a mis plantas" : "Crear Cuenta"}
             </button>
           </div>
 

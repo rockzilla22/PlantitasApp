@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
   if (authLoading || !user)
     return (
-      <div className="min-h-screen flex registros-center justify-center">
+      <div className="flex registros-center justify-center py-20">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Sincronizando...</p>
       </div>
     );
@@ -196,7 +196,7 @@ export default function ProfilePage() {
   const canUnlink = (user.identities ?? []).length > 1;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+    <div className="bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
         {/* NAV */}
         <div className="flex registros-center justify-between">
