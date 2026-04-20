@@ -64,7 +64,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
                     {plant.type}
                   </span>
                   {plant.subtype && (
-                    <span className="text-[0.65rem] text-[var(--text-gray)] font-bold uppercase tracking-tight truncate max-w-full px-1" title={plant.subtype}>
+                    <span className="text-[0.65rem] text-[var(--text-gray)] font-bold uppercase tracking-tight truncate max-w-full mt-4 px-1" title={plant.subtype}>
                       {plant.subtype}
                     </span>
                   )}
