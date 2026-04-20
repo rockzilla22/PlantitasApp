@@ -5,10 +5,10 @@ import configProject from "@/data/configProject";
 import { PlantSchema } from "@/core/plant/domain/Plant";
 import { PropagationSchema } from "@/core/nursery/domain/Propagation";
 import { GlobalNoteSchema } from "@/core/notes/domain/GlobalNote";
-import { WishlistItemSchema } from "@/core/wishlist/domain/WishlistItem";
+import { WishlistItemschema } from "@/core/wishlist/domain/WishlistItem";
 
-function parseValid<T>(schema: { safeParse: (v: unknown) => { success: boolean; data?: T } }, items: unknown[]): T[] {
-  return items.reduce<T[]>((acc, item) => {
+function parseValid<T>(schema: { safeParse: (v: unknown) => { success: boolean; data?: T } }, registros: unknown[]): T[] {
+  return registros.reduce<T[]>((acc, item) => {
     const result = schema.safeParse(item);
     if (result.success && result.data) acc.push(result.data);
     return acc;
@@ -54,7 +54,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   const validPlants = parseValid(PlantSchema, data.plants);
   const validProps = parseValid(PropagationSchema, data.propagations);
   const validNotes = parseValid(GlobalNoteSchema, data.globalNotes);
-  const validWishlist = parseValid(WishlistItemSchema, data.wishlist);
+  const validWishlist = parseValid(WishlistItemschema, data.wishlist);
 
   // Plants — upsert + delete orphans
   const plantRows = validPlants.map((p) => ({
@@ -122,9 +122,9 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Inventory — full replace (no client-side IDs)
-  await sb.from("inventory_items").delete().eq("user_id", userId);
-  const invRows = Object.entries(data.inventory).flatMap(([cat, items]) =>
-    (items as any[]).map((item) => ({
+  await sb.from("inventory_Items").delete().eq("user_id", userId);
+  const invRows = Object.entries(data.inventory).flatMap(([cat, registros]) =>
+    (registros as any[]).map((item) => ({
       user_id: userId,
       category: cat,
       name: item.name,
@@ -133,7 +133,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
     }))
   );
   if (invRows.length > 0) {
-    await sb.from("inventory_items").insert(invRows);
+    await sb.from("inventory_Items").insert(invRows);
   }
 
   // Global notes — upsert + delete orphans
@@ -208,7 +208,7 @@ export async function loadTrashFromSupabase(userId: string, retentionDays: numbe
     sb.from("wishlist").select("id,name,priority,deleted_at").eq("user_id", userId).not("deleted_at", "is", null),
   ]);
 
-  const items: TrashItem[] = [];
+  const registros: TrashItem[] = [];
   const now = new Date();
 
   const mapItem = (row: any, table: TrashItem["table"], label: string, meta: string): TrashItem => {
@@ -225,12 +225,12 @@ export async function loadTrashFromSupabase(userId: string, retentionDays: numbe
     };
   };
 
-  (plants || []).forEach((p: any) => items.push(mapItem(p, "plants", p.name, p.type)));
-  (propagations || []).forEach((p: any) => items.push(mapItem(p, "propagations", p.name, p.method)));
-  (notes || []).forEach((n: any) => items.push(mapItem(n, "global_notes", n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), "")));
-  (wishlist || []).forEach((w: any) => items.push(mapItem(w, "wishlist", w.name, w.priority)));
+  (plants || []).forEach((p: any) => registros.push(mapItem(p, "plants", p.name, p.type)));
+  (propagations || []).forEach((p: any) => registros.push(mapItem(p, "propagations", p.name, p.method)));
+  (notes || []).forEach((n: any) => registros.push(mapItem(n, "global_notes", n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), "")));
+  (wishlist || []).forEach((w: any) => registros.push(mapItem(w, "wishlist", w.name, w.priority)));
 
-  return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
+  return registros.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
 }
 
 export async function emptyTrashPermanently(userId: string): Promise<void> {
@@ -278,7 +278,7 @@ export async function loadFromSupabase(userId: string): Promise<AppData | null> 
     sb.from("plants").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("plant_logs").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("propagations").select("*").eq("user_id", userId).is("deleted_at", null),
-    sb.from("inventory_items").select("*").eq("user_id", userId),
+    sb.from("inventory_Items").select("*").eq("user_id", userId),
     sb.from("global_notes").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("wishlist").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("seasonal_tasks").select("*").eq("user_id", userId),

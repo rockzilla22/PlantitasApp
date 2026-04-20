@@ -56,7 +56,7 @@ export default function PrivacyPage() {
         <section className="privacy-section">
           <h2>4. Control del Usuario</h2>
           <p>
-            En cumplimiento con los estándares internacionales de privacidad, tenés el control total. Podés solicitar la eliminación total
+            En cumplimiento con los estándares internacionales de privacidad, tienes el control total. Puedes solicitar la eliminación total
             de tu cuenta y todos los datos asociados en cualquier momento desde la configuración de tu perfil o contactándonos directamente.
           </p>
         </section>

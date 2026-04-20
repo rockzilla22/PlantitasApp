@@ -25,7 +25,7 @@ This document compiles essential best practices and guidelines for building Mode
 ### Pagination
 - Always respect `limit` parameter
 - Return `has_more`, `next_offset`, `total_count`
-- Default to 20-50 items
+- Default to 20-50 registros
 
 ### Character Limits
 - Set CHARACTER_LIMIT constant (typically 25,000)
@@ -123,7 +123,7 @@ For tools that list resources:
 - **Implement pagination**: Use `offset` or cursor-based pagination
 - **Return pagination metadata**: Include `has_more`, `next_offset`/`next_cursor`, `total_count`
 - **Never load all results into memory**: Especially important for large datasets
-- **Default to reasonable limits**: 20-50 items is typical
+- **Default to reasonable limits**: 20-50 registros is typical
 - **Include clear pagination info in responses**: Make it easy for LLMs to request more data
 
 Example pagination response structure:
@@ -132,7 +132,7 @@ Example pagination response structure:
   "total": 150,
   "count": 20,
   "offset": 0,
-  "items": [...],
+  "Items": [...],
   "has_more": true,
   "next_offset": 20
 }
@@ -158,7 +158,7 @@ if len(result) > CHARACTER_LIMIT:
     truncated_data = data[:max(1, len(data) // 2)]
     response["truncated"] = True
     response["truncation_message"] = (
-        f"Response truncated from {len(data)} to {len(truncated_data)} items. "
+        f"Response truncated from {len(data)} to {len(truncated_data)} registros. "
         f"Use 'offset' parameter or add filters to see more results."
     )
 ```
@@ -569,7 +569,7 @@ Tools that interact with the local system:
     type: "object",
     properties: {
       command: { type: "string" },
-      args: { type: "array", items: { type: "string" } }
+      args: { type: "array", registros: { type: "string" } }
     }
   }
 }
@@ -588,7 +588,7 @@ Tools that wrap external APIs:
     properties: {
       title: { type: "string" },
       body: { type: "string" },
-      labels: { type: "array", items: { type: "string" } }
+      labels: { type: "array", registros: { type: "string" } }
     }
   }
 }
@@ -608,7 +608,7 @@ Tools that transform or analyze data:
       filepath: { type: "string" },
       operations: {
         type: "array",
-        items: {
+        registros: {
           enum: ["sum", "average", "count"]
         }
       }

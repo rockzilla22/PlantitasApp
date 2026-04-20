@@ -36,7 +36,7 @@ GSAP batches updates internally. When mixing GSAP with direct DOM reads/writes o
 ## Many Elements (Stagger, Lists)
 
 - Use **stagger** instead of many separate tweens with manual delays when the animation is the same; it’s more efficient.
-- For long lists, consider **virtualization** or animating only visible items; avoid creating hundreds of simultaneous tweens if it causes jank.
+- For long lists, consider **virtualization** or animating only visible registros; avoid creating hundreds of simultaneous tweens if it causes jank.
 - Reuse timelines where possible; avoid creating new timelines every frame.
 
 ## Frequently updated properties (e.g. mouse followers)

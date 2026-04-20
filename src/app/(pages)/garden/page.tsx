@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function GardenPage() {
   return (
-    <section className="min-h-[80vh] flex items-center justify-center p-6 bg-[var(--background)] animate-in fade-in duration-700">
+    <section className="flex registros-center justify-center p-6 bg-[var(--background)] animate-in fade-in duration-700">
       <div className="max-w-md w-full bg-[var(--white-glass)] backdrop-blur-md rounded-[2.5rem] border border-[var(--white)] shadow-xl text-center p-12">
         <div className="mx-auto mb-6 inline-flex w-[120px] justify-center">
           <Image

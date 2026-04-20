@@ -9,7 +9,7 @@ tags: javascript, functions, optimization, early-return
 
 Return early when result is determined to skip unnecessary processing.
 
-**Incorrect (processes all items even after finding answer):**
+**Incorrect (processes all registros even after finding answer):**
 
 ```typescript
 function validateUsers(users: User[]) {

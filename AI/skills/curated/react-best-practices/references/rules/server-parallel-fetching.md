@@ -23,8 +23,8 @@ export default async function Page() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 ```
 
@@ -37,8 +37,8 @@ async function Header() {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 export default function Page() {
@@ -65,8 +65,8 @@ async function Layout({ children }: { children: ReactNode }) {
 }
 
 async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
+  const registros = await fetchSidebarItems()
+  return <nav>{Items.map(renderItem)}</nav>
 }
 
 export default function Page() {

@@ -71,20 +71,32 @@ export function FeedbackSection() {
 
   return (
     <div className="fixed bottom-6 left-6 z-[1000]" ref={containerRef}>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[999] bg-black/20 backdrop-blur-[2px] sm:bg-transparent sm:backdrop-blur-none"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Botón Flotante */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-14 h-14 bg-[var(--primary)] text-white rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none border-4 border-white"
+        className="relative z-[1002] flex registros-center justify-center w-14 h-14 bg-[var(--primary)] text-white rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none border-4 border-white"
         title="Enviar Feedback"
+        aria-expanded={isOpen}
+        aria-controls="feedback-panel"
       >
         <Image src="/icons/common/stars.svg" alt="Feedback" width={28} height={28} className="brightness-0 invert" />
       </button>
 
       {/* Formulario */}
       {isOpen && (
-        <div className="absolute bottom-16 left-0 sm:left-0 w-[calc(100vw-3rem)] sm:w-[380px] bg-[var(--white)] border border-[var(--border-light)] rounded-[2.5rem] shadow-2xl p-6 animate-in slide-in-from-bottom-4 duration-300 z-[1001]">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-[var(--primary)] flex items-center gap-2">
+        <div
+          id="feedback-panel"
+          className="fixed bottom-24 left-4 right-4 z-[1001] w-auto rounded-[2rem] border border-[var(--border-light)] bg-[var(--input-bg)] p-6 shadow-[0_24px_60px_rgba(22,48,32,0.22)] ring-1 ring-[var(--white)]/80 animate-in slide-in-from-bottom-4 duration-300 sm:absolute sm:bottom-16 sm:left-0 sm:right-auto sm:w-[380px]"
+        >
+          <div className="flex justify-between registros-center mb-4">
+            <h3 className="text-xl font-bold text-[var(--primary)] flex registros-center gap-2">
               <Image src="/icons/common/notes.svg" alt="Feedback" width={20} height={20} />
               Tu Feedback
             </h3>
@@ -134,7 +146,7 @@ export function FeedbackSection() {
             <button
               type="submit"
               disabled={isSending}
-              className="w-full py-4 bg-[var(--primary)] text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
+              className="w-full py-4 bg-[var(--primary)] text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:opacity-90 transition-opacity disabled:opacity-50 flex registros-center justify-center gap-2 shadow-lg"
             >
               {isSending ? (
                 "Enviando..."

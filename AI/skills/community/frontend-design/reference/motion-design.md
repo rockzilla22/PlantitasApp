@@ -44,7 +44,7 @@ Timing matters more than easing. These durations feel right for most UI:
 
 ## Staggered Animations
 
-Use CSS custom properties for cleaner stagger: `animation-delay: calc(var(--i, 0) * 50ms)` with `style="--i: 0"` on each item. **Cap total stagger time**—10 items at 50ms = 500ms total. For many items, reduce per-item delay or cap staggered count.
+Use CSS custom properties for cleaner stagger: `animation-delay: calc(var(--i, 0) * 50ms)` with `style="--i: 0"` on each item. **Cap total stagger time**—10 registros at 50ms = 500ms total. For many registros, reduce per-item delay or cap staggered count.
 
 ## Reduced Motion
 

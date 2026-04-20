@@ -171,9 +171,9 @@ export function SignInForm({ redirectTo = "/" }: Props) {
 
       <p className="signin-toggle">
         {mode === "signin" ? (
-          <>¿No tenés cuenta?{" "}<button type="button" onClick={() => { setMode("signup"); setError(null); }}>Crear cuenta</button></>
+          <>¿No tienes cuenta?{" "}<button type="button" onClick={() => { setMode("signup"); setError(null); }}>Crear cuenta</button></>
         ) : (
-          <>¿Ya tenés cuenta?{" "}<button type="button" onClick={() => { setMode("signin"); setError(null); }}>Iniciar sesión</button></>
+          <>¿Ya tienes cuenta?{" "}<button type="button" onClick={() => { setMode("signin"); setError(null); }}>Iniciar sesión</button></>
         )}
       </p>
     </div>

@@ -6,12 +6,20 @@ import { useStore } from "@nanostores/react";
 import { $user } from "@/store/authStore";
 import { getPlanLevel } from "@/libs/syncService";
 import configProject from "@/data/configProject";
+import { useEffect, useState } from "react";
 
 export function PricingSection() {
   const router = useRouter();
   const user = useStore($user);
   const p = configProject.plans;
-  const currentPlanId = getPlanLevel(user);
+  
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const currentPlanId = isMounted ? getPlanLevel(user) : null;
 
   return (
     <>
@@ -56,9 +64,9 @@ export function PricingSection() {
             <button
               className="btn-primary-large"
               style={{ marginTop: "2rem", width: "100%" }}
-              onClick={() => router.push(user ? "/plants" : "/login")}
+              onClick={() => router.push(isMounted && user ? "/plants" : "/login")}
             >
-              {user ? "Ir a mis plantas" : "Crear Cuenta"}
+              {isMounted && user ? "Ir a mis plantas" : "Crear Cuenta"}
             </button>
           </div>
 
@@ -106,6 +114,7 @@ export function PricingSection() {
           padding: 6rem 2rem;
           border-radius: 2rem;
           margin: 4rem 0;
+          min-width: 0;
         }
 
         .bg-soft {
@@ -132,10 +141,16 @@ export function PricingSection() {
 
         .plans-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: 1fr;
           gap: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
+        }
+
+        @media (min-width: 700px) {
+          .plans-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          }
         }
 
         @media (min-width: 1200px) {
@@ -197,9 +212,10 @@ export function PricingSection() {
         }
 
         .plan-card h3 {
-          font-size: 1.6rem;
+          font-size: clamp(1.6rem, 5vw, 1.9rem);
           margin-bottom: 0.5rem;
           font-weight: 900;
+          overflow-wrap: anywhere;
         }
 
         .plan-subtitle {
@@ -225,8 +241,9 @@ export function PricingSection() {
           font-weight: 500;
           color: var(--text-gray);
           display: flex;
-          align-registros: center;
+          align-items: flex-start;
           gap: 0.5rem;
+          overflow-wrap: anywhere;
         }
 
         .btn-primary-large {
@@ -242,6 +259,7 @@ export function PricingSection() {
           transition: all 0.2s;
           text-transform: uppercase;
           letter-spacing: 1px;
+          min-width: 0;
         }
 
         .btn-secondary-large {
@@ -257,11 +275,57 @@ export function PricingSection() {
           transition: all 0.2s;
           text-transform: uppercase;
           letter-spacing: 1px;
+          min-width: 0;
         }
 
         .btn-primary-large:hover:not(:disabled) {
           background: var(--secondary);
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 699px) {
+          .info-section {
+            padding: 3rem 1rem;
+            margin: 2.5rem 0;
+            border-radius: 1.5rem;
+          }
+
+          .section-title {
+            margin-bottom: 2.5rem;
+          }
+
+          .section-title h2 {
+            font-size: clamp(2rem, 10vw, 2.4rem);
+            text-wrap: balance;
+          }
+
+          .section-title p {
+            font-size: 1rem;
+          }
+
+          .plan-card {
+            padding: 2rem 1.25rem 1.5rem;
+          }
+
+          .premium-badge,
+          .current-badge {
+            max-width: calc(100% - 2rem);
+            text-align: center;
+            white-space: normal;
+            line-height: 1.2;
+          }
+
+          .plan-subtitle {
+            margin-bottom: 1.75rem;
+          }
+
+          .btn-primary-large,
+          .btn-secondary-large {
+            padding: 1rem 1rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            white-space: normal;
+          }
         }
       `}</style>
     </>

@@ -41,9 +41,9 @@ export const initialData: AppData = {
   globalNotes: [],
 };
 
-const dedupeByName = (items: any[]): any[] => {
+const dedupeByName = (Items: any[]): any[] => {
   const seen = new Map<string, any>();
-  (items || []).forEach((item) => {
+  (Items || []).forEach((item) => {
     if (!seen.has(item.name)) {
       seen.set(item.name, { ...item });
     } else {
@@ -118,7 +118,7 @@ export const $selectedPlantId = atom<number | null>(null);
 export const $trashCount = atom<number>(0);
 
 /**
- * EL MURO: Verifica si el usuario alcanzó el límite de su plan antes de añadir nuevos items.
+ * EL MURO: Verifica si el usuario alcanzó el límite de su plan antes de añadir nuevos registros.
  */
 export const checkCapLimit = (): boolean => {
   const data = $store.get();

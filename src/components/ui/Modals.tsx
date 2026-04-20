@@ -13,6 +13,7 @@ import {
   addSeasonTask,
   updatePlant,
   updatePropagation,
+  updatePropStatus,
   updateWish,
   updateSeasonTask,
   updateNote,
@@ -283,7 +284,10 @@ export function Modals() {
       updatePlant(props.id, data);
       handleClose();
     } else {
-      if (addPlant(data)) handleClose();
+      if (addPlant(data)) {
+        if (props?.propId) updatePropStatus(props.propId, "Trasplantada");
+        handleClose();
+      }
     }
   };
 
@@ -344,7 +348,7 @@ export function Modals() {
     handleClose();
   };
 
-  const handleItemSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleItemsubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const fd = new FormData(e.currentTarget);
     const data = {
       category: fd.get("i-type") as InventoryCategory,
@@ -671,7 +675,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR INSUMO --- */}
         {(type === "add-item" || type === "edit-item") && (
-          <form method="dialog" onSubmit={handleItemSubmit}>
+          <form method="dialog" onSubmit={handleItemsubmit}>
             <h3>{type === "edit-item" ? "Editar Insumo" : "Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>

@@ -119,7 +119,7 @@ Wh- openers become a crutch. "What makes this hard is..." becomes "The constrain
 
 | Pattern | Fix |
 |---------|-----|
-| Three-item lists | Use two items or one |
+| Three-item lists | Use two registros or one |
 | Questions answered immediately | Let questions breathe or cut them |
 | Every paragraph ends punchily | Vary endings |
 | Em-dashes | Remove. Use commas or periods. No em dashes at all. |

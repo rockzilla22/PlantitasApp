@@ -43,7 +43,7 @@ Don't rely on size alone. Combine:
 
 ### Cards Are Not Required
 
-Cards are overused. Spacing and alignment create visual grouping naturally. Use cards only when content is truly distinct and actionable, items need visual comparison in a grid, or content needs clear interaction boundaries. **Never nest cards inside cards**—use spacing, typography, and subtle dividers for hierarchy within a card.
+Cards are overused. Spacing and alignment create visual grouping naturally. Use cards only when content is truly distinct and actionable, registros need visual comparison in a grid, or content needs clear interaction boundaries. **Never nest cards inside cards**—use spacing, typography, and subtle dividers for hierarchy within a card.
 
 ## Container Queries
 

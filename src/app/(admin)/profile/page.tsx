@@ -65,9 +65,9 @@ export default function ProfilePage() {
   const handleToggleTrash = async () => {
     if (!showTrash && trashItems.length === 0) {
       setTrashLoading(true);
-      const items = await loadTrashFromSupabase(user!.id, planConfig.trashRetentionDays);
-      setTrashItems(items);
-      $trashCount.set(items.length);
+      const registros = await loadTrashFromSupabase(user!.id, planConfig.trashRetentionDays);
+      setTrashItems(registros);
+      $trashCount.set(registros.length);
       setTrashLoading(false);
     }
     setShowTrash((v) => !v);
@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
   if (authLoading || !user)
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex registros-center justify-center py-20">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Sincronizando...</p>
       </div>
     );
@@ -196,13 +196,13 @@ export default function ProfilePage() {
   const canUnlink = (user.identities ?? []).length > 1;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+    <div className="bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
         {/* NAV */}
-        <div className="flex items-center justify-between">
+        <div className="flex registros-center justify-between">
           <Link
             href="/"
-            className="no-underline text-[var(--text-brown)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1"
+            className="no-underline text-[var(--text-brown)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex registros-center gap-1"
           >
             ← Inicio
           </Link>
@@ -217,8 +217,8 @@ export default function ProfilePage() {
         </div>
 
         {/* HEADER */}
-        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex items-center gap-4 shadow-sm">
-          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex items-center justify-center shrink-0 shadow-md">
+        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex registros-center gap-4 shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex registros-center justify-center shrink-0 shadow-md">
             {getInitials(currentName, user.email)}
           </div>
           <div className="min-w-0 flex-1">
@@ -292,11 +292,11 @@ export default function ProfilePage() {
                   return (
                     <div
                       key={pid}
-                      className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]"
+                      className="flex registros-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex registros-center gap-3">
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
+                          className="w-8 h-8 rounded-full flex registros-center justify-center text-xs font-bold shadow-sm"
                           style={{ background: iconBg, color: iconColor }}
                         >
                           {label[0]}
@@ -336,8 +336,8 @@ export default function ProfilePage() {
               <h2 className="text-sm font-bold text-[var(--text)] m-0">Estado de la cuenta</h2>
 
               {/* Plan badge */}
-              <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
-                <div className="flex items-center gap-2">
+              <div className="flex registros-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
+                <div className="flex registros-center gap-2">
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
                 {user.app_metadata?.premium_expires_at && (
@@ -349,7 +349,7 @@ export default function ProfilePage() {
 
               {/* Slots */}
               <div className="flex flex-col gap-3">
-                <div className="flex items-end justify-between">
+                <div className="flex registros-end justify-between">
                   <div>
                     <p className="text-[0.7rem] uppercase tracking-widest text-[var(--text-brown)] m-0 mb-0.5">Almacenamiento</p>
                     <p className="text-2xl font-bold text-[var(--text)] m-0 leading-none">
@@ -390,10 +390,10 @@ export default function ProfilePage() {
             <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
               <button
                 onClick={handleToggleTrash}
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
+                className="w-full flex registros-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                <div className="flex registros-center gap-3">
+                  <div className="w-5 h-5 flex registros-center justify-center shrink-0">
                     <NextImage src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
                   </div>
                   <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>
@@ -424,15 +424,15 @@ export default function ProfilePage() {
                     <p className="text-center py-6 text-sm text-[var(--text-brown)] italic">Papelera vacía</p>
                   ) : (
                     (() => {
-                      const groups: Record<string, { label: string; img: string; items: TrashItem[] }> = {
-                        plants: { label: "Plantas", img: "/icons/environment/plants/alocasia.svg", items: [] },
-                        propagations: { label: "Propagaciones", img: "/icons/environment/plants/layering.svg", items: [] },
-                        global_notes: { label: "Notas", img: "/icons/common/notes.svg", items: [] },
-                        wishlist: { label: "Deseos", img: "/icons/common/wishlist.svg", items: [] },
+                      const groups: Record<string, { label: string; img: string; registros: TrashItem[] }> = {
+                        plants: { label: "Plantas", img: "/icons/environment/plants/alocasia.svg", registros: [] },
+                        propagations: { label: "Propagaciones", img: "/icons/environment/plants/layering.svg", registros: [] },
+                        global_notes: { label: "Notas", img: "/icons/common/notes.svg", registros: [] },
+                        wishlist: { label: "Deseos", img: "/icons/common/wishlist.svg", registros: [] },
                       };
-                      trashItems.forEach((i) => groups[i.table]?.items.push(i));
+                      trashItems.forEach((i) => groups[i.table]?.registros.push(i));
                       return Object.entries(groups).map(([k, g]) =>
-                        g.items.length === 0 ? null : (
+                        g.registros.length === 0 ? null : (
                           <div key={k} className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                               <NextImage src={g.img} alt={g.label} width={14} height={14} className="object-contain" />
@@ -440,7 +440,7 @@ export default function ProfilePage() {
                                 {g.label}
                               </p>
                             </div>
-                            {g.items.map((i) => (
+                            {g.registros.map((i) => (
                               <div
                                 key={i.id}
                                 className="flex items-center justify-between bg-[var(--card-bg)] px-4 py-3 rounded-xl border border-[var(--border)]"

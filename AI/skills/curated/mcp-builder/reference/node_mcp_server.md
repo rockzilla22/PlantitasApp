@@ -359,12 +359,12 @@ async function listItems(params: z.infer<typeof ListSchema>) {
 
   const response = {
     total: data.total,
-    count: data.items.length,
+    count: data.Items.length,
     offset: params.offset,
-    items: data.items,
-    has_more: data.total > params.offset + data.items.length,
-    next_offset: data.total > params.offset + data.items.length
-      ? params.offset + data.items.length
+    registros: data.Items,
+    has_more: data.total > params.offset + data.Items.length,
+    next_offset: data.total > params.offset + data.Items.length
+      ? params.offset + data.Items.length
       : undefined
   };
 
@@ -389,7 +389,7 @@ async function searchTool(params: SearchInput) {
     response.data = truncatedData;
     response.truncated = true;
     response.truncation_message =
-      `Response truncated from ${data.length} to ${truncatedData.length} items. ` +
+      `Response truncated from ${data.length} to ${truncatedData.length} registros. ` +
       `Use 'offset' parameter or add filters to see more results.`;
     result = JSON.stringify(response, null, 2);
   }

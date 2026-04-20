@@ -17,19 +17,19 @@ metadata:
 
 ```typescript
 // ✅ React Compiler handles optimization automatically
-function Component({ items }) {
-  const filtered = items.filter(x => x.active);
+function Component({ registros }) {
+  const filtered = registros.filter(x => x.active);
   const sorted = filtered.sort((a, b) => a.name.localeCompare(b.name));
 
   const handleClick = (id) => {
     console.log(id);
   };
 
-  return <List items={sorted} onClick={handleClick} />;
+  return <List registros={sorted} onClick={handleClick} />;
 }
 
 // ❌ NEVER: Manual memoization
-const filtered = useMemo(() => items.filter(x => x.active), [items]);
+const filtered = useMemo(() => registros.filter(x => x.active), [Items]);
 const handleClick = useCallback((id) => console.log(id), []);
 ```
 

@@ -50,7 +50,7 @@ Pages, hero sections, landing pages, portfolios — the "wow" is often sensory: 
 Tables, forms, dialogs, navigation — the "wow" is in how it FEELS: a dialog that morphs from the button that triggered it via View Transitions, a data table that renders 100k rows at 60fps via virtual scrolling, a form with streaming validation that feels instant, drag-and-drop with spring physics.
 
 ### For performance-critical UI
-The "wow" is invisible but felt: a search that filters 50k items without a flicker, a complex form that never blocks the main thread, an image editor that processes in near-real-time. The interface just never hesitates.
+The "wow" is invisible but felt: a search that filters 50k registros without a flicker, a complex form that never blocks the main thread, an image editor that processes in near-real-time. The interface just never hesitates.
 
 ### For data-heavy interfaces
 Charts and dashboards — the "wow" is in fluidity: GPU-accelerated rendering via Canvas/WebGL for massive datasets, animated transitions between data states, force-directed graph layouts that settle naturally.
@@ -76,7 +76,7 @@ Organized by what you're trying to achieve, not by technology name.
 - **SVG filter chains** — displacement maps, turbulence, morphology for organic distortion effects. CSS-animatable.
 
 ### Make data feel alive
-- **Virtual scrolling** — render only visible rows for tables/lists with tens of thousands of items. No library required for simple cases; TanStack Virtual for complex ones.
+- **Virtual scrolling** — render only visible rows for tables/lists with tens of thousands of registros. No library required for simple cases; TanStack Virtual for complex ones.
 - **GPU-accelerated charts** — Canvas or WebGL-rendered data visualization for datasets too large for SVG/DOM. Libraries: deck.gl, regl-based custom renderers.
 - **Animated data transitions** — morph between chart states rather than replacing. D3's `transition()` or View Transitions for DOM-based charts.
 

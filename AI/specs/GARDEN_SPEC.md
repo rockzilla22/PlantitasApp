@@ -5,7 +5,7 @@
 **Garden** es una vista visual donde el usuario ve su "casa/jardín" con sus plantas, propagaciones e inventario representedos como objetos visuais. Es una gamificación ligera que:
 
 - Da feedback visual del progreso del usuario
-- Motivates a agregar más items
+- Motivates a agregar más registros
 - Genera attachment emocional a la colección
 - Prepara el terreno para skins monetizeadas
 
@@ -43,17 +43,17 @@
 │              [Semilla 1]  [Semilla 2]      │
 │                 🌱            🌱            │
 │                                             │
-│  [Tierra] [Bolsa] [Spray]   [más items...] │
+│  [Tierra] [Bolsa] [Spray]   [más registros...] │
 │                                             │
 │  ___________________________________________│
-│  💡 Tu jardín tiene X items - ¡Agrega más! │
+│  💡 Tu jardín tiene X registros - ¡Agrega más! │
 └─────────────────────────────────────────────┘
 ```
 
 ### Zonas de Renderizado
 1. **Main Area**: Plantas (macetas distribuidas en grid flexible)
 2. **Seedbed**: Propagaciones activas
-3. **Shed/Shelf**: Inventario (items)
+3. **Shed/Shelf**: Inventario (Items)
 4. **Info Bar**: Stats + motivational message
 
 ---
@@ -92,19 +92,19 @@ UsuarioHaceClick(planta en garden)
 
 ---
 
-## 5. DISTRIBUCIÓN DE ITEMS
+## 5. DISTRIBUCIÓN DE registros
 
 ### Algoritmo de Layout
 ```typescript
-function distributeItems(items: GardenItem[]): Position[] {
-  // Grid responsive: 3-6 items por fila según screen
+function distributeItems(Items: GardenItem[]): Position[] {
+  // Grid responsive: 3-6 registros por fila según screen
   // Posición aleatoria sutil para "natural look"
   // No overlapping
   
   const gridCols = getGridCols(windowWidth); // 3, 4, 5, 6
   const spacing = 80; // px
   
-  return items.map((item, index) => ({
+  return registros.map((item, index) => ({
     row: Math.floor(index / gridCols),
     col: index % gridCols,
     x: (index % gridCols) * spacing + random(-10, 10),
@@ -277,7 +277,7 @@ src/components/garden/
 - [ ] 2. Connect to plantStore for plants
 - [ ] 3. Render plantas como macetas con icon
 - [ ] 4. Render propagaciones como semillas
-- [ ] 5. Render inventario como shelf items
+- [ ] 5. Render inventario como shelf registros
 - [ ] 6. Implementar click → modal con details
 - [ ] 7. Animations de entrance
 - [ ] 8. Responsive layout
@@ -305,7 +305,7 @@ Por qué $1-2? Low friction, impulse buy, no requiere suscripción
 
 ## 10. NOTAS
 
-- **No level up por ahora**: Solo aparecen items cuando existen
+- **No level up por ahora**: Solo aparecen registros cuando existen
 - **Es responsive**: Mobile = 2-3 columns, Desktop = 4-6
 - **Cada item clickeable**: Link directo a la planta real
 - **Skins son permanentes**: No expiran, una vez compradas son tuyas

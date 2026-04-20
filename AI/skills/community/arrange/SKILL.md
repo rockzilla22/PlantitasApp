@@ -80,7 +80,7 @@ Create a systematic plan:
 
 ### Choose the Right Layout Tool
 
-- **Use Flexbox for 1D layouts**: Rows of items, nav bars, button groups, card contents, most component internals. Flex is simpler and more appropriate for the majority of layout tasks.
+- **Use Flexbox for 1D layouts**: Rows of registros, nav bars, button groups, card contents, most component internals. Flex is simpler and more appropriate for the majority of layout tasks.
 - **Use Grid for 2D layouts**: Page-level structure, dashboards, data-dense interfaces, anything where rows AND columns need coordinated control.
 - **Don't default to Grid** when Flexbox with `flex-wrap` would be simpler and more flexible.
 - Use `repeat(auto-fit, minmax(280px, 1fr))` for responsive grids without breakpoints.

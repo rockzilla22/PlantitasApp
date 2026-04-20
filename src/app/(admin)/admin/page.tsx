@@ -44,6 +44,7 @@ export default function AdminPanel() {
   // Feedback filters
   const [fbSearch, setFbSearch] = useState("");
   const [fbStatusFilter, setFbStatusFilter] = useState("all");
+  const [fbTypeFilter, setFbTypeFilter] = useState("all");
 
   useEffect(() => {
     if (currentUser?.app_metadata?.role !== configProject.plans.MASTER.id) {
@@ -145,7 +146,7 @@ export default function AdminPanel() {
           role: data.role,
           gift_slots: data.gift_slots,
           extra_slots: data.extra_slots,
-          premium_expires_at: data.premium_expires_at
+          premium_expires_at: data.premium_expires_at,
         });
       },
     });
@@ -172,9 +173,10 @@ export default function AdminPanel() {
         f.description.toLowerCase().includes(fbSearch.toLowerCase()) ||
         f.user_email.toLowerCase().includes(fbSearch.toLowerCase());
       const matchesStatus = fbStatusFilter === "all" || f.status === fbStatusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesType = fbTypeFilter === "all" || f.type === fbTypeFilter;
+      return matchesSearch && matchesStatus && matchesType;
     });
-  }, [feedback, fbSearch, fbStatusFilter]);
+  }, [feedback, fbSearch, fbStatusFilter, fbTypeFilter]);
 
   const totalMasters = users.filter((u) => getPlanConfig(u).id === configProject.plans.MASTER.id).length;
   const totalPremium = users.filter((u) => getPlanConfig(u).id === configProject.plans.PREMIUM.id).length;
@@ -189,13 +191,13 @@ export default function AdminPanel() {
 
   if (loading && users.length === 0 && feedback.length === 0)
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center py-20">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Cargando sistema...</p>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
+    <div className="bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[1400px] mx-auto w-full flex flex-col gap-8">
         {/* HEADER */}
         <header className="flex flex-col gap-4">
@@ -269,7 +271,7 @@ export default function AdminPanel() {
             </div>
 
             {/* FILTERS */}
-            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 items-end shadow-sm">
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 registros-end shadow-sm">
               <div className="flex-1 min-w-0">
                 <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Buscar</label>
                 <input
@@ -308,12 +310,12 @@ export default function AdminPanel() {
                     ))}
                   </select>
                 </div>
-                <div className="flex items-end">
+                <div className="flex registros-end">
                   <button
                     title="Recargar"
                     onClick={loadData}
                     disabled={loading}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
                     <Image
                       src="/icons/common/refresh.svg"
@@ -358,9 +360,6 @@ export default function AdminPanel() {
                           {/* Usuario */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xs font-bold flex items-center justify-center shrink-0">
-                                {(u.name || u.email || "?")[0].toUpperCase()}
-                              </div>
                               <div className="min-w-0">
                                 <div className="font-semibold text-[var(--text)] truncate">{u.name || "Sin nombre"}</div>
                                 <div className="text-xs text-[var(--text)] truncate">{u.email}</div>
@@ -370,63 +369,79 @@ export default function AdminPanel() {
 
                           {/* Rol */}
                           <td className="px-6 py-4">
-                            <span className={`badge ${u.role === configProject.plans.MASTER.id ? "badge-danger" : "badge-warning"}`}>
-                              {u.role === configProject.plans.MASTER.id ? configProject.plans.MASTER.label : configProject.plans.FREE.label}
-                            </span>
+                            {(() => {
+                              const plan = getPlanConfig(u);
+
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
+                                      plan.id === configProject.plans.MASTER.id
+                                        ? "bg-[var(--danger)] text-white"
+                                        : plan.id === configProject.plans.PREMIUM.id
+                                          ? "bg-[var(--primary)] text-white"
+                                          : plan.id === configProject.plans.PRO.id
+                                            ? "bg-[var(--secondary)] text-white"
+                                            : "bg-[var(--border)] text-[var(--text)]"
+                                    }`}
+                                  >
+                                    {plan.label}
+                                  </span>
+                                </div>
+                              );
+                            })()}
                           </td>
 
                           {/* Plan */}
                           <td className="px-6 py-4">
                             {(() => {
-                              const plan = getPlanConfig(u);
                               const gSlots = u.gift_slots || 0;
                               const eSlots = u.extra_slots || 0;
                               const exp = u.premium_expires_at;
                               const start = u.premium_started_at;
-                              
+
                               return (
                                 <div className="flex flex-col gap-2">
-                                  <div className="flex items-center gap-2">
-                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                                      plan.id === configProject.plans.MASTER.id ? "bg-[var(--danger)] text-white" :
-                                      plan.id === configProject.plans.PREMIUM.id ? "bg-[var(--primary)] text-white" :
-                                      plan.id === configProject.plans.PRO.id ? "bg-[var(--secondary)] text-white" :
-                                      "bg-[var(--border)] text-[var(--text)]"
-                                    }`}>
-                                      {plan.label}
-                                    </span>
-                                  </div>
-
                                   {/* INFO EXTRA */}
-                                  <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                                    <div className="flex flex-col">
+                                  <div className={`grid gap-x-3 gap-y-1 ${exp ? "grid-cols-3" : "grid-cols-2"}`}>
+                                    {/* Columna 3 */}
+                                    <div className="flex min-w-0 flex-col">
                                       <span className="text-[9px] uppercase font-bold text-[var(--text-gray)] opacity-60">Regalo</span>
                                       <span className="text-xs font-bold text-[var(--text)]">+{gSlots} slots</span>
                                     </div>
-                                    <div className="flex flex-col">
+                                    {/* Columna 2 */}
+                                    <div className="flex min-w-0 flex-col">
                                       <span className="text-[9px] uppercase font-bold text-[var(--text-gray)] opacity-60">Extra</span>
                                       <span className="text-xs font-bold text-[var(--text)]">+{eSlots} slots</span>
                                     </div>
+                                    {/* Columna 1 */}
+                                    {exp && (
+                                      <div className="flex min-w-0 flex-col">
+                                        {(() => {
+                                          const isExpired = new Date() > new Date(exp);
+                                          return (
+                                            <>
+                                              <span
+                                                className={`text-[9px] uppercase font-bold opacity-80 ${isExpired ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}
+                                              >
+                                                {isExpired ? "Membresía Vencida" : "Membresía Premium"}
+                                              </span>
+                                              <span
+                                                className={`text-xs font-bold ${isExpired ? "text-[var(--danger)]" : "text-[var(--text)]"}`}
+                                              >
+                                                {isExpired ? "Venció: " : "Vence: "} {new Date(exp).toLocaleDateString()}
+                                              </span>
+                                            </>
+                                          );
+                                        })()}
+                                        {start && (
+                                          <span className="text-[8px] text-[var(--text-gray)]">
+                                            Inicio: {new Date(start).toLocaleDateString()}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
-
-                                  {exp && (
-                                    <div className="flex flex-col border-t border-[var(--border-light)] pt-1">
-                                      {(() => {
-                                        const isExpired = new Date() > new Date(exp);
-                                        return (
-                                          <>
-                                            <span className={`text-[9px] uppercase font-bold opacity-80 ${isExpired ? "text-[var(--danger)]" : "text-[var(--primary)]"}`}>
-                                              {isExpired ? "Membresía Vencida" : "Membresía Premium"}
-                                            </span>
-                                            <span className={`text-xs font-bold ${isExpired ? "text-[var(--danger)]" : "text-[var(--text)]"}`}>
-                                              {isExpired ? "Venció: " : "Vence: "} {new Date(exp).toLocaleDateString()}
-                                            </span>
-                                          </>
-                                        );
-                                      })()}
-                                      {start && <span className="text-[8px] text-[var(--text-gray)]">Inicio: {new Date(start).toLocaleDateString()}</span>}
-                                    </div>
-                                  )}
                                 </div>
                               );
                             })()}
@@ -503,7 +518,7 @@ export default function AdminPanel() {
             </div>
 
             {/* FILTERS FEEDBACK */}
-            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 items-end shadow-sm">
+            <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-4 registros-end shadow-sm">
               <div className="flex-1 min-w-0">
                 <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Buscar Reporte</label>
                 <input
@@ -515,6 +530,21 @@ export default function AdminPanel() {
                 />
               </div>
               <div className="flex gap-3 flex-wrap">
+                <div>
+                  <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Tipo</label>
+                  <select
+                    className="px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-xs outline-none cursor-pointer focus:border-[var(--primary)] transition-colors"
+                    value={fbTypeFilter}
+                    onChange={(e) => setFbTypeFilter(e.target.value)}
+                  >
+                    <option value="all">Todos</option>
+                    {Object.entries(configProject.feedback.types).map(([key, cfg]) => (
+                      <option key={key} value={key}>
+                        {cfg.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="text-[0.7rem] uppercase tracking-widest text-[var(--text)] mb-1.5 block">Estado</label>
                   <select
@@ -529,12 +559,12 @@ export default function AdminPanel() {
                     <option value="cerrado">Cerrado</option>
                   </select>
                 </div>
-                <div className="flex items-end">
+                <div className="flex registros-end">
                   <button
                     title="Recargar"
                     onClick={loadData}
                     disabled={loading}
-                    className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input-bg)] text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl text-[var(--text)] text-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all disabled: cursor-pointer"
                   >
                     <Image
                       src="/icons/common/refresh.svg"
@@ -555,16 +585,16 @@ export default function AdminPanel() {
                   <table className="w-full border-collapse text-sm">
                     <thead className="sticky top-0 z-10 bg-[var(--background)] border-b border-[var(--border)]">
                       <tr>
-                        <th className="px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
+                        <th className="w-[22%] px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Reporte
                         </th>
-                        <th className="px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
+                        <th className="w-[22%] px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Ubicación / Metadata
                         </th>
-                        <th className="px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
+                        <th className="w-[10%] px-4 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Estado y Prioridad
                         </th>
-                        <th className="w-[260px] max-w-[260px] px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
+                        <th className="w-[42%] px-6 py-4 text-left text-[0.7rem] text-[var(--text)] uppercase tracking-widest font-semibold">
                           Notas Admin
                         </th>
                         <th className="w-[44px] max-w-[44px] px-0 py-4 text-center text-[0.65rem] text-[var(--text)] uppercase font-semibold align-middle whitespace-nowrap overflow-hidden">
@@ -580,7 +610,7 @@ export default function AdminPanel() {
                             i % 2 === 0 ? "" : "bg-[var(--bg-faint)]/40"
                           }`}
                         >
-                          <td className="px-6 py-4 align-top w-[300px]">
+                          <td className="w-[20%] px-6 py-4 align-top w-[300px]">
                             <div className="flex flex-col gap-1">
                               {(() => {
                                 const typeCfg =
@@ -598,17 +628,10 @@ export default function AdminPanel() {
                               })()}
                               <div className="font-bold text-[var(--text)]">{f.title}</div>
                               <p className="text-xs text-[var(--text)] line-clamp-3 mb-2">{f.description}</p>
-                              <div className="text-[10px]">
-                                {f.user_name} ({f.user_email})
-                              </div>
-                              <div className="flex items-center gap-1 text-[10px] italic">
-                                <Image src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain" />
-                                <span>{new Date(f.created_at).toLocaleString()}</span>
-                              </div>
                             </div>
                           </td>
 
-                          <td className="px-6 py-4 align-top w-[250px]">
+                          <td className="w-[20%] px-6 py-4 align-top w-[250px]">
                             <div className="flex flex-col gap-2">
                               <a
                                 href={f.attachment_url}
@@ -620,6 +643,15 @@ export default function AdminPanel() {
                                   <span>{f.attachment_url}</span>
                                 </span>
                               </a>
+
+                              <div className="text-[10px] mt-2">
+                                {f.user_name} ({f.user_email})
+                              </div>
+                              <div className="flex items-center gap-1 text-[10px] italic mt-2">
+                                <Image src="/icons/common/calendar.svg" width={11} height={11} alt="" className="object-contain" />
+                                <span>{new Date(f.created_at).toLocaleString()}</span>
+                              </div>
+
                               <button
                                 onClick={() =>
                                   openModal("info", { title: "Metadata Técnica", message: JSON.stringify(f.metadata, null, 2) })
@@ -631,15 +663,10 @@ export default function AdminPanel() {
                                   <span>Ver Metadata JSON</span>
                                 </span>
                               </button>
-                              {f.metadata?.browser && (
-                                <div className="text-[9px] bg-[var(--bg-faint)] p-2 rounded-lg border border-[var(--border-light)]">
-                                  {f.metadata.browser.slice(0, 100)}...
-                                </div>
-                              )}
                             </div>
                           </td>
 
-                          <td className="px-6 py-4 align-top">
+                          <td className="w-[15%] px-4 py-4 align-top">
                             <div className="flex flex-col gap-3">
                               <div className="flex flex-col gap-1">
                                 <label className="text-[9px] font-black uppercase">Estado</label>
@@ -680,9 +707,9 @@ export default function AdminPanel() {
                             </div>
                           </td>
 
-                          <td className="w-[260px] max-w-[260px] px-6 py-4 align-top">
+                          <td className="w-[20%] px-6 py-4 align-top">
                             <textarea
-                              className="block w-full max-w-[260px] bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-xl p-3 text-xs outline-none min-h-[100px] focus:border-[var(--primary)]"
+                              className="block w-full bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-xl p-3 text-xs outline-none min-h-[100px] focus:border-[var(--primary)]"
                               placeholder="Escribir notas internas..."
                               defaultValue={f.admin_notes || ""}
                               onBlur={(e) => {
@@ -691,10 +718,15 @@ export default function AdminPanel() {
                                 }
                               }}
                             />
+                            {f.metadata?.browser && (
+                              <div className="text-[9px] bg-[var(--bg-faint)] p-2 rounded-lg border border-[var(--border-light)] mt-2">
+                                {f.metadata.browser.slice(0, 100)}...
+                              </div>
+                            )}
                           </td>
 
                           {/* Acciones Feedback */}
-                          <td className="w-[44px] max-w-[44px] px-0 py-4 text-center align-middle">
+                          <td className="w-[5%] max-w-[44px] px-0 py-4 text-center align-middle">
                             <button
                               onClick={() => handleRemoveFeedback(f.id)}
                               disabled={busyId === f.id}

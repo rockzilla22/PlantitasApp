@@ -48,8 +48,8 @@ Complete reference for Google Analytics 4 (GA4) metrics and dimensions.
 | `transactions` | Number of purchases | Sales volume |
 | `purchaseRevenue` | Revenue from purchases | Sales performance |
 | `averagePurchaseRevenue` | Average transaction value | Revenue per sale |
-| `itemsViewed` | Product detail views | Product interest |
-| `addToCarts` | Items added to cart | Purchase intent |
+| `ItemsViewed` | Product detail views | Product interest |
+| `addToCarts` | registros added to cart | Purchase intent |
 | `checkouts` | Checkout initiations | Conversion funnel |
 
 ## Key Dimensions
@@ -148,7 +148,7 @@ metrics = [
     "transactions",
     "purchaseRevenue",
     "averagePurchaseRevenue",
-    "itemsViewed",
+    "ItemsViewed",
     "addToCarts"
 ]
 dimensions = ["sessionSource", "deviceCategory"]

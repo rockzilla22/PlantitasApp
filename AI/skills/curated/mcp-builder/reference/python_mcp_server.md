@@ -87,7 +87,7 @@ class ServiceToolInput(BaseModel):
 
     param1: str = Field(..., description="First parameter description (e.g., 'user123', 'project-abc')", min_length=1, max_length=100)
     param2: Optional[int] = Field(default=None, description="Optional integer parameter with constraints", ge=0, le=1000)
-    tags: Optional[List[str]] = Field(default_factory=list, description="List of tags to apply", max_items=10)
+    tags: Optional[List[str]] = Field(default_factory=list, description="List of tags to apply", max_Items=10)
 
 @mcp.tool(
     name="service_tool_name",
@@ -188,18 +188,18 @@ class ListInput(BaseModel):
     limit: Optional[int] = Field(default=20, description="Maximum results to return", ge=1, le=100)
     offset: Optional[int] = Field(default=0, description="Number of results to skip for pagination", ge=0)
 
-async def list_items(params: ListInput) -> str:
+async def list_Items(params: ListInput) -> str:
     # Make API request with pagination
     data = await api_request(limit=params.limit, offset=params.offset)
 
     # Return pagination info
     response = {
         "total": data["total"],
-        "count": len(data["items"]),
+        "count": len(data["Items"]),
         "offset": params.offset,
-        "items": data["items"],
-        "has_more": data["total"] > params.offset + len(data["items"]),
-        "next_offset": params.offset + len(data["items"]) if data["total"] > params.offset + len(data["items"]) else None
+        "Items": data["Items"],
+        "has_more": data["total"] > params.offset + len(data["Items"]),
+        "next_offset": params.offset + len(data["Items"]) if data["total"] > params.offset + len(data["Items"]) else None
     }
     return json.dumps(response, indent=2)
 ```
@@ -222,7 +222,7 @@ async def search_tool(params: SearchInput) -> str:
         response["data"] = truncated_data
         response["truncated"] = True
         response["truncation_message"] = (
-            f"Response truncated from {len(data)} to {len(truncated_data)} items. "
+            f"Response truncated from {len(data)} to {len(truncated_data)} registros. "
             f"Use 'offset' parameter or add filters to see more results."
         )
         result = json.dumps(response, indent=2)

@@ -105,7 +105,7 @@ Refine text across these common areas:
 - Link to detailed docs if needed
 
 ### Empty States
-**Bad**: "No items"
+**Bad**: "No registros"
 **Good**: "No projects yet. Create your first project to get started."
 
 **Principles**:
