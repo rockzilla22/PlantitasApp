@@ -19,7 +19,7 @@ export default function SeasonPage() {
   ];
 
   const handleAddTask = (season: Season) => {
-    openModal("add-season-task", { season });
+    if (checkCapLimit()) openModal("add-season-task", { season });
   };
 
   const getTaskIcon = (type: string) => {

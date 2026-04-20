@@ -230,7 +230,7 @@ export async function loadTrashFromSupabase(userId: string, retentionDays: numbe
   (notes || []).forEach((n: any) => items.push(mapItem(n, "global_notes", n.content.slice(0, 60) + (n.content.length > 60 ? "…" : ""), "")));
   (wishlist || []).forEach((w: any) => items.push(mapItem(w, "wishlist", w.name, w.priority)));
 
-  return items.sort((a, b) => b.deleted_at.localeCompare(a.date));
+  return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
 }
 
 export async function emptyTrashPermanently(userId: string): Promise<void> {
