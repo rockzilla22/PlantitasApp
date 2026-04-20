@@ -95,6 +95,7 @@ export interface ConfigProject {
       color: string;
       description: string;
       maxSlots: number; // Límite de items (plantas + notas + etc)
+      trashRetentionDays: number; // Días de vigencia en papelera
       hasCloud: boolean; // Sincronización en la nube activa
       billingType: "free" | "one-time" | "subscription" | "system";
     };
@@ -296,6 +297,7 @@ const configProject: ConfigProject = {
       color: "var(--text-gray)",
       description: "Modo invitado. Tus datos se guardan solo en este navegador.",
       maxSlots: 25,
+      trashRetentionDays: 30,
       hasCloud: false,
       billingType: "free",
     },
@@ -305,6 +307,7 @@ const configProject: ConfigProject = {
       color: "var(--text-white)",
       description: "Cuenta básica. Acceso a gestión botánica local.",
       maxSlots: 50,
+      trashRetentionDays: 60,
       hasCloud: false,
       billingType: "free",
     },
@@ -313,7 +316,8 @@ const configProject: ConfigProject = {
       label: "Pro",
       color: "var(--secondary)",
       description: "Pago único. Ampliá tu capacidad local permanentemente.",
-      maxSlots: 200,
+      maxSlots: 300,
+      trashRetentionDays: 90,
       hasCloud: true,
       billingType: "one-time",
     },
@@ -323,6 +327,7 @@ const configProject: ConfigProject = {
       color: "var(--primary)",
       description: "Acceso total. Sincronización en la nube e ilimitados.",
       maxSlots: 999999,
+      trashRetentionDays: 180,
       hasCloud: true,
       billingType: "subscription",
     },
@@ -332,6 +337,7 @@ const configProject: ConfigProject = {
       color: "var(--gold)",
       description: "Nivel de sistema. Control total e integridad suprema.",
       maxSlots: 999999,
+      trashRetentionDays: 9999,
       hasCloud: true,
       billingType: "system",
     },

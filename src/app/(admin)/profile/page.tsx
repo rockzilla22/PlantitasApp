@@ -13,6 +13,7 @@ import {
   getEffectiveMaxSlots,
   loadTrashFromSupabase,
   restoreTrashItem,
+  deleteTrashItemPermanently,
   type TrashItem,
 } from "@/libs/syncService";
 import { $store } from "@/store/plantStore";
@@ -48,6 +49,7 @@ export default function ProfilePage() {
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [trashLoading, setTrashLoading] = useState(false);
   const [restoringId, setRestoringId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [linkingProvider, setLinkingProvider] = useState<"google" | "discord" | null>(null);
   const [unlinkError, setUnlinkError] = useState<string | null>(null);
 
@@ -78,6 +80,19 @@ export default function ProfilePage() {
       console.error(err);
     } finally {
       setRestoringId(null);
+    }
+  };
+
+  const handleDeletePermanent = async (item: TrashItem) => {
+    if (!confirm("¿Eliminar permanentemente? Esta acción no se puede deshacer.")) return;
+    setDeletingId(item.id);
+    try {
+      await deleteTrashItemPermanently(item.table, item.id, user!.id);
+      setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -369,6 +384,10 @@ export default function ProfilePage() {
 
               {showTrash && (
                 <div className="border-t border-[var(--border)] px-6 py-4 bg-[var(--background)] flex flex-col gap-4">
+                  <p className="text-[10px] text-[var(--text-brown)] italic bg-[var(--warning-bg)]/50 p-2 rounded-lg border border-[var(--border-light)]">
+                    💡 Los elementos en la papelera cuentan hacia tu límite de almacenamiento. 
+                    Se eliminan automáticamente después de 90 días.
+                  </p>
                   {trashLoading ? (
                     <p className="text-center py-6 text-xs text-[var(--text-brown)] animate-pulse">Cargando...</p>
                   ) : trashItems.length === 0 ? (
@@ -398,15 +417,29 @@ export default function ProfilePage() {
                               >
                                 <div className="min-w-0">
                                   <p className="text-sm font-semibold text-[var(--text)] m-0 truncate">{i.label}</p>
-                                  {i.meta && <span className="text-xs text-[var(--text-brown)] truncate block">{i.meta}</span>}
+                                  <div className="flex flex-wrap gap-2 items-center">
+                                    {i.meta && <span className="text-[10px] text-[var(--text-brown)] truncate">{i.meta}</span>}
+                                    <span className="text-[10px] text-[var(--text-gray)] italic">
+                                      Eliminado: {new Date(i.deleted_at).toLocaleDateString()}
+                                    </span>
+                                  </div>
                                 </div>
-                                <button
-                                  onClick={() => handleRestore(i)}
-                                  disabled={restoringId === i.id}
-                                  className="btn-primary py-1 px-3 text-xs ml-3 shrink-0 disabled:opacity-40"
-                                >
-                                  {restoringId === i.id ? "..." : "Restaurar"}
-                                </button>
+                                <div className="flex gap-2 ml-3 shrink-0">
+                                  <button
+                                    onClick={() => handleRestore(i)}
+                                    disabled={restoringId === i.id || deletingId === i.id}
+                                    className="btn-primary py-1 px-3 text-[10px] disabled:opacity-40"
+                                  >
+                                    {restoringId === i.id ? "..." : "Restaurar"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeletePermanent(i)}
+                                    disabled={restoringId === i.id || deletingId === i.id}
+                                    className="btn-danger py-1 px-3 text-[10px] disabled:opacity-40"
+                                  >
+                                    {deletingId === i.id ? "..." : "Borrar"}
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>

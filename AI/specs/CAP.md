@@ -1,10 +1,10 @@
 # AI/specs/CAP.md: LÍMITES DE PLANES (CAPS) - PLANTITASAPP V5
 
-Este documento especifica los límites de capacidad (caps) para cada nivel de plan en PlantitasApp, basándose en la configuración definida en `src/data/configProject.ts`.
+Este documento especifica los límites de capacidad (caps) y las políticas de retención para cada nivel de plan en PlantitasApp.
 
 ## 1. VISIÓN GENERAL
 
-Los caps en PlantitasApp limitan el número total de elementos que un usuario puede tener almacenados en su cuenta. Estos límites se aplican a la **suma de todos los elementos** en las siguientes categorías:
+Los caps en PlantitasApp limitan el número total de elementos que un usuario puede tener almacenados. Estos límites se aplican a la **suma de todos los elementos** (incluyendo los que están en la papelera) en las siguientes categorías:
 
 - **Plantas** (`src/core/plant/domain/Plant.ts`)
 - **Propagaciones** (`src/core/nursery/domain/Propagation.ts`) 
@@ -13,204 +13,241 @@ Los caps en PlantitasApp limitan el número total de elementos que un usuario pu
 - **Lista de Deseos** (`src/core/wishlist/domain/WishlistItem.ts`)
 - **Tareas Estacionales** (`src/core/season/domain/SeasonTask.ts`)
 
-Cada plan define un valor `maxSlots` que representa el límite máximo de elementos totales permitidos.
+## 2. ESPECIFICACIONES POR PLAN (Se toman de ConfigProject)
 
-## 2. ESPECIFICACIONES POR PLAN
+| Plan | ID | maxSlots | Cloud | Retención Papelera | Tipo Billing |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Sin cuenta** | `NoAccount` | 25 | No | 1 mes (30 días) | Free |
+| **Usuario** | `Free` | 50 | No | 2 meses (60 días) | Free |
+| **Pro** | `Pro` | 300 | Sí | 3 meses (90 días) | One-time |
+| **Premium** | `Premium` | 999,999 | Sí | 6 meses (180 días) | Subscription |
+| **Master** | `Master` | 999,999 | Sí | Sin límite | System |
 
-### 2.1 SIN CUENTA (NONE/NoAccount)
-- **ID**: `"NoAccount"`
-- **Etiqueta**: `"Sin cuenta"`
-- **maxSlots**: `25`
-- **hasCloud**: `false`
-- **billingType**: `"free"`
-- **Descripción**: Modo invitado. Tus datos se guardan solo en este navegador (localStorage).
-- **Límite**: 25 elementos totales entre todas las categorías
-- **Comportamiento al llegar al límite**: 
-  - Se bloquea la creación de nuevos elementos
-  - Se muestra notificación de límite alcanzado
-  - Se sugiere crear una cuenta gratuita para aumentar el límite
-  - Los datos se pierden al borrar caché o cambiar de navegador/pérfil
-
-### 2.2 GRATUITO (FREE/Free)
-- **ID**: `"Free"`
-- **Etiqueta**: `"Usuario"`
-- **maxSlots**: `50`
-- **hasCloud**: `false`
-- **billingType**: `"free"`
-- **Descripción**: Cuenta básica. Acceso a gestión botánica local.
-- **Límite**: 50 elementos totales entre todas las categorías
-- **Comportamiento al llegar al límite**:
-  - Se bloquea la creación de nuevos elementos
-  - Se muestra notificación de límite alcanzado
-  - Se sugiere actualizar a plan Pro o Premium para más capacidad
-  - Los datos persisten mientras exista la cuenta (aunque solo en localStorage)
-
-### 2.3 PRO (PRO)
-- **ID**: `"Pro"`
-- **Etiqueta**: `"Pro"`
-- **maxSlots**: `200`
-- **hasCloud**: `true`
-- **billingType**: `"one-time"`
-- **Descripción**: Pago único. Amplía tu capacidad local permanentemente.
-- **Límite**: 200 elementos totales entre todas las categorías
-- **Notas importantes**:
-  - Aunque el `maxSlots` es 200, en la práctica este plan ofrece 50 (base) + 200 (adicional) = 250 slots
-  - Esto se debe a que el plan Pro incluye los 50 slots del plan gratuito como base más 200 adicionales
-  - El límite efectivo es 250 elementos totales
-  - Tiene sincronización en la nube activada
-  - Pago único vitalicio (no requiere suscripción)
-- **Comportamiento al llegar al límite**:
-  - Se bloquea la creación de nuevos elementos
-  - Se muestra notificación de límite alcanzado
-  - Se sugiere considerar el plan Premium para capacidad ilimitada
-
-### 2.4 PREMIUM (PREMIUM)
-- **ID**: `"Premium"`
-- **Etiqueta**: `"Premium"`
-- **maxSlots**: `999999` (efectivamente ilimitado)
-- **hasCloud**: `true`
-- **billingType**: `"subscription"`
-- **Descripción**: Acceso total. Sincronización en la nube e ilimitados.
-- **Límite**: Ilimitado (999,999 elementos)
-- **Comportamiento al llegar al límite**:
-  - En la práctica, no hay límite alcanzable bajo condiciones normales de uso
-  - El límite es suficientemente alto para considerar el plan ilimitado
-  - Tiene sincronización en la nube completa y multi-dispositivo
-  - Requiere suscripción activa (mensual/anual)
-
-### 2.5 MASTER (MASTER)
-- **ID**: `"Master"`
-- **Etiqueta**: `"Master"`
-- **maxSlots**: `999999` (efectivamente ilimitado)
-- **hasCloud**: `true`
-- **billingType**: `"system"`
-- **Descripción**: Nivel de sistema. Control total e integridad suprema.
-- **Límite**: Ilimitado (999,999 elementos)
-- **Uso exclusivo**: Reservado para administradores del sistema y desarrollo interno
-- **Características adicionales**:
-  - Acceso a todas las funciones administrativas
-  - Capacidad para modificar configuraciones del sistema
-  - No está disponible para registro público estándar
+### 2.1 Políticas de Retención (Papelera)
+Los elementos eliminados se mueven a la papelera. 
+- **Siguen contando** para el límite de `maxSlots` hasta que se borran permanentemente.
+- Se eliminan automáticamente según el tiempo de vigencia de cada plan.
+- El usuario puede borrarlos manualmente en cualquier momento para liberar espacio.
 
 ## 3. IMPLEMENTACIÓN TÉCNICA
 
-### 3.1 Cálculo del Total de Elementos
-El total de elementos se calcula en tiempo real mediante la función `usedSlots` en `src/layout/Header.tsx`:
+### 3.1 Configuración Centralizada ✅ DONE
+`src/data/configProject.ts` ya tiene los valores correctos:
 
 ```typescript
-const usedSlots = useMemo(() => {
-  const invCount = Object.values(data.inventory).reduce((sum, arr) => sum + arr.length, 0);
-  const seasonCount = Object.values(data.seasonalTasks).reduce((sum, arr) => sum + arr.length, 0);
-  return data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
-}, [data]);
+plans: {
+  NONE: { ..., maxSlots: 25, trashRetentionDays: 30 },
+  FREE: { ..., maxSlots: 50, trashRetentionDays: 60 },
+  PRO: { ..., maxSlots: 300, trashRetentionDays: 90 },
+  PREMIUM: { ..., maxSlots: 999999, trashRetentionDays: 180 },
+  MASTER: { ..., maxSlots: 999999, trashRetentionDays: 9999 },
+}
 ```
 
-Esta suma incluye:
-- `data.plants.length`: Número de plantas
-- `data.propagations.length`: Número de propagaciones
-- `data.wishlist.length`: Número de elementos en wishlist
-- `data.globalNotes.length`: Número de notas globales
-- `invCount`: Total de elementos en todas las categorías de inventario
-- `seasonCount`: Total de tareas estacionales
+### 3.2 "El Muro" (checkCapLimit) — PARCIALMENTE DONE, 2 bugs pendientes
 
-### 3.2 Aplicación del Límite
-Los límites se aplican en varios puntos del sistema:
+**Estado actual:** La función existe en `src/store/plantStore.ts:116` pero tiene dos problemas.
 
-#### 3.2.1 En el Header (Visualización)
-En `src/layout/Header.tsx`, el límite actual se muestra mediante:
+#### Bug 1: Import faltante ❌
+`getEffectiveMaxSlots` se llama en línea 124 pero NO está en el import de `syncService`.
+
+**Fix:** En `src/store/plantStore.ts`, línea 10, agregar `getEffectiveMaxSlots` al import:
 ```typescript
-const maxSlotsLabel = isMasterAdmin ? "∞" : String(maxSlots);
-// ...
-<span className="text-sm text-[var(--text-gray)] opacity-60">/ {maxSlotsLabel} items</span>
+// ANTES:
+import { hasPremium, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
+
+// DESPUÉS:
+import { hasPremium, getEffectiveMaxSlots, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
 ```
 
-#### 3.2.2 En Acciones de Creación
-Antes de permitir la creación de nuevos elementos, se verifica el límite en los componentes UI y stores correspondientes. Por ejemplo:
+#### Bug 2: Trash no contabilizado para plan Pro ❌
+El spec dice que items en papelera SIGUEN contando para `maxSlots`.
+- **Free/NoAccount**: sin cloud, sin soft-delete → trash no existe → no aplica.
+- **Premium/Master**: 999999 slots → trash irrelevante en la práctica.
+- **Pro**: 300 slots → trash SÍ importa. Hay que sumarlo.
 
-- Al agregar una nueva planta: se verifica que `usedSlots < maxSlots`
-- Al agregar un elemento al inventario: se verifica que `usedSlots < maxSlots`
-- Similar para propagaciones, notas, wishlist y tareas estacionales
+**Solución: `$trashCount` atom cacheado (NO async en checkCapLimit)**
 
-#### 3.2.3 Mensajes de Límite
-Cuando se intenta superar el límite, se muestran modales de información con mensajes como:
-- "Has alcanzado el límite de tu plan actual"
-- "Para continuar, considera actualizar tu plan"
-- Específicos por categoría cuando aplica
+`checkCapLimit` es síncrona y se llama en múltiples lugares. No puede hacer fetch. La solución es un atom que cachea el conteo de trash y se actualiza cuando se carga la papelera.
 
-### 3.3 Sincronización y Persistencia
-- Los planes sin `hasCloud: true` (NONE y FREE) almacenan datos únicamente en `localStorage`
-- Los planes con `hasCloud: true` (PRO, PREMIUM, MASTER) sincronizan con Supabase
-- El límite se aplica igualmente tanto en localStorage como en la nube
-- Al sincronizar, se verifica que el total no exceda el límite del plan
+**Paso A — Agregar atom en `src/store/plantStore.ts`:**
+```typescript
+// Después de las otras exportaciones de atoms (línea 111):
+export const $trashCount = atom<number>(0);
+```
 
-## 4. CONSIDERACIONES DE USO
+**Paso B — En `checkCapLimit` (`src/store/plantStore.ts:116`), sumar `$trashCount.get()`:**
+```typescript
+export const checkCapLimit = (): boolean => {
+  const data = $store.get();
+  const user = $user.get();
+  
+  const invCount = Object.values(data.inventory).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+  const seasonCount = Object.values(data.seasonalTasks).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+  const activeSlots = data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+  const usedSlots = activeSlots + $trashCount.get(); // trash cuenta para Pro
+  
+  const maxSlots = getEffectiveMaxSlots(user);
+  // ... resto igual
+};
+```
 
-### 4.1 Monitoreo de Uso
-Los usuarios pueden ver su uso actual en:
-- Header de la aplicación: muestra `usedSlots / maxSlots`
-- Página de perfil (`/profile`): muestra detalles del plan y uso
-- Notificaciones cuando se acerca al límite (usualmente al 80% y 95%)
+**Paso C — En `src/app/(admin)/profile/page.tsx`, setear `$trashCount` cuando carga trash:**
 
-### 4.2 Actualización de Planes
-- Al actualizar de un plan con límite menor a uno mayor: el límite aumenta inmediatamente
-- Al downgradear de un plan con límite mayor a uno menor:
-  - Si el uso actual está por debajo del nuevo límite: se permite el cambio
-  - Si el uso actual está por encima del nuevo límite: se bloquea el downgrade hasta reducir el uso
-  - Se ofrece opción de archivar o eliminar elementos para reducir el conteo
+La función `handleToggleTrash` (línea 64) ya llama `loadTrashFromSupabase`. Agregar:
+```typescript
+// Agregar import:
+import { $store, $trashCount } from "@/store/plantStore";
 
-### 4.3 Casos Especiales
-- **Elementos eliminados**: van a la papelera y aún cuentan hacia el límite hasta que se eliminan permanentemente
-- **Restauración desde papelera**: verifica que haya espacio disponible antes de restaurar
-- **Importación de JSON**: verifica que el total existente + importado no exceda el límite
-- **Sincronización inicial**: verifica que los datos a sincronizar no excedan el límite del plan
+// En handleToggleTrash, después de setTrashItems(items):
+$trashCount.set(items.length);
+```
 
-## 5. RECOMENDACIONES PARA DESARROLLADORES
+**Paso D — Limpiar `$trashCount` al hacer delete permanente:**
 
-### 5.1 Agregando Nuevas Categorías
-Si se agrega una nueva categoría de elementos que deba contar hacia el límite:
-1. Añadir el conteo de esa categoría en la función `usedSlots` en `src/layout/Header.tsx`
-2. Actualizar los componentes donde se crean elementos de esa categoría para verificar el límite
-3. Asegurarse de que la lógica de límite se aplique consistentemente en stores y UI
-
-### 5.2 Pruebas de Límites
-Al desarrollar nuevas funcionalidades:
-- Probar el comportamiento exactamente en el límite (usedSlots === maxSlots)
-- Probar el intento de exceder el límite (usedSlots + 1 > maxSlots)
-- Verificar mensajes de error apropiados
-- Confirmar que se permite la acción cuando usedSlots < maxSlots
-
-### 5.3 Internacionalización
-Los mensajes relacionados con límites deben estar disponibles para internacionalización mediante el sistema de stores existente.
-
-## 6. EJEMPLOS DE CÁLCULO
-
-### Ejemplo 1: Usuario Gratuito (FREE)
-- 15 plantas
-- 8 propagaciones  
-- 5 notas globales
-- 12 elementos de inventario (3 sustratos, 4 fertilizantes, 5 otros)
-- 3 wishlist items
-- 4 tareas estacionales
-**Total**: 15 + 8 + 5 + 12 + 3 + 4 = 47/50 slots utilizados (3 disponibles)
-
-### Ejemplo 2: Usuario Pro (PRO)
-- 40 plantas
-- 25 propagaciones
-- 10 notas globales
-- 35 elementos de inventario
-- 15 wishlist items
-- 10 tareas estacionales
-**Total**: 40 + 25 + 10 + 35 + 15 + 10 = 135/250 slots utilizados (115 disponibles)
-
-### Ejemplo 3: Límite Alcanzado
-Usuario en plan Sin cuenta (NONE) con:
-- 10 plantas
-- 6 propagaciones
-- 4 notas globales
-- 3 elementos de inventario
-- 2 wishlist items
-**Total**: 10 + 6 + 4 + 3 + 2 = 25/25 slots utilizados
-- El próximo intento de crear cualquier elemento fallará con mensaje de límite alcanzado
+En `handleDeletePermanently` (profile page), después de filtrar el item borrado de `trashItems`:
+```typescript
+$trashCount.set(trashItems.length - 1); // o recalcular desde el array actualizado
+```
 
 ---
-*Este especificación refleja el estado actual de los límites de planes según definido en `src/data/configProject.ts` y su implementación en todo el códigobase de PlantitasApp V5.*
+
+### 3.3 Importación Masiva con Overflow — PENDIENTE ❌
+
+**Flujo esperado:**
+1. Usuario importa JSON en el Header.
+2. Se parsea el JSON y se calcula cuántos slots nuevos trae (items que NO están en el store actual, identificados por `id`).
+3. Si `activeSlots + newItems > maxSlots`: NO se hace mergeData. Se abre modal de selección.
+4. Modal muestra los ítems nuevos con checkboxes. El usuario elige cuáles importar hasta llenar el cupo disponible (`availableSlots = maxSlots - activeSlots - $trashCount`).
+5. Al confirmar: solo se mergean los ítems seleccionados.
+6. Si no hay overflow: merge normal como ahora.
+
+**Archivos a modificar:**
+
+#### A) `src/store/plantStore.ts` — nueva función `mergeDataSelective`
+```typescript
+// Mergea solo los items elegidos por el usuario (viene del modal de import overflow)
+export const mergeDataSelective = (incomingData: any, selectedIds: Set<number>) => {
+  const incoming = normalizeData(incomingData);
+  const data = $store.get();
+
+  const filterSelected = (items: any[]) => items.filter(i => selectedIds.has(i.id));
+
+  const mergeById = (local: any[], imported: any[]) => {
+    const map = new Map();
+    local.forEach(item => map.set(item.id, item));
+    filterSelected(imported).forEach(item => map.set(item.id, item));
+    return Array.from(map.values());
+  };
+
+  $store.set({
+    plants: mergeById(data.plants, incoming.plants),
+    propagations: mergeById(data.propagations, incoming.propagations),
+    globalNotes: mergeById(data.globalNotes, incoming.globalNotes),
+    wishlist: mergeById(data.wishlist, incoming.wishlist),
+    inventory: mergeInventory(data.inventory, incoming.inventory), // inventory no tiene IDs, se mergea completo
+    seasonalTasks: incoming.seasonalTasks,
+  });
+  setDirty(false);
+};
+```
+
+> Nota: `mergeInventory` es una función local dentro de `mergeData`. Hay que extraerla como función de módulo para reutilizarla en `mergeDataSelective`. Moverla fuera del closure de `mergeData`.
+
+#### B) `src/store/modalStore.ts` — agregar tipo `"importSelect"`
+Verificar cómo está tipado `$activeModal`. Agregar `"importSelect"` al union type si está tipado estrictamente. Props que necesita:
+```typescript
+{
+  type: "importSelect";
+  props: {
+    importedData: any;           // el JSON completo parseado
+    newItems: ImportSelectItem[]; // items nuevos (no en store actual)
+    availableSlots: number;       // cuántos puede elegir
+  };
+}
+```
+
+#### C) `src/layout/Header.tsx` — lógica de overflow antes del merge
+Reemplazar el `onChange` del input de importación:
+
+```typescript
+reader.onload = (ev) => {
+  try {
+    const importedData = JSON.parse(ev.target?.result as string);
+    const normalized = normalizeData(importedData); // necesita ser exportada desde plantStore
+    const data = $store.get();
+    const user = $user.get(); // necesita import de authStore
+    
+    // Calcular items nuevos (no presentes en store actual por ID)
+    const existingIds = new Set([
+      ...data.plants.map(p => p.id),
+      ...data.propagations.map(p => p.id),
+      ...data.globalNotes.map(n => n.id),
+      ...data.wishlist.map(w => w.id),
+    ]);
+    
+    const newItems: ImportSelectItem[] = [
+      ...normalized.plants.filter(p => !existingIds.has(p.id)).map(p => ({ id: p.id, label: p.name, category: "Planta" })),
+      ...normalized.propagations.filter(p => !existingIds.has(p.id)).map(p => ({ id: p.id, label: p.name, category: "Propagación" })),
+      ...normalized.globalNotes.filter(n => !existingIds.has(n.id)).map(n => ({ id: n.id, label: n.content.slice(0, 40), category: "Nota" })),
+      ...normalized.wishlist.filter(w => !existingIds.has(w.id)).map(w => ({ id: w.id, label: w.name, category: "Wishlist" })),
+    ];
+    
+    const invCount = Object.values(data.inventory).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+    const seasonCount = Object.values(data.seasonalTasks).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+    const activeSlots = data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+    const availableSlots = getEffectiveMaxSlots(user) - activeSlots - $trashCount.get();
+    
+    if (newItems.length > availableSlots) {
+      // Overflow: abrir modal de selección
+      openModal("importSelect", { importedData, newItems, availableSlots });
+    } else {
+      // Sin overflow: merge normal
+      mergeData(importedData);
+      openModal("info", { title: "¡Sincronizado!", message: "Fusión completada." });
+    }
+  } catch {
+    openModal("info", { title: "Error", message: "JSON corrupto." });
+  }
+};
+```
+
+> Imports adicionales que necesita Header.tsx: `normalizeData`, `$trashCount` desde `plantStore`; `$user` desde `authStore`; `getEffectiveMaxSlots` desde `syncService`.
+
+#### D) `src/components/ui/Modals.tsx` — nuevo modal `ImportSelectModal`
+
+Componente que recibe `importedData`, `newItems[]`, `availableSlots`:
+
+- Muestra: "Tenés espacio para **N** ítems nuevos. Seleccioná cuáles importar."
+- Lista scrolleable de `newItems` con checkbox por item, agrupados por categoría.
+- Contador en tiempo real: "X / N seleccionados". Deshabilitar checkboxes al llegar al límite.
+- Botones: "Cancelar" / "Importar Seleccionados" (disabled si 0 seleccionados).
+- Al confirmar: llama `mergeDataSelective(importedData, selectedIds)` luego cierra modal y muestra info de éxito.
+
+**Tipo `ImportSelectItem`** (definir en `plantStore.ts` o en un types file):
+```typescript
+export interface ImportSelectItem {
+  id: number;
+  label: string;
+  category: "Planta" | "Propagación" | "Nota" | "Wishlist";
+}
+```
+
+---
+
+## 4. ORDEN DE EJECUCIÓN
+
+```
+1. [FÁCIL]   Fix import getEffectiveMaxSlots — plantStore.ts línea 10
+2. [FÁCIL]   Agregar $trashCount atom — plantStore.ts después línea 111
+3. [FÁCIL]   Actualizar checkCapLimit para sumar $trashCount — plantStore.ts línea 116
+4. [MEDIO]   Setear $trashCount en profile/page.tsx (handleToggleTrash + handleDeletePermanently)
+5. [MEDIO]   Extraer mergeInventory como función de módulo en plantStore.ts
+6. [MEDIO]   Agregar mergeDataSelective + ImportSelectItem a plantStore.ts
+7. [MEDIO]   Agregar tipo "importSelect" a modalStore.ts
+8. [DIFÍCIL] Lógica overflow en Header.tsx (imports adicionales + cálculo + openModal)
+9. [DIFÍCIL] ImportSelectModal en Modals.tsx (UI con checkboxes, contador, límite)
+```
+
+---
+*Ultima actualización: 20 de Abril, 2026. Plan de implementación detallado post-análisis de código.*

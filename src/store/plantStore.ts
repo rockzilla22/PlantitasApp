@@ -7,7 +7,7 @@ import { WishlistItem } from "@/core/wishlist/domain/WishlistItem";
 import { GlobalNote } from "@/core/notes/domain/GlobalNote";
 import { triggerExportFlash, setDirty } from "./uiStore";
 import { $user, $syncStatus, $lastSyncTime } from "./authStore";
-import { hasPremium, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
+import { hasPremium, getEffectiveMaxSlots, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
 
 export interface AppData {
   plants: Plant[];
@@ -110,6 +110,33 @@ export const normalizeData = (d: any): AppData => {
 export const $store = map<AppData>(initialData);
 export const $selectedPlantId = atom<number | null>(null);
 
+/**
+ * EL MURO: Verifica si el usuario alcanzó el límite de su plan antes de añadir nuevos items.
+ */
+export const checkCapLimit = (): boolean => {
+  const data = $store.get();
+  const user = $user.get();
+  
+  const invCount = Object.values(data.inventory).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+  const seasonCount = Object.values(data.seasonalTasks).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
+  const usedSlots = data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+  
+  const maxSlots = getEffectiveMaxSlots(user);
+  
+  if (usedSlots >= maxSlots) {
+    openModal("confirm", {
+      title: "Límite de Almacenamiento Alcanzado",
+      message: `Has alcanzado el límite de ${maxSlots} elementos de tu plan actual. Para seguir añadiendo, borra elementos de la papelera o actualizá tu plan.`,
+      confirmText: "Ver Planes",
+      onConfirm: () => {
+        window.open("/pricing", "_blank");
+      }
+    });
+    return false;
+  }
+  return true;
+};
+
 // Flag que evita que $store.listen → saveData → syncToSupabase
 // se dispare durante una carga (loop infinito)
 let _isLoading = false;
@@ -211,6 +238,7 @@ $store.listen((value) => {
 });
 
 export const addPlant = (plant: Omit<Plant, "id" | "logs">) => {
+  if (!checkCapLimit()) return;
   const id = Date.now();
   const newPlant: Plant = {
     ...plant,
@@ -284,6 +312,7 @@ export const removePlantLog = (plantId: number, logId: number) => {
 };
 
 export const addPropagation = (prop: Omit<Propagation, "id" | "status">) => {
+  if (!checkCapLimit()) return;
   const newProp: Propagation = { ...prop, id: Date.now(), status: "Activo" };
   $store.setKey("propagations", [...$store.get().propagations, newProp]);
   setDirty(true);
@@ -314,6 +343,7 @@ export const updateInventoryItem = (category: InventoryCategory, name: string, q
   if (index >= 0) {
     catItems[index] = { ...catItems[index], qty, unit };
   } else {
+    if (!checkCapLimit()) return;
     catItems.push({ name, qty, unit } as any);
   }
   
@@ -340,6 +370,7 @@ export const removeInventoryItem = (category: InventoryCategory, name: string) =
 };
 
 export const addNote = (content: string) => {
+  if (!checkCapLimit()) return;
   const newNote: GlobalNote = { id: Date.now(), content };
   $store.setKey("globalNotes", [...$store.get().globalNotes, newNote]);
   setDirty(true);
@@ -357,6 +388,7 @@ export const updateNote = (id: number, content: string) => {
 };
 
 export const addWish = (name: string, priority: WishlistItem["priority"], notes: string) => {
+  if (!checkCapLimit()) return;
   const newWish: WishlistItem = { id: Date.now(), name, priority, notes };
   $store.setKey("wishlist", [...$store.get().wishlist, newWish]);
   setDirty(true);
@@ -374,6 +406,7 @@ export const updateWish = (id: number, wish: Partial<WishlistItem>) => {
 };
 
 export const addSeasonTask = (season: Season, type: SeasonTask["type"], desc: string) => {
+  if (!checkCapLimit()) return;
   const data = $store.get();
   const tasks = [...(data.seasonalTasks[season] || [])];
   tasks.push({ type, desc } as any);

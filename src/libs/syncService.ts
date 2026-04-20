@@ -207,6 +207,15 @@ export async function restoreTrashItem(table: TrashItem["table"], id: number, us
   }
 }
 
+export async function deleteTrashItemPermanently(table: TrashItem["table"], id: number, userId: string): Promise<void> {
+  const sb = supabaseBrowser();
+  await sb.from(table).delete().eq("id", id).eq("user_id", userId);
+  // Los logs y otros se borran por cascade en BD o manualmente si no hay FK
+  if (table === "plants") {
+    await sb.from("plant_logs").delete().eq("plant_id", id).eq("user_id", userId);
+  }
+}
+
 export async function loadFromSupabase(userId: string): Promise<AppData | null> {
   const sb = supabaseBrowser();
 
