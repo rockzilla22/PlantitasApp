@@ -109,6 +109,7 @@ export const normalizeData = (d: any): AppData => {
 
 export const $store = map<AppData>(initialData);
 export const $selectedPlantId = atom<number | null>(null);
+export const $trashCount = atom<number>(0);
 
 /**
  * EL MURO: Verifica si el usuario alcanzó el límite de su plan antes de añadir nuevos items.
@@ -116,11 +117,12 @@ export const $selectedPlantId = atom<number | null>(null);
 export const checkCapLimit = (): boolean => {
   const data = $store.get();
   const user = $user.get();
-  
+
   const invCount = Object.values(data.inventory).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
   const seasonCount = Object.values(data.seasonalTasks).reduce((sum: number, arr: any[]) => sum + arr.length, 0);
-  const usedSlots = data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
-  
+  const activeSlots = data.plants.length + data.propagations.length + data.wishlist.length + data.globalNotes.length + invCount + seasonCount;
+  const usedSlots = activeSlots + $trashCount.get();
+
   const maxSlots = getEffectiveMaxSlots(user);
   
   if (usedSlots >= maxSlots) {

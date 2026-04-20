@@ -16,7 +16,7 @@ import {
   deleteTrashItemPermanently,
   type TrashItem,
 } from "@/libs/syncService";
-import { $store } from "@/store/plantStore";
+import { $store, $trashCount } from "@/store/plantStore";
 import { translateError } from "@/libs/utils";
 import configProject from "@/data/configProject";
 
@@ -66,6 +66,7 @@ export default function ProfilePage() {
       setTrashLoading(true);
       const items = await loadTrashFromSupabase(user!.id);
       setTrashItems(items);
+      $trashCount.set(items.length);
       setTrashLoading(false);
     }
     setShowTrash((v) => !v);
@@ -88,7 +89,11 @@ export default function ProfilePage() {
     setDeletingId(item.id);
     try {
       await deleteTrashItemPermanently(item.table, item.id, user!.id);
-      setTrashItems((prev) => prev.filter((i) => i.id !== item.id));
+      setTrashItems((prev) => {
+        const updated = prev.filter((i) => i.id !== item.id);
+        $trashCount.set(updated.length);
+        return updated;
+      });
     } catch (err: any) {
       console.error(err);
     } finally {
