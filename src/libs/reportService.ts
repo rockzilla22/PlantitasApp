@@ -9,7 +9,7 @@ import { AppData } from "@/store/plantStore";
  * Focado en legibilidad técnica y datos puros.
  */
 export const generateFullReport = (data: AppData, userName: string) => {
-  const doc = jsPDF();
+  const doc = new jsPDF();
   const now = new Date().toLocaleString("es-AR");
 
   // --- Título del Reporte ---
