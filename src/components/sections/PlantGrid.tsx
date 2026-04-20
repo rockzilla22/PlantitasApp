@@ -42,14 +42,14 @@ export function PlantGrid({ plants }: PlantGridProps) {
               style={{ borderTop: `5px solid ${selectedId === plant.id ? "var(--primary)" : "var(--primary-light)"}` }}
             >
               {/* ROW 1: HEADER (Identidad) */}
-              <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-start min-w-0">
                 <div className="flex flex-col gap-y-2 min-w-0">
                   <h3 className="text-[var(--primary)] mb-2 flex items-center gap-3 text-lg font-bold">
                     <div className="flex items-center justify-center shrink-0">
-                      {isCustom ? (
+                      {plant.icon && !plant.icon.startsWith("/") ? (
                         <span className="text-2xl">{plant.icon}</span>
                       ) : (
-                        <Image src={plantImg} alt={plant.type} width={26} height={26} className="object-contain" />
+                        <Image src={plant.icon || plantImg} alt={plant.type} width={26} height={26} className="object-contain" />
                       )}
                     </div>
                     <span className="truncate">{plant.name}</span>
@@ -59,8 +59,15 @@ export function PlantGrid({ plants }: PlantGridProps) {
                     <small className="text-xs text-[var(--text-brown)] uppercase tracking-widest truncate block">{plant.location}</small>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-y-2 shrink-0">
-                  <span className="badge badge-info text-[0.7rem] px-3 py-1">{plant.type}</span>
+                <div className="flex max-w-[9.5rem] flex-col items-end gap-y-1 shrink-0">
+                  <span className="badge badge-info block max-w-full truncate text-[0.7rem] px-3 py-1" title={plant.type}>
+                    {plant.type}
+                  </span>
+                  {plant.subtype && (
+                    <span className="text-[0.65rem] text-[var(--text-gray)] font-bold uppercase tracking-tight truncate max-w-full mt-4 px-1" title={plant.subtype}>
+                      {plant.subtype}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -84,9 +91,12 @@ export function PlantGrid({ plants }: PlantGridProps) {
                 <div className="flex flex-col gap-y-2">
                   <span className="text-[0.85rem] italic">Perfil Completo</span>
                 </div>
-                 <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
-                   Ver más
-                 </button>
+                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-[14px] w-[14px] bg-[var(--primary)] [mask-image:url('/icons/common/arrow_rigth.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] [-webkit-mask-image:url('/icons/common/arrow_rigth.svg')] [-webkit-mask-position:center] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:contain]"
+                  />
+                </button>
               </div>
             </div>
           );

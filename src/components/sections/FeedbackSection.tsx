@@ -82,7 +82,7 @@ export function FeedbackSection() {
 
       {/* Formulario */}
       {isOpen && (
-        <div className="absolute bottom-16 left-0 w-[320px] sm:w-[380px] bg-[var(--card-bg)] border border-[var(--border-light)] rounded-[2.5rem] shadow-2xl p-6 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="absolute bottom-16 left-0 sm:left-0 w-[calc(100vw-3rem)] sm:w-[380px] bg-[var(--white)] border border-[var(--border-light)] rounded-[2.5rem] shadow-2xl p-6 animate-in slide-in-from-bottom-4 duration-300 z-[1001]">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold text-[var(--primary)] flex items-center gap-2">
               <Image src="/icons/common/notes.svg" alt="Feedback" width={20} height={20} />

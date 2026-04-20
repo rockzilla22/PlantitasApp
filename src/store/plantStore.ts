@@ -6,7 +6,7 @@ import { SeasonTask, Season } from "@/core/season/domain/SeasonTask";
 import { WishlistItem } from "@/core/wishlist/domain/WishlistItem";
 import { GlobalNote } from "@/core/notes/domain/GlobalNote";
 import { triggerExportFlash, setDirty } from "./uiStore";
-import { $user, $syncStatus } from "./authStore";
+import { $user, $syncStatus, $lastSyncTime } from "./authStore";
 import { hasPremium, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
 
 export interface AppData {
@@ -122,6 +122,9 @@ export const loadData = async () => {
 
   // Carga local primero (respuesta instantánea)
   const saved = localStorage.getItem("plantitas_db");
+  const lastSync = localStorage.getItem("plantitas_last_sync");
+  if (lastSync) $lastSyncTime.set(lastSync);
+
   if (saved) {
     try {
       $store.set(normalizeData(JSON.parse(saved)));
@@ -141,6 +144,9 @@ export const loadData = async () => {
         _isLoading = true; 
         $store.set(remoteData);
         localStorage.setItem("plantitas_db", JSON.stringify(remoteData));
+        const now = new Date().toISOString();
+        $lastSyncTime.set(now);
+        localStorage.setItem("plantitas_last_sync", now);
         $syncStatus.set("synced");
       } else {
         $syncStatus.set("idle");
@@ -169,10 +175,34 @@ export const saveData = (data: AppData) => {
     
     _syncTimeout = setTimeout(() => {
       syncToSupabase(data, user.id)
-        .then(() => $syncStatus.set("synced"))
+        .then(() => {
+          const now = new Date().toISOString();
+          $lastSyncTime.set(now);
+          localStorage.setItem("plantitas_last_sync", now);
+          $syncStatus.set("synced");
+        })
         .catch(() => $syncStatus.set("error"))
         .finally(() => { _syncTimeout = null; });
     }, 5000);
+  }
+};
+
+export const forceSync = async () => {
+  const user = $user.get();
+  if (!user || !hasPremium(user)) return;
+
+  if (_syncTimeout) clearTimeout(_syncTimeout);
+  $syncStatus.set("syncing");
+
+  try {
+    await syncToSupabase($store.get(), user.id);
+    const now = new Date().toISOString();
+    $lastSyncTime.set(now);
+    localStorage.setItem("plantitas_last_sync", now);
+    $syncStatus.set("synced");
+  } catch (err) {
+    console.error("Force sync error:", err);
+    $syncStatus.set("error");
   }
 };
 

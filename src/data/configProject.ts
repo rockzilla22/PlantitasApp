@@ -146,9 +146,9 @@ const configProject: ConfigProject = {
   images: {
     ogDefault: "/PageCover/cover.webp",
     twitterCard: "/PageCover/cover.webp",
-    favicon: "/icons/environment/location/greenhouse.svg",
-    icon16: "/icons/environment/location/greenhouse.svg",
-    icon32: "/icons/environment/location/greenhouse.svg",
+    favicon: "/PageCover/favicon.svg",
+    icon16: "/PageCover/favicon.svg",
+    icon32: "/PageCover/favicon.svg",
     icon192: "/PageCover/favicon.svg",
     icon512: "/PageCover/favicon.svg",
     appleTouch: "/PageCover/favicon.svg",
