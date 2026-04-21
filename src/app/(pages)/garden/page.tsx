@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "@nanostores/react";
 import { $store } from "@/store/plantStore";
 import { $roomSkins } from "@/store/gardenStore";
@@ -8,9 +8,20 @@ import { PLANT_LOCATIONS } from "@/data/catalog";
 import { LOCATION_TO_ROOM_KEY, getPlantsByRoom } from "@/helpers/garden";
 import { RoomCard } from "@/components/garden/RoomCard";
 
+type SortMode = "count-desc" | "count-asc" | "name-asc" | "name-desc";
+
+const SORT_LABELS: Record<SortMode, string> = {
+  "count-desc": "Más plantas primero",
+  "count-asc": "Menos plantas primero",
+  "name-asc": "Nombre A→Z",
+  "name-desc": "Nombre Z→A",
+};
+
 export default function GardenPage() {
   const storeData = useStore($store);
   const roomSkins = useStore($roomSkins);
+  const [sort, setSort] = useState<SortMode>("count-desc");
+
   const plantsByRoom = useMemo(
     () => getPlantsByRoom(storeData.plants ?? []),
     [storeData.plants]
@@ -19,29 +30,54 @@ export default function GardenPage() {
   const totalPlants = storeData.plants?.filter((p) => !p.deleted_at).length ?? 0;
   const occupiedRooms = Object.keys(plantsByRoom).filter((k) => plantsByRoom[k].length > 0).length;
 
+  const sortedRooms = useMemo(() => {
+    const rooms = PLANT_LOCATIONS.map((loc) => ({
+      roomKey: LOCATION_TO_ROOM_KEY[loc.value] ?? "storage",
+      label: loc.value === "Otros" ? "Bodega" : loc.label,
+      plants: plantsByRoom[LOCATION_TO_ROOM_KEY[loc.value] ?? "storage"] ?? [],
+    }));
+
+    return [...rooms].sort((a, b) => {
+      if (sort === "count-desc") return b.plants.length - a.plants.length;
+      if (sort === "count-asc") return a.plants.length - b.plants.length;
+      if (sort === "name-asc") return a.label.localeCompare(b.label, "es");
+      if (sort === "name-desc") return b.label.localeCompare(a.label, "es");
+      return 0;
+    });
+  }, [plantsByRoom, sort]);
+
   return (
     <div className="garden-page">
       <div className="garden-header">
-        <h1>Mi Jardín - Beta / En Desarrollo</h1>
-        <p className="garden-summary">
-          {totalPlants} {totalPlants === 1 ? "planta" : "plantas"} en {occupiedRooms} {occupiedRooms === 1 ? "habitación" : "habitaciones"}
-        </p>
+        <div>
+          <h1>Mi Jardín</h1>
+          <p className="garden-summary">
+            {totalPlants} {totalPlants === 1 ? "planta" : "plantas"} en {occupiedRooms} {occupiedRooms === 1 ? "habitación" : "habitaciones"}
+          </p>
+        </div>
+        <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
+          {(Object.keys(SORT_LABELS) as SortMode[]).map((k) => (
+            <button
+              key={k}
+              className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sort === k ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
+              onClick={() => setSort(k)}
+            >
+              {SORT_LABELS[k]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="garden-grid">
-        {PLANT_LOCATIONS.map((loc) => {
-          const roomKey = LOCATION_TO_ROOM_KEY[loc.value] ?? "storage";
-          const label = loc.value === "Otros" ? "Bodega" : loc.label;
-          return (
-            <RoomCard
-              key={roomKey}
-              roomKey={roomKey}
-              label={label}
-              plants={plantsByRoom[roomKey] ?? []}
-              skinId={roomSkins[roomKey] ?? "standard"}
-            />
-          );
-        })}
+        {sortedRooms.map(({ roomKey, label, plants }) => (
+          <RoomCard
+            key={roomKey}
+            roomKey={roomKey}
+            label={label}
+            plants={plants}
+            skinId={roomSkins[roomKey] ?? "standard"}
+          />
+        ))}
       </div>
 
       <style jsx>{`
@@ -52,7 +88,12 @@ export default function GardenPage() {
         }
 
         .garden-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
           margin-bottom: 2rem;
+          flex-wrap: wrap;
         }
 
         .garden-header h1 {
@@ -64,6 +105,11 @@ export default function GardenPage() {
         .garden-summary {
           font-size: 0.95rem;
           color: var(--text-gray);
+        }
+
+        .garden-header .sort-group {
+          align-self: center;
+          flex-shrink: 0;
         }
 
         .garden-grid {

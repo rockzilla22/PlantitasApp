@@ -12,7 +12,9 @@
 - **Respuestas**: Comentarios en posts
 - **Citas**: "Quote" de otro post dentro de respuesta
 - **Votos**: Upvote/downvote en posts y respuestas
+- **Access**: All can read, only login users can send post.
 
+File: E:\Archivos\Documents\devcode\5.Pruebas\PlantitasApp\src\app\(pages)\forum
 ---
 
 ## 2. DATA MODEL
