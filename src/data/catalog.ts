@@ -65,7 +65,7 @@ export const SEASON_TASK_TYPES: Option[] = [
 
 export const INVENTORY_CATEGORIES: Option[] = [
   { value: "fertilizers", label: "Fertilizantes", img: "/icons/environment/inventory/fertilizer.svg" },
-  { value: "meds", label: "Insecticidas/Medicinas", img: "/icons/environment/inventory/medicine.svg" },
+  { value: "meds", label: "Insecticidas/Fungicida", img: "/icons/environment/inventory/medicine.svg" },
   { value: "liquids", label: "Líquidos", img: "/icons/environment/log/lab.svg" },
   { value: "powders", label: "Polvos", img: "/icons/environment/log/powder.svg" },
   { value: "substrates", label: "Sustratos", img: "/icons/environment/log/substrates.svg" },
@@ -105,8 +105,8 @@ export const LOG_ACTIONS: LogActionOption[] = [
     img: "/icons/environment/inventory/fertilizer.svg",
   },
   {
-    value: "Insecticidas/Medicinas",
-    label: "Insecticidas/Medicinas",
+    value: "Insecticidas/Fungicida",
+    label: "Insecticidas/Fungicida",
     inventoryCategory: "meds",
     img: "/icons/environment/inventory/medicine.svg",
   },
@@ -124,7 +124,7 @@ export const LOG_ACTIONS: LogActionOption[] = [
 
 export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
   Fertilizante: "/icons/environment/inventory/fertilizer.svg",
-  "Insecticidas/Medicinas": "/icons/environment/inventory/medicine.svg",
+  "Insecticidas/Fungicida": "/icons/environment/inventory/medicine.svg",
   Líquidos: "/icons/environment/log/lab.svg",
   Medición: "/icons/environment/log/rule.svg",
   Nota: "/icons/common/notes.svg",
@@ -139,7 +139,7 @@ export const LOG_ACTION_ICON_BY_VALUE: Record<string, string> = {
 
 export const LOG_ACTION_INVENTORY_CATEGORY_BY_VALUE: Record<string, string> = {
   Fertilizante: "fertilizers",
-  "Insecticidas/Medicinas": "meds",
+  "Insecticidas/Fungicida": "meds",
   Líquidos: "liquids",
   "Plaga/Enfermedad": "meds",
   Polvos: "powders",

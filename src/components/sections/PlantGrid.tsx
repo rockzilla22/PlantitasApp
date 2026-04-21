@@ -3,6 +3,7 @@
 import { Plant } from "@/core/plant/domain/Plant";
 import { useStore } from "@nanostores/react";
 import { $selectedPlantId } from "@/store/plantStore";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { PLANT_TYPES } from "@/data/catalog";
 
@@ -12,11 +13,24 @@ interface PlantGridProps {
 
 export function PlantGrid({ plants }: PlantGridProps) {
   const selectedId = useStore($selectedPlantId);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "Nunca";
     return dateStr.split("-").reverse().join("/");
   };
+
+  if (!hasMounted) {
+    return (
+      <div id="plants-list" className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-8 gap-y-8 w-full px-1 min-w-0">
+        {/* Placeholder vacío para evitar mismatch */}
+      </div>
+    );
+  }
 
   const sortedPlants = [...plants].sort((a, b) => a.name.localeCompare(b.name));
 
