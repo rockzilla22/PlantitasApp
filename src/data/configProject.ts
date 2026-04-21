@@ -217,7 +217,7 @@ const configProject: ConfigProject = {
         href: "/inventory",
       },
       season: {
-        label: "Temporada",
+        label: "Planeación",
         description: "Organiza tareas por estación. Riego, poda, fertilización y siembra según el ciclo natural.",
         icon: "/icons/common/calendar.svg",
         href: "/season",
@@ -234,7 +234,12 @@ const configProject: ConfigProject = {
         icon: "/icons/common/notes.svg",
         href: "/notes",
       },
-
+      garden: {
+        label: "Jardín",
+        description: "El espacio donde tu esfuerzo florece y tu colección cobra vida.",
+        icon: "/icons/environment/location/home.svg",
+        href: "/garden",
+      },
     },
     EN: {
       plants: {

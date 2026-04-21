@@ -427,11 +427,11 @@ export const updateWish = (id: number, wish: Partial<WishlistItem>) => {
   setDirty(true);
 };
 
-export const addSeasonTask = (season: Season, type: SeasonTask["type"], desc: string) => {
+export const addSeasonTask = (season: Season, type: SeasonTask["type"], desc: string, date?: string) => {
   if (!checkCapLimit()) return;
   const data = $store.get();
   const tasks = [...(data.seasonalTasks[season] || [])];
-  tasks.push({ type, desc } as any);
+  tasks.push({ type, desc, date } as any);
   $store.setKey("seasonalTasks", { ...data.seasonalTasks, [season]: tasks });
   setDirty(true);
 };

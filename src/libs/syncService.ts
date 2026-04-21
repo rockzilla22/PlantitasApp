@@ -178,6 +178,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
       season,
       type: t.type,
       description: t.desc,
+      date: t.date || null,
     }))
   );
   if (seasonRows.length > 0) {
@@ -333,7 +334,7 @@ export async function loadFromSupabase(userId: string): Promise<AppData | null> 
   (seasonal_tasks || []).forEach((t: any) => {
     const season = t.season as keyof AppData["seasonalTasks"];
     if (mappedSeasonal[season]) {
-      mappedSeasonal[season].push({ type: t.type, desc: t.description } as any);
+      mappedSeasonal[season].push({ type: t.type, desc: t.description, date: t.date } as any);
     }
   });
 

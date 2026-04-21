@@ -10,6 +10,7 @@ export type ModalType =
   | "calendar" | "info" | "confirm" | "import-choice"
   | "admin-premium" | "admin-master"
   | "import-select"
+  | "room-plants"
   | null;
 
 export interface ModalContext {
