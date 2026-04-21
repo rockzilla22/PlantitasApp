@@ -36,7 +36,7 @@ Para operar aquí, debes conocer la ubicación de los sistemas críticos:
 
 ### 1. El Núcleo (Carpeta AI/)
 
-* **ARCHITECTURE_BLUEPRINT_NEXT.md**: La ley sobre Next.js, Server Components y la frontera RSC/Client.
+* **ARCHITECTURE_BLUEPRINT.md**: La ley sobre Next.js, Server Components y la frontera RSC/Client.
 * **SECURITY_FIREWALL.md**: Protocolos de defensa. Reemplaza a llmignore.md para el control de accesos.
 * **rules/DESIGN_SYSTEM.md**: El firewall visual. Prohibido usar colores o sombras fuera de estos tokens.
 * **rules/TDD_DDD_PROTOCOLS.md**: Estructura de lógica de negocio (src/core) vs infraestructura (src/app).
@@ -108,4 +108,4 @@ Antes de proponer cualquier cambio técnico, el agente debe:
 
 ## Verificación Final para la IA
 
-¿Has leído el AI/ARCHITECTURE_BLUEPRINT_NEXT.md? Si no, hazlo ahora. En este hangar, la arquitectura limpia no es una opción, es la ley.
+¿Has leído el AI/ARCHITECTURE_BLUEPRINT.md? Si no, hazlo ahora. En este hangar, la arquitectura limpia no es una opción, es la ley.
