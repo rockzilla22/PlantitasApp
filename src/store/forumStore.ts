@@ -185,10 +185,18 @@ export async function voteReply(replyId: string, postId: string, userId: string,
   }
 
   // 2. Persist to DB
+  let dbErr;
   if (current === vote) {
-    await sb.from("reply_votes").delete().eq("user_id", userId).eq("reply_id", replyId);
+    const { error } = await sb.from("reply_votes").delete().eq("user_id", userId).eq("reply_id", replyId);
+    dbErr = error;
   } else {
-    await sb.from("reply_votes").upsert({ user_id: userId, reply_id: replyId, vote });
+    const { error } = await sb.from("reply_votes").upsert({ user_id: userId, reply_id: replyId, vote });
+    dbErr = error;
+  }
+
+  if (dbErr) {
+    console.error("Error al persistir voto en reply_votes:", dbErr);
+    return;
   }
 
   // 3. Sync final counts to DB
@@ -197,10 +205,11 @@ export async function voteReply(replyId: string, postId: string, userId: string,
     sb.from("reply_votes").select("*", { count: "exact", head: true }).eq("reply_id", replyId).eq("vote", -1),
   ]);
 
-  await sb.from("replies").update({ upvotes: up ?? 0, downvotes: down ?? 0 }).eq("id", replyId);
+  const { error: updateErr } = await sb.from("replies").update({ upvotes: up ?? 0, downvotes: down ?? 0 }).eq("id", replyId);
   
-  // IMPORTANTE: No llamamos a loadReplies(postId) aquí para no pisar el estado optimista.
-  // La DB ya se actualizó en segundo plano.
+  if (updateErr) {
+    console.error("Error al actualizar contadores en tabla 'replies'. ¿Existen las columnas upvotes/downvotes?:", updateErr);
+  }
 }
 
 // Accept reply (post author only)

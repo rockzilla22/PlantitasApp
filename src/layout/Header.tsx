@@ -163,11 +163,44 @@ export function Header() {
     });
     data.propagations.forEach((p) => {
       if (p.name.toLowerCase().includes(q) || p.method.toLowerCase().includes(q)) {
-        matches.push({ type: "Propagación", name: p.name, icon: "/icons/environment/log/lab.svg", id: p.id, href: "/nursery" });
+        matches.push({ type: "Propagación", name: p.name, icon: "/icons/environment/plants/seed.svg", id: p.id, href: "/nursery" });
       }
     });
+
+    // Búsqueda en Inventario
+    Object.entries(data.inventory).forEach(([cat, items]: [string, any[]]) => {
+      items.forEach((item) => {
+        if (item.name.toLowerCase().includes(q)) {
+          matches.push({ type: `Insumo (${cat})`, name: item.name, icon: "/icons/environment/inventory/box.svg", id: `inv-${item.name}`, href: "/inventory" });
+        }
+      });
+    });
+
+    // Búsqueda en Planeación (Temporadas)
+    Object.entries(data.seasonalTasks).forEach(([season, tasks]: [string, any[]]) => {
+      tasks.forEach((task) => {
+        if (task.desc.toLowerCase().includes(q) || task.type.toLowerCase().includes(q)) {
+          matches.push({ type: `Tarea (${season})`, name: task.desc, icon: "/icons/common/calendar.svg", id: `task-${task.desc}`, href: "/season" });
+        }
+      });
+    });
+
+    // Búsqueda en Lista de Deseos
+    data.wishlist.forEach((w) => {
+      if (w.name.toLowerCase().includes(q) || (w.notes && w.notes.toLowerCase().includes(q))) {
+        matches.push({ type: "Deseo", name: w.name, icon: "/icons/common/stars.svg", id: w.id, href: "/wishlist" });
+      }
+    });
+
+    // Búsqueda en Notas Globales
+    data.globalNotes.forEach((n) => {
+      if (n.content.toLowerCase().includes(q)) {
+        matches.push({ type: "Nota", name: n.content.substring(0, 30) + "...", icon: "/icons/common/notes.svg", id: n.id, href: "/notes" });
+      }
+    });
+
     setSearchResults(matches);
-  }, [searchQuery, data]);
+    }, [searchQuery, data]);
 
   const tabs = Object.entries(configProject.navigation.ES).map(([id, item]) => ({ ...item, id: `tab-${id}` }));
 

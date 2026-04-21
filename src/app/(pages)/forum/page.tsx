@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "@nanostores/react";
-import { $posts, $forumLoading, $userVotes, loadPosts, loadUserVotes, deletePost } from "@/store/forumStore";
+import { $posts, $forumLoading, $userVotes, $userReplyVotes, loadPosts, loadUserVotes, loadUserReplyVotes, deletePost } from "@/store/forumStore";
 import { $user } from "@/store/authStore";
 import { Post, PostType, POST_TYPE_LABELS } from "@/core/forum/domain/Forum";
 import { PostCard } from "@/components/forum/PostCard";
@@ -44,7 +44,10 @@ export default function ForumPage() {
 
   useEffect(() => {
     loadPosts();
-    if (user?.id) loadUserVotes(user.id);
+    if (user?.id) {
+      loadUserVotes(user.id);
+      loadUserReplyVotes(user.id);
+    }
   }, [user?.id]);
 
   useEffect(() => {

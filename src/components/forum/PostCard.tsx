@@ -111,9 +111,12 @@ export function PostCard({ post, onClick, currentUserId, isMaster, onModerate, o
       </div>
 
       {/* FOOTER: Stats y Tags */}
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-[var(--border-light)]">
-        <div className="flex gap-4 font-bold text-[0.7rem] uppercase tracking-wider text-[var(--text-brown)]">
-          <span className="flex items-center gap-2">
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-[var(--border-light)] text-[var(--text-brown)]">
+        <div className="flex gap-4 font-bold text-[0.7rem] uppercase tracking-wider">
+          <span className={`flex items-center gap-1 ${score > 0 ? "text-[var(--success)]" : score < 0 ? "text-[var(--danger)]" : ""}`}>
+            {score > 0 ? "▲" : score < 0 ? "▼" : "•"} {Math.abs(score)}
+          </span>
+          <span className="flex items-center gap-2 opacity-70">
             <Image 
               src="/icons/common/chat.svg" 
               alt="Respuestas" 

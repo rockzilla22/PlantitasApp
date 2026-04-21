@@ -245,7 +245,7 @@ const configProject: ConfigProject = {
         description: "El espacio los Plant Lover pueden compartir experiencias, consejos y fotos de sus plantas.",
         icon: "/icons/common/sand_timer.svg",
         href: "/forum",
-      }
+      },
     },
     EN: {
       plants: {
@@ -257,8 +257,14 @@ const configProject: ConfigProject = {
       nursery: {
         label: "Nursery",
         description: "Track cuttings and seeds. Link propagations with their parent plants and monitor their progress.",
-        icon: "/icons/environment/log/lab.svg",
+        icon: "/icons/environment/plants/seed.svg",
         href: "/nursery",
+      },
+      inventory: {
+        label: "Inventory",
+        description: "Keep your supplies stock up to date: substrates, fertilizers, and medications.",
+        icon: "/icons/environment/inventory/box.svg",
+        href: "/inventory",
       },
       season: {
         label: "Season",
@@ -269,14 +275,8 @@ const configProject: ConfigProject = {
       wishlist: {
         label: "Wishlist",
         description: "Your botanical Wishlist organized by priority so you don't miss anything.",
-        icon: "/icons/common/stars.svg",
+        icon: "/icons/common/gift.svg",
         href: "/wishlist",
-      },
-      inventory: {
-        label: "Inventory",
-        description: "Keep your supplies stock up to date: substrates, fertilizers, and medications.",
-        icon: "/icons/environment/inventory/box.svg",
-        href: "/inventory",
       },
       notes: {
         label: "Notes",
@@ -286,9 +286,15 @@ const configProject: ConfigProject = {
       },
       garden: {
         label: "Garden",
-        description: "Visualize and manage your entire garden.",
+        description: "The space where your effort flourishes and your collection comes to life.",
         icon: "/icons/environment/location/home.svg",
         href: "/garden",
+      },
+      forum: {
+        label: "Forum",
+        description: "The space where Plant Lovers can share experiences, advice, and photos of their plants.",
+        icon: "/icons/common/sand_timer.svg",
+        href: "/forum",
       },
     },
   },

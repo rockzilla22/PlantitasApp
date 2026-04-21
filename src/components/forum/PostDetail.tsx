@@ -223,9 +223,6 @@ export function PostDetail({
 
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center font-black text-[0.6rem] text-[var(--primary)] uppercase shrink-0">
-                      {r.author_name.slice(0, 2)}
-                    </div>
                     <span className="text-sm font-bold text-[var(--text-brown)]">@{r.author_name}</span>
                     <span className="text-[0.6rem] font-medium text-[var(--text-gray)] opacity-50">{timeAgo(r.created_at)}</span>
                     {r.is_accepted && (
