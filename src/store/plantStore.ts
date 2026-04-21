@@ -5,7 +5,7 @@ import { InventoryItem, InventoryCategory } from "@/core/inventory/domain/Invent
 import { SeasonTask, Season } from "@/core/season/domain/SeasonTask";
 import { WishlistItem } from "@/core/wishlist/domain/WishlistItem";
 import { GlobalNote } from "@/core/notes/domain/GlobalNote";
-import { triggerExportFlash, setDirty } from "./uiStore";
+import { $isDirty, triggerExportFlash, setDirty } from "./uiStore";
 import { openModal } from "./modalStore";
 import { $user, $syncStatus, $lastSyncTime } from "./authStore";
 import { hasPremium, getEffectiveMaxSlots, syncToSupabase, loadFromSupabase } from "@/libs/syncService";

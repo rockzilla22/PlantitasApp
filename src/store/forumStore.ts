@@ -130,6 +130,26 @@ export async function createReply(payload: {
   return !error;
 }
 
+async function refreshPostVoteCounts(postId: string) {
+  const sb = supabaseBrowser();
+  const [{ count: upvotes }, { count: downvotes }] = await Promise.all([
+    sb.from("post_votes").select("*", { count: "exact", head: true }).eq("post_id", postId).eq("vote", 1),
+    sb.from("post_votes").select("*", { count: "exact", head: true }).eq("post_id", postId).eq("vote", -1),
+  ]);
+
+  const nextUpvotes = upvotes ?? 0;
+  const nextDownvotes = downvotes ?? 0;
+
+  const updatedPosts = $posts.get().map((post) =>
+    post.id === postId
+      ? { ...post, upvotes: nextUpvotes, downvotes: nextDownvotes }
+      : post
+  );
+
+  $posts.set(updatedPosts);
+  await sb.from("posts").update({ upvotes: nextUpvotes, downvotes: nextDownvotes }).eq("id", postId);
+}
+
 // Vote post
 export async function votePost(postId: string, userId: string, vote: 1 | -1) {
   const sb = supabaseBrowser();
@@ -138,9 +158,6 @@ export async function votePost(postId: string, userId: string, vote: 1 | -1) {
   if (current === vote) {
     // Toggle off
     await sb.from("post_votes").delete().eq("user_id", userId).eq("post_id", postId);
-    await sb.from("posts").update({
-      [vote === 1 ? "upvotes" : "downvotes"]: sb.rpc as any,
-    });
     // Refetch to get accurate counts
     const { data } = await sb.from("post_votes").select("post_id, vote").eq("user_id", userId);
     const newMap: Record<string, -1 | 1> = {};
@@ -151,7 +168,7 @@ export async function votePost(postId: string, userId: string, vote: 1 | -1) {
     $userVotes.setKey(postId, vote);
   }
   // Refresh post counts via RPC or re-fetch
-  await refreshPostVoteCounts(postId, userId);
+  await refreshPostVoteCounts(postId);
 }
 
 // Vote reply

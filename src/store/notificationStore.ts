@@ -71,8 +71,9 @@ export async function loadNotifications(userId: string) {
   }
 
   if (data) {
-    $notifications.set(data as Notification[]);
-    $unreadCount.set(data.filter((n) => !(n as Notification).is_read).length);
+    const notifications = data as Notification[];
+    $notifications.set(notifications);
+    $unreadCount.set(notifications.filter((notification) => !notification.is_read).length);
   }
   $notificationsLoading.set(false);
 }
