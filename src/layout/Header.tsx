@@ -7,6 +7,7 @@ import { $store, loadData, setStoreData, $selectedPlantId, mergeData, normalizeD
 import { useStore } from "@nanostores/react";
 import { openModal } from "@/store/modalStore";
 import { $user, $authLoading, $syncStatus, $lastSyncTime } from "@/store/authStore";
+import { $notifications, $unreadCount, loadNotifications, markAllAsRead, NOTIFICATION_ICONS, timeAgo } from "@/store/notificationStore";
 import { supabaseBrowser } from "@/libs/db";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
@@ -30,9 +31,12 @@ export function Header() {
   const [isNotifyMenuOpen, setIsNotifyMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notifyMenuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const lastSyncTime = useStore($lastSyncTime);
   const syncStatus = useStore($syncStatus);
+  const notifications = useStore($notifications);
+  const unreadCount = useStore($unreadCount);
 
   const formatLastSync = (iso?: string | null) => {
     if (!iso) return "Nunca";
@@ -85,11 +89,14 @@ export function Header() {
   }, [daysLeft]);
 
   const handleOpenNotify = () => {
-    setIsNotifyMenuOpen(!isNotifyMenuOpen);
-    if (!isNotifyMenuOpen && hasNewNotification) {
-      // Guardamos que ya la vio hoy
-      localStorage.setItem("last_expiration_notif_date", new Date().toISOString().split("T")[0]);
-      setHasNewNotification(false);
+    const next = !isNotifyMenuOpen;
+    setIsNotifyMenuOpen(next);
+    if (next) {
+      if (hasNewNotification) {
+        localStorage.setItem("last_expiration_notif_date", new Date().toISOString().split("T")[0]);
+        setHasNewNotification(false);
+      }
+      if (user?.id) markAllAsRead(user.id);
     }
   };
 
@@ -97,6 +104,7 @@ export function Header() {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) setIsProfileMenuOpen(false);
       if (notifyMenuRef.current && !notifyMenuRef.current.contains(e.target as Node)) setIsNotifyMenuOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setSearchResults([]);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -106,6 +114,7 @@ export function Header() {
 
   useEffect(() => {
     loadData();
+    if (user?.id) loadNotifications(user.id);
   }, [user?.id]);
 
   useEffect(() => {
@@ -208,7 +217,7 @@ export function Header() {
             )}
           </button>
 
-          <div className="search-input-wrapper">
+          <div className="search-input-wrapper" ref={searchRef}>
             <input
               type="text"
               id="global-search"
@@ -221,6 +230,35 @@ export function Header() {
             <span className="search-icon">
               <Image src="/icons/common/search.svg" alt="Buscar" width={16} height={16} />
             </span>
+
+            {searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--input-bg)] backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-[var(--border-light)] overflow-hidden z-[1100] animate-in fade-in slide-in-from-top-2 duration-200 max-h-80 overflow-y-auto">
+                {searchResults.map((res, idx) => (
+                  <button
+                    key={`${res.id}-${idx}`}
+                    onClick={(e) => {
+                      if (res.action) res.action();
+                      handleNav(e as any, res.href);
+                      $searchQuery.set("");
+                      setSearchResults([]);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 hover:bg-[var(--primary)] hover:text-white transition-colors border-none bg-transparent text-left cursor-pointer border-b border-[var(--border-light)] last:border-none text-[var(--text)]"
+                  >
+                    <Image
+                      src={res.icon || "/icons/environment/plants/generic.svg"}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="object-contain shrink-0"
+                    />
+                    <div className="flex flex-col text-inherit">
+                      <span className="text-sm font-bold truncate">{res.name}</span>
+                      <span className="text-[10px] opacity-70 uppercase tracking-wider">{res.type}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <button type="button" className="btn-backup rounded-full" onClick={() => importInputRef.current?.click()}>
@@ -275,9 +313,9 @@ export function Header() {
               onClick={handleOpenNotify}
             >
               <Image src="/icons/common/ringbell.svg" alt="Notificaciones" width={28} height={28} className="brightness-0 invert" />
-              {hasNewNotification && (
+              {(unreadCount > 0 || hasNewNotification) && (
                 <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)] animate-bounce">
-                  1
+                  {unreadCount > 9 ? "9+" : unreadCount > 0 ? unreadCount : "1"}
                 </span>
               )}
             </button>
@@ -289,6 +327,38 @@ export function Header() {
                 </h3>
 
                 <div className="max-h-80 overflow-y-auto">
+                  {/* Notificaciones del foro */}
+                  {user && notifications.length > 0 && (
+                    <div className="border-b border-[var(--border-light)]">
+                      <p className="px-4 pt-3 pb-1 text-[0.7rem] text-[var(--text-gray)] uppercase tracking-widest font-black m-0">Actividad</p>
+                      {notifications.slice(0, 5).map((n) => (
+                        <a
+                          key={n.id}
+                          href={n.link_url || "#"}
+                          onClick={() => setIsNotifyMenuOpen(false)}
+                          className={`flex items-start gap-3 px-4 py-3 border-b border-[var(--border-light)] last:border-none hover:bg-[var(--primary)]/5 transition-all no-underline ${!n.is_read ? "bg-[var(--primary)]/5" : ""}`}
+                        >
+                          <div className="w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center shrink-0">
+                            <Image
+                              src={`/icons/common/${NOTIFICATION_ICONS[n.type]}`}
+                              alt=""
+                              width={16}
+                              height={16}
+                              className="opacity-70"
+                              onError={(e) => { (e.target as HTMLImageElement).src = "/icons/common/ringbell.svg"; }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-[var(--text)] truncate m-0">{n.title}</p>
+                            <p className="text-[0.7rem] text-[var(--text-gray)] truncate m-0 mt-0.5">{n.message}</p>
+                            <span className="text-[0.6rem] text-[var(--primary)] font-medium">{timeAgo(n.created_at)}</span>
+                          </div>
+                          {!n.is_read && <div className="w-2 h-2 rounded-full bg-[var(--primary)] shrink-0 mt-1.5" />}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
                   {/* ALERTA (Real para Premium) */}
                   {daysLeft !== null && daysLeft <= 7 && (
                     <div className="p-4 bg-red-500/10 border-b border-red-500/20">

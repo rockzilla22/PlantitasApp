@@ -122,7 +122,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
   }
 
   // Inventory — full replace (no client-side IDs)
-  await sb.from("inventory_Items").delete().eq("user_id", userId);
+  await sb.from("inventory_items").delete().eq("user_id", userId);
   const invRows = Object.entries(data.inventory).flatMap(([cat, registros]) =>
     (registros as any[]).map((item) => ({
       user_id: userId,
@@ -133,7 +133,7 @@ export async function syncToSupabase(data: AppData, userId: string): Promise<voi
     }))
   );
   if (invRows.length > 0) {
-    await sb.from("inventory_Items").insert(invRows);
+    await sb.from("inventory_items").insert(invRows);
   }
 
   // Global notes — upsert + delete orphans
@@ -279,7 +279,7 @@ export async function loadFromSupabase(userId: string): Promise<AppData | null> 
     sb.from("plants").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("plant_logs").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("propagations").select("*").eq("user_id", userId).is("deleted_at", null),
-    sb.from("inventory_Items").select("*").eq("user_id", userId),
+    sb.from("inventory_items").select("*").eq("user_id", userId),
     sb.from("global_notes").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("wishlist").select("*").eq("user_id", userId).is("deleted_at", null),
     sb.from("seasonal_tasks").select("*").eq("user_id", userId),

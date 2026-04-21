@@ -10,6 +10,7 @@ import { openModal } from "./modalStore";
 import { $user, $syncStatus, $lastSyncTime } from "./authStore";
 import { hasPremium, getEffectiveMaxSlots, syncToSupabase, loadFromSupabase } from "@/libs/syncService";
 import { sanitizeString } from "@/libs/utils";
+import { PLANT_TYPES } from "@/data/catalog";
 
 export interface AppData {
   plants: Plant[];
@@ -20,7 +21,7 @@ export interface AppData {
   globalNotes: GlobalNote[];
 }
 
-export const initialData: AppData = {
+export const getInitialData = (): AppData => ({
   plants: [],
   propagations: [],
   inventory: {
@@ -39,15 +40,19 @@ export const initialData: AppData = {
   },
   wishlist: [],
   globalNotes: [],
-};
+});
+
+export const initialData = getInitialData();
 
 const dedupeByName = (Items: any[]): any[] => {
   const seen = new Map<string, any>();
   (Items || []).forEach((item) => {
-    if (!seen.has(item.name)) {
-      seen.set(item.name, { ...item });
+    if (!item || !item.name) return;
+    const name = String(item.name);
+    if (!seen.has(name)) {
+      seen.set(name, { ...item });
     } else {
-      seen.get(item.name)!.qty = Math.max(seen.get(item.name)!.qty, item.qty);
+      seen.get(name)!.qty = Math.max(seen.get(name)!.qty || 0, item.qty || 0);
     }
   });
   return Array.from(seen.values());
@@ -56,6 +61,7 @@ const dedupeByName = (Items: any[]): any[] => {
 const dedupeSeasonTasks = (tasks: any[]): any[] => {
   const seen = new Set<string>();
   return (tasks || []).filter((t) => {
+    if (!t) return false;
     const key = `${t.type}|${t.desc}`;
     if (seen.has(key)) return false;
     seen.add(key);
@@ -64,8 +70,11 @@ const dedupeSeasonTasks = (tasks: any[]): any[] => {
 };
 
 export const normalizeData = (d: any): AppData => {
+  if (!d) return getInitialData();
+  
   const inv = d.inventory || {};
-  const rawSeasonal = d.seasonalTasks || { Primavera: [], Verano: [], Otoño: [], Invierno: [] };
+  const rawSeasonal = d.seasonalTasks || {};
+  
   return {
     inventory: {
       substrates: dedupeByName(inv.substrates).map((i) => ({ ...i, name: sanitizeString(i.name) })),
@@ -75,40 +84,49 @@ export const normalizeData = (d: any): AppData => {
       meds: dedupeByName(inv.meds).map((i) => ({ ...i, name: sanitizeString(i.name) })),
       others: dedupeByName(inv.others).map((i) => ({ ...i, name: sanitizeString(i.name) })),
     },
-    plants: (d.plants || []).map((p: any) => ({
-      ...p,
-      name: sanitizeString(p.name || ""),
-      subtype: sanitizeString(p.subtype || ""),
-      icon: p.icon || p.img || p.image || "/icons/environment/plants/generic.svg",
-      type: p.type || "Planta",
-      location: sanitizeString(p.location || "No especificada"),
-      light: p.light || "Media",
-      potType: p.potType || "Plástico",
-      dormancy: p.dormancy || "Ninguna",
-      logs: (p.logs || []).map((l: any) => ({
-        ...l,
-        detail: sanitizeString(l.detail || ""),
-        actionType: l.actionType === "Initial" ? "Registro Nuevo" : l.actionType,
-      })),
-    })),
-    globalNotes: (d.globalNotes || []).map((n: any) => ({ ...n, content: sanitizeString(n.content || "") })),
+    plants: (d.plants || []).map((p: any) => {
+      const catalogType = PLANT_TYPES.find((t) => t.value === p.type);
+      const defaultIcon = catalogType?.img || "/icons/environment/plants/generic.svg";
+
+      return {
+        ...p,
+        name: sanitizeString(p.name || ""),
+        subtype: sanitizeString(p.subtype || ""),
+        icon:
+          p.icon && p.icon !== "/icons/environment/plants/generic.svg"
+            ? p.icon
+            : p.img || p.image || defaultIcon,
+        type: p.type || "Planta",
+        location: sanitizeString(p.location || "No especificada"),
+        light: p.light || "Media",
+        potType: p.potType || "Plástico",
+        dormancy: p.dormancy || "Ninguna",
+        logs: (p.logs || []).map((l: any) => ({
+          ...l,
+          detail: sanitizeString(l.detail || ""),
+          actionType: l.actionType === "Initial" ? "Registro Nuevo" : l.actionType,
+        })),
+      };
+    }),
+    globalNotes: (d.globalNotes || []).map((n: any) => ({ ...n, id: n.id || Date.now(), content: sanitizeString(n.content || "") })),
     propagations: (d.propagations || []).map((pr: any) => ({
       ...pr,
+      id: pr.id || Date.now(),
       name: sanitizeString(pr.name || ""),
       status: pr.status || "Activo",
       notes: sanitizeString(pr.notes || ""),
     })),
     wishlist: (d.wishlist || []).map((w: any) => ({
-      id: w.id,
+      id: w.id || Date.now(),
       name: sanitizeString(w.name || "Sin nombre"),
       priority: w.priority || "Media",
       notes: sanitizeString(w.notes || ""),
     })),
     seasonalTasks: {
-      Primavera: dedupeSeasonTasks(rawSeasonal.Primavera).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
-      Verano: dedupeSeasonTasks(rawSeasonal.Verano).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
-      Otoño: dedupeSeasonTasks(rawSeasonal.Otoño).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
-      Invierno: dedupeSeasonTasks(rawSeasonal.Invierno).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
+      Primavera: dedupeSeasonTasks(rawSeasonal.Primavera || []).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
+      Verano: dedupeSeasonTasks(rawSeasonal.Verano || []).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
+      Otoño: dedupeSeasonTasks(rawSeasonal.Otoño || []).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
+      Invierno: dedupeSeasonTasks(rawSeasonal.Invierno || []).map((t) => ({ ...t, desc: sanitizeString(t.desc || "") })),
     },
   };
 };
@@ -156,7 +174,7 @@ export const loadData = async () => {
 
   _isLoading = true;
 
-  // Carga local primero (respuesta instantánea)
+  // 1. Carga local primero (respuesta instantánea)
   const saved = localStorage.getItem("plantitas_db");
   const lastSync = localStorage.getItem("plantitas_last_sync");
   if (lastSync) $lastSyncTime.set(lastSync);
@@ -169,31 +187,45 @@ export const loadData = async () => {
     }
   }
 
-  // Si es premium, sobreescribe con datos de Supabase
+  // Liberamos el flag de carga inicial para permitir que cambios locales 
+  // se guarden mientras esperamos a la nube
+  _isLoading = false;
+
+  // 2. Si es premium, sincroniza con datos de Supabase
   const user = $user.get();
   if (hasPremium(user) && user) {
     $syncStatus.set("syncing");
     try {
       const remoteData = await loadFromSupabase(user.id);
       if (remoteData) {
-        // Marcamos como cargando para que el set no gatille un saveData -> sync
-        _isLoading = true;
-        $store.set(remoteData);
-        localStorage.setItem("plantitas_db", JSON.stringify(remoteData));
-        const now = new Date().toISOString();
-        $lastSyncTime.set(now);
-        localStorage.setItem("plantitas_last_sync", now);
-        $syncStatus.set("synced");
+        // En lugar de pisar ciegamente, mergeamos o verificamos 
+        // si el usuario hizo cambios locales (isDirty)
+        if (!$isDirty.get()) {
+           _isLoading = true; 
+           $store.set(remoteData);
+           localStorage.setItem("plantitas_db", JSON.stringify(remoteData));
+           const now = new Date().toISOString();
+           $lastSyncTime.set(now);
+           localStorage.setItem("plantitas_last_sync", now);
+           _isLoading = false;
+           $syncStatus.set("synced");
+           setDirty(false); // Solo reseteamos dirty si realmente cargamos de la nube
+        } else {
+           // Si hay cambios locales, preferimos preservarlos y 
+           // dejar que la sincronización normal los suba luego
+           $syncStatus.set("idle");
+        }
       } else {
         $syncStatus.set("idle");
+        setDirty(false);
       }
     } catch {
       $syncStatus.set("error");
     }
+  } else {
+    // Si no es premium o no hay usuario, el estado local es la verdad
+    setDirty(false);
   }
-
-  _isLoading = false;
-  setDirty(false);
 };
 
 export const saveData = (data: AppData) => {
