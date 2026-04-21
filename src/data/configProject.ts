@@ -113,6 +113,43 @@ export interface ConfigProject {
       [key: string]: { label: string; color: string; bgColor: string };
     };
   };
+
+  // Sistema de Referidos
+  referrals: {
+    rewards: {
+      signup: {
+        referrerSlots: number;
+        referredSlots: number;
+        requiredPlants: number;
+      };
+      proPurchase: {
+        referrerSlots: number;
+        referredSlots: number;
+        requiresNoPremium: boolean;
+      };
+      premiumPurchase: {
+        referrerDays: number;
+        referredDays: number;
+        requiresNoPro: boolean;
+      };
+    };
+    limits: {
+      maxReferralSlots: number;
+      codeExpirationDays: number;
+      maxActiveReferrals: number;
+    };
+    antiFraud: {
+      blockSameEmail: boolean;
+      blockSameDevice: boolean;
+      blockSameIP: boolean;
+      blockSamePaymentMethod: boolean;
+    };
+    ui: {
+      headline: string;
+      subhead: string;
+      benefits: string[];
+    };
+  };
 }
 
 const configProject: ConfigProject = {
@@ -375,6 +412,59 @@ const configProject: ConfigProject = {
       media: { label: "Media", color: "#2563eb", bgColor: "#eff6ff" },
       alta: { label: "Alta", color: "#d97706", bgColor: "#fffbeb" },
       critica: { label: "Crítica", color: "#e11d48", bgColor: "#fff1f2" },
+    },
+  },
+
+  // ======================================================
+  // SISTEMA DE REFERIDOS (refer-a-friend)
+  // ======================================================
+  referrals: {
+    // Recompensas por hito completado
+    rewards: {
+      // Hito 1: Registro completado + X plantas creadas
+      signup: {
+        referrerSlots: 1,
+        referredSlots: 1,
+        requiredPlants: 5, // plantas necesarias para validar aceptación
+      },
+      // Hito 2: Primera compra Pro (solo si NO tiene Premium)
+      proPurchase: {
+        referrerSlots: 5,
+        referredSlots: 5,
+        requiresNoPremium: true, // solo otorga si el referido no tiene Premium activo
+      },
+      // Hito 3: Primera compra Premium (solo si NO tiene Pro)
+      premiumPurchase: {
+        referrerDays: 7,
+        referredDays: 7,
+        requiresNoPro: true, // solo otorga si el referido no tiene Pro comprado
+      },
+    },
+
+    // Límites del sistema
+    limits: {
+      maxReferralSlots: 100, // slots máximos ganados por referral (separado de Pro purchased)
+      codeExpirationDays: 7, // días de vigencia del código de invitación
+      maxActiveReferrals: 10, // máximo de referidos activos simultáneos
+    },
+
+    // Validaciones anti-fraude
+    antiFraud: {
+      blockSameEmail: true, // impide auto-referido por email
+      blockSameDevice: true, // mismo fingerprint de dispositivo
+      blockSameIP: true, // misma IP de registro
+      blockSamePaymentMethod: true, // mismo método de pago en checkout
+    },
+
+    // textos de la UI
+    ui: {
+      headline: "Invitar Amigos",
+      subhead: "Gana slots y días Premium por cada amigo que se una",
+      benefits: [
+        "¡Gana +1 slot cuando tu amigo se registre!",
+        "Si compran Pro: +5 slots para ambos",
+        "Si compran Premium: +7 días extra para ambos",
+      ],
     },
   },
 };
