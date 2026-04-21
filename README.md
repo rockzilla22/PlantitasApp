@@ -23,25 +23,26 @@ Puedes usar PlantitasApp al 100% sin registrarte. No hay límite de plantas ni f
 
 Al iniciar sesión con una cuenta, según tu plan podrás acceder a diferentes niveles de funcionalidad:
 
-| | Sin cuenta 🌱 | Gratuito 👤 | Pro 💎 | Premium ☁ | Master 👑 |
-|---|---|---|---|---|---|
-| Todas las funciones de la app | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Datos locales (localStorage) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Exportar / Importar JSON | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Sincronización en la nube | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Acceso multi-dispositivo | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Papelera de registros eliminados | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Perfil editable (nombre, teléfono) | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Límite de registros (plantas, notas, etc.) | 25 | 50 | 250* | Ilimitado | Ilimitado |
-| Tipo de pago | Gratis | Gratis | Pago único | Suscripción | Sistema |
+|                                            | Sin cuenta | Gratuito | Pro        | Premium     |
+| ------------------------------------------ | ---------- | -------- | ---------- | ----------- |
+| Todas las funciones de la app              | ✅         | ✅      | ✅         | ✅          |
+| Datos locales (localStorage)               | ✅         | ✅      | ✅         | ✅          |
+| Exportar / Importar JSON                   | ✅         | ✅      | ✅         | ✅          |
+| Sincronización en la nube                  | ❌         | ❌      | ✅         | ✅          |
+| Acceso multi-dispositivo                   | ❌         | ❌      | ✅         | ✅          |
+| Papelera de registros eliminados           | ❌         | ❌      | ✅         | ✅          |
+| Perfil editable (nombre, teléfono)         | ❌         | ✅      | ✅         | ✅          |
+| Límite de registros (plantas, notas, etc.) | 15         | 30       | 300\*      | Ilimitado   |
+| Tipo de pago                               | Gratis     | Gratis   | Pago único | Suscripción |
 
-*El plan Pro incluye 50 slots base + 200 slots adicionales = 250 total
+\*El plan Pro incluye 50 slots base + 250 slots adicionales que se adquieren por separado.
 
 ---
 
 ## Funcionalidades
 
 ### 🌱 Mis Plantas
+
 Registrá cada planta con nombre, tipo, ícono, ubicación, luz y tipo de maceta. Cada planta tiene su **historial de logs**:
 
 - Riego, fertilización, sustrato, trasplante, plagas/enfermedades y más
@@ -49,6 +50,7 @@ Registrá cada planta con nombre, tipo, ícono, ubicación, luz y tipo de maceta
 - Panel de detalle lateral en desktop, bottom sheet en mobile
 
 ### 🧪 Propagación (Vivero)
+
 Seguimiento completo del ciclo de vida de tus esquejes y semillas:
 
 - Vinculá cada propagación con su planta madre
@@ -56,12 +58,14 @@ Seguimiento completo del ciclo de vida de tus esquejes y semillas:
 - Estados: Activo → Trasplantada / Fracaso
 
 ### 📅 Planeación Anual
+
 Organizá tareas de cuidado por estación (Primavera, Verano, Otoño, Invierno):
 
 - Tipos: Riego, Fertilización, Poda, Siembra, Limpieza, Tratamiento, etc.
 - Ordenable por tipo o descripción
 
 ### 📦 Inventario de Insumos
+
 Control de stock para lo que usás en tu jardín:
 
 - Categorías: Sustratos, Fertilizantes, Polvos, Líquidos, Medicamentos, Otros
@@ -69,12 +73,15 @@ Control de stock para lo que usás en tu jardín:
 - Al registrar un log de mantenimiento, el inventario valida el stock disponible
 
 ### ✨ wishlist
+
 Tu Lista de Deseos de plantas, artículos y más. Prioridad Alta / Media / Baja con notas.
 
 ### 📝 Notas Globales
+
 Notas libres sin estructura, para apuntes rápidos, observaciones o ideas.
 
 ### 🔍 Buscador Global
+
 Buscador en tiempo real en el header que encuentra plantas, propagaciones e insumos de una sola vez.
 
 ---
@@ -91,14 +98,14 @@ Desde `/profile` puedes:
 
 ## Stack Tecnológico
 
-| Capa | Tecnología |
-|---|---|
-| Framework | Next.js 15 (App Router) |
-| Lenguaje | TypeScript |
-| Estilos | CSS mobile-first + Tailwind v4 |
-| Estado cliente | nanostores |
-| Auth | Supabase Auth (email/password) |
-| Base de datos | Supabase (PostgreSQL + RLS) |
+| Capa             | Tecnología                                              |
+| ---------------- | ------------------------------------------------------- |
+| Framework        | Next.js 15 (App Router)                                 |
+| Lenguaje         | TypeScript                                              |
+| Estilos          | CSS mobile-first + Tailwind v4                          |
+| Estado cliente   | nanostores                                              |
+| Auth             | Supabase Auth (email/password)                          |
+| Base de datos    | Supabase (PostgreSQL + RLS)                             |
 | Arquitectura CSS | Custom properties + breakpoints 480 / 600 / 768 / 900px |
 
 La arquitectura de datos sigue un modelo **hexagonal**: dominio puro en `src/core/`, adaptadores en `src/libs/`, estado global en `src/store/`.
