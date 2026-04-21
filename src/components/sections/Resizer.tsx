@@ -7,6 +7,33 @@ import { useEffect } from "react";
 export function Resizer() {
   const isResizing = useStore($isResizing);
 
+  useEffect(() => {
+    const syncInitialWidth = () => {
+      if (typeof window === "undefined" || window.innerWidth < 1024) {
+        return;
+      }
+
+      const container = document.querySelector(".plants-layout");
+      const detailPanel = document.querySelector("#plant-detail-panel");
+
+      if (!(container instanceof HTMLElement)) {
+        return;
+      }
+
+      if ($resizerWidth.get() <= 0) {
+        const containerWidth = container.getBoundingClientRect().width;
+        const panelWidth = detailPanel instanceof HTMLElement ? detailPanel.getBoundingClientRect().width : containerWidth * 0.4;
+
+        $resizerWidth.set(panelWidth);
+      }
+    };
+
+    syncInitialWidth();
+    window.addEventListener("resize", syncInitialWidth);
+
+    return () => window.removeEventListener("resize", syncInitialWidth);
+  }, []);
+
   const startResizing = () => {
     $isResizing.set(true);
     document.body.style.cursor = 'col-resize';

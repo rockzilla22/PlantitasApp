@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Fruit tree -->
+  <ellipse cx="16" cy="12" rx="8" ry="10" fill="#388e3c"/>
+  <circle cx="14" cy="8" r="2" fill="#ff5722"/>
+  <circle cx="18" cy="10" r="2" fill="#ff5722"/>
+  <circle cx="16" cy="14" r="2" fill="#ff5722"/>
+  <path d="M16 22 L16 28" stroke="#5d4037" stroke-width="2"/>
+  <path d="M10 28 L12 30 L20 30 L22 28 Z" fill="#8d6e63"/>
+</svg>

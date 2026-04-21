@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Generic plant -->
+  <path d="M16 4 Q12 8 14 14 Q12 18 16 20 Q20 18 18 14 Q20 8 16 4" fill="#4caf50"/>
+  <path d="M16 20 L16 24" stroke="#5d4037" stroke-width="2"/>
+  <path d="M8 24 L10 30 L22 30 L24 24 Z" fill="#8d6e63"/>
+</svg>

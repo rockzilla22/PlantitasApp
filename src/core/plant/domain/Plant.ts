@@ -40,6 +40,8 @@ export const PlantSchema = z.object({
   lastWateredDate: z.string().optional(),
   logs: z.array(PlantLogSchema).default([]),
   created_at: z.string().optional(),
+  deleted_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
 });
 
 export type Plant = z.infer<typeof PlantSchema>;

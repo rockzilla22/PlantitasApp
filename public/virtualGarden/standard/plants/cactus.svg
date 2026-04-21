@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Cactus -->
+  <ellipse cx="16" cy="18" rx="5" ry="10" fill="#4caf50"/>
+  <ellipse cx="12" cy="14" rx="3" ry="6" fill="#4caf50"/>
+  <ellipse cx="20" cy="14" rx="3" ry="6" fill="#4caf50"/>
+  <!-- Pot -->
+  <path d="M10 24 L12 30 L20 30 L22 24 Z" fill="#8d6e63"/>
+</svg>

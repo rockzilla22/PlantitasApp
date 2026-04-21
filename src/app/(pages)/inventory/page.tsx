@@ -43,7 +43,7 @@ export default function InventoryPage() {
           + Añadir
         </button>
       </div>
-      <div className="flex registros-center gap-3 flex-wrap mb-6">
+      <div className="flex items-center gap-3 flex-wrap mb-6">
         <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${sortBy === "name" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-gray)] hover:text-[var(--primary)]"}`}
@@ -65,7 +65,7 @@ export default function InventoryPage() {
             key={cat.value}
             className="inventory-card bg-[var(--card-bg)] p-8 rounded-[2.5rem] shadow-xl border border-[var(--border-light)]"
           >
-            <h3 className="text-[var(--primary)] mb-6 flex registros-center gap-3 text-lg font-bold">
+            <h3 className="text-[var(--primary)] mb-6 flex items-center gap-3 text-lg font-bold">
               {cat.img ? (
                 <Image src={cat.img} alt={cat.label} width={32} height={32} className="object-contain" />
               ) : (
@@ -80,10 +80,10 @@ export default function InventoryPage() {
               {getSortedItems(cat.value as InventoryCategory).map((item, index) => (
                 <li
                   key={`${item.name}-${index}`}
-                  className="inventory-item bg-[var(--input-bg)] hover:bg-[var(--primary)]/[0.08] border border-[var(--primary)]/10 transition-all py-3 px-4 rounded-[1.5rem] shadow-sm flex registros-center justify-between gap-4"
+                  className="inventory-item bg-[var(--input-bg)] hover:bg-[var(--primary)]/[0.08] border border-[var(--primary)]/10 transition-all py-3 px-4 rounded-[1.5rem] shadow-sm flex items-center justify-between gap-4"
                 >
                   {/* Izquierda: Info Principal */}
-                  <div className="flex registros-center gap-4 min-w-0 flex-1">
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
                     <button
                       className="text-2xl p-0 hover:scale-125 transition-transform shrink-0"
                       title="Reponer"
@@ -99,10 +99,10 @@ export default function InventoryPage() {
                   </div>
 
                   {/* Centro/Derecha: Controles y Cantidad */}
-                  <div className="flex registros-center gap-4 shrink-0">
-                    <div className="flex registros-center p-1">
+                  <div className="flex items-center gap-4 shrink-0">
+                    <div className="flex items-center p-1">
                       <button
-                        className="w-8 h-8 flex registros-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
+                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
                         onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, -1)}
                       >
                         -
@@ -111,14 +111,14 @@ export default function InventoryPage() {
                         {item.qty} {item.unit}
                       </span>
                       <button
-                        className="w-8 h-8 flex registros-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
+                        className="w-8 h-8 flex items-center justify-center hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl transition-colors active:scale-75"
                         onClick={() => updateItemQty(cat.value as InventoryCategory, item.name, 1)}
                       >
                         +
                       </button>
                     </div>
 
-                    <div className="flex registros-center gap-1 pl-4">
+                    <div className="flex items-center gap-1 pl-4">
                       <button
                         className="p-2 hover:bg-[var(--input-bg)] rounded-xl transition-all active:scale-90 opacity-60 hover:opacity-100 "
                         onClick={() => openModal("edit-item", { ...item, cat: cat.value as InventoryCategory, index })}

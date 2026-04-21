@@ -165,10 +165,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-[1000] bg-[var(--primary)] text-[var(--text-white)] shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
       <div className="h-top">
-        <div className="flex registros-center">
+        <div className="flex items-center">
           <Link href="/" onClick={(e) => handleNav(e, "/")} className="no-underline text-[var(--text-white)] whitespace-nowrap">
             <h1
-              className="m-0 inline-flex registros-center gap-2 whitespace-nowrap font-bold leading-none"
+              className="m-0 inline-flex items-center gap-2 whitespace-nowrap font-bold leading-none"
               style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}
             >
               <Image
@@ -271,12 +271,12 @@ export function Header() {
           <div className="relative" ref={notifyMenuRef}>
             <button
               type="button"
-              className={`flex registros-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isNotifyMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
+              className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isNotifyMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
               onClick={handleOpenNotify}
             >
               <Image src="/icons/common/ringbell.svg" alt="Notificaciones" width={28} height={28} className="brightness-0 invert" />
               {hasNewNotification && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 registros-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)] animate-bounce">
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-[var(--primary)] animate-bounce">
                   1
                 </span>
               )}
@@ -315,7 +315,7 @@ export function Header() {
                   {user && (
                     <div className="p-4 border-b border-[var(--border-light)] opacity-95">
                       <p className="text-[0.7rem] text-[var(--text-gray)] m-0 uppercase tracking-widest font-black">Plan Actual</p>
-                      <div className="flex registros-center justify-between mt-1">
+                      <div className="flex items-center justify-between mt-1">
                         <p className="text-sm font-bold text-[var(--text)] m-0">{planConfig.label}</p>
                         {(() => {
                           const isExpired = premiumExpiresAt && new Date() > new Date(premiumExpiresAt);
@@ -364,7 +364,7 @@ export function Header() {
                 </div>
 
                 {!user && (
-                  <div className="p-8 text-center flex flex-col registros-center gap-3">
+                  <div className="p-8 text-center flex flex-col items-center gap-3">
                     <Image src="/icons/common/lock.svg" alt="Lock" width={32} height={32} className="opacity-20" />
                     <p className="italic text-xs text-[var(--text-gray)] opacity-60 m-0 leading-relaxed">
                       Iniciá sesión para ver tus alertas botánicas.
@@ -379,10 +379,10 @@ export function Header() {
             <div className="relative" ref={profileMenuRef}>
               <button
                 type="button"
-                className={`flex registros-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isProfileMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
+                className={`flex items-center gap-2 cursor-pointer transition-all border-none bg-transparent p-1 ${isProfileMenuOpen ? "bg-[var(--input-bg)] rounded-full" : ""}`}
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
-                <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex registros-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
+                <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
                   <Image src="/icons/environment/animals/turtle.svg" alt="Turtle" width={24} height={24} className="object-contain" />
                 </div>
                 <span className="hidden md:block uppercase text-[0.7rem] tracking-wide text-[var(--text-white)] font-bold">Perfil</span>
@@ -404,9 +404,9 @@ export function Header() {
                       <button
                         onClick={() => forceSync()}
                         disabled={syncStatus === "syncing"}
-                        className="flex flex-col registros-center justify-center w-full hover:bg-[var(--bg-faint)] no-underline text-[var(--primary)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group py-3 px-4 mb-2"
+                        className="flex flex-col items-center justify-center w-full hover:bg-[var(--bg-faint)] no-underline text-[var(--primary)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group py-3 px-4 mb-2"
                       >
-                        <span className="flex registros-center gap-2">
+                        <span className="flex items-center gap-2">
                           <Image
                             src="/icons/common/success.svg"
                             alt=""
@@ -424,21 +424,21 @@ export function Header() {
                     <Link
                       href="/profile"
                       onClick={(e) => handleNav(e, "/profile")}
-                      className="flex registros-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
                     >
                       <span className="text-left">Perfil</span>
                     </Link>
                     <Link
                       href="/pricing"
                       onClick={(e) => handleNav(e, "/pricing")}
-                      className="flex registros-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group pb-2"
                     >
                       <span className="text-left">Planes</span>
                     </Link>
                     <Link
                       href="/privacy"
                       onClick={(e) => handleNav(e, "/privacy")}
-                      className="flex registros-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
+                      className="flex items-center justify-center w-full hover:text-[var(--success)] no-underline text-[var(--text-gray)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
                       <span className="text-left">Privacidad</span>
                     </Link>
@@ -446,7 +446,7 @@ export function Header() {
                   <div className="pb-5 flex flex-col registros-stretch w-full">
                     <button
                       onClick={handleLogout}
-                      className="flex registros-center justify-center gap-2 w-full hover:text-[var(--secondary)] no-underline text-[var(--danger)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
+                      className="flex items-center justify-center gap-2 w-full hover:text-[var(--secondary)] no-underline text-[var(--danger)] text-sm font-bold text-center transition-colors border-none bg-transparent cursor-pointer group"
                     >
                       <span className="text-center">Cerrar Sesión</span>
                     </button>
@@ -496,7 +496,7 @@ export function Header() {
             href={tab.href ?? "#"}
             onClick={(e) => handleNav(e, tab.href ?? "#")}
             title={tab.description}
-            className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex registros-center gap-2`}
+            className={`tab-link${pathname === tab.href ? " active" : ""} inline-flex items-center gap-2`}
           >
             {tab.icon && <Image src={tab.icon} alt={tab.label} width={20} height={20} className="shrink-0 object-contain" />}
             {tab.label}

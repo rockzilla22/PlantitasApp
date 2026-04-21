@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
   if (authLoading || !user)
     return (
-      <div className="flex registros-center justify-center py-20">
+      <div className="flex items-center justify-center py-20">
         <p className="text-[var(--primary)] animate-pulse uppercase tracking-[0.3em] text-sm">Sincronizando...</p>
       </div>
     );
@@ -199,10 +199,10 @@ export default function ProfilePage() {
     <div className="bg-[var(--background)] px-4 py-8 md:px-8 md:py-12">
       <div className="max-w-[900px] mx-auto w-full flex flex-col gap-6">
         {/* NAV */}
-        <div className="flex registros-center justify-between">
+        <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="no-underline text-[var(--text-brown)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex registros-center gap-1"
+            className="no-underline text-[var(--text-brown)] text-xs uppercase tracking-widest hover:text-[var(--primary)] transition-colors flex items-center gap-1"
           >
             ← Inicio
           </Link>
@@ -217,8 +217,8 @@ export default function ProfilePage() {
         </div>
 
         {/* HEADER */}
-        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex registros-center gap-4 shadow-sm">
-          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex registros-center justify-center shrink-0 shadow-md">
+        <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+          <div className="w-14 h-14 rounded-full bg-[var(--primary)] text-[var(--text-white)] text-xl font-bold flex items-center justify-center shrink-0 shadow-md">
             {getInitials(currentName, user.email)}
           </div>
           <div className="min-w-0 flex-1">
@@ -292,11 +292,11 @@ export default function ProfilePage() {
                   return (
                     <div
                       key={pid}
-                      className="flex registros-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]"
+                      className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-[var(--border)] bg-[var(--background)]"
                     >
-                      <div className="flex registros-center gap-3">
+                      <div className="flex items-center gap-3">
                         <div
-                          className="w-8 h-8 rounded-full flex registros-center justify-center text-xs font-bold shadow-sm"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
                           style={{ background: iconBg, color: iconColor }}
                         >
                           {label[0]}
@@ -336,8 +336,8 @@ export default function ProfilePage() {
               <h2 className="text-sm font-bold text-[var(--text)] m-0">Estado de la cuenta</h2>
 
               {/* Plan badge */}
-              <div className="flex registros-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
-                <div className="flex registros-center gap-2">
+              <div className="flex items-center justify-between bg-[var(--background)] rounded-xl px-4 py-3 border border-[var(--border)]">
+                <div className="flex items-center gap-2">
                   <span className="font-semibold text-[var(--text)]">{planConfig.label}</span>
                 </div>
                 {user.app_metadata?.premium_expires_at && (
@@ -390,10 +390,10 @@ export default function ProfilePage() {
             <div className="bg-[var(--card-bg)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
               <button
                 onClick={handleToggleTrash}
-                className="w-full flex registros-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--background)] transition-colors cursor-pointer bg-transparent border-none text-left"
               >
-                <div className="flex registros-center gap-3">
-                  <div className="w-5 h-5 flex registros-center justify-center shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 flex items-center justify-center shrink-0">
                     <NextImage src="/icons/common/trash.svg" alt="Papelera" width={20} height={20} className="object-contain" />
                   </div>
                   <span className="text-sm font-semibold text-[var(--text)]">Papelera</span>

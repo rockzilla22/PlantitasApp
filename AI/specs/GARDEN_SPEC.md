@@ -224,17 +224,46 @@ Cada **room** puede tener su propio diseño/skin independientemente. El usuario 
 
 ```
 public/
-└── virtualGarden/      → Garden assets (SVGs)
-    ├── standard/       → Versiones gratuitas (free)
-    │   ├── rooms/      → Fondos de rooms
-    │   ├── pots/       → Macetas
-    │   └── plants/     → Plantas visuales
+└── virtualGarden/
+    ├── standard/           → Versiones gratuitas (free) [YA CREADOS]
+    │   ├── rooms/          → Fondos de rooms (14 archivos)
+    │   │   ├── Balcon.svg
+    │   │   ├── Baño.svg
+    │   │   ├── Cocina.svg
+    │   │   ├── Comedor.svg
+    │   │   ├── Entrada.svg
+    │   │   ├── Estudio.svg
+    │   │   ├── Jardin.svg
+    │   │   ├── Lavanderia.svg
+    │   │   ├── Oficina.svg
+    │   │   ├── Patio.svg
+    │   │   ├── Recamara.svg
+    │   │   ├── Sala.svg
+    │   │   ├── Techo.svg
+    │   │   └── Bodega.svg
+    │   ├── pots/           → Macetas
+    │   │   └── default.svg
+    │   └── plants/         → Plantas visuales (14 tipos)
+    │       ├── generic.svg
+    │       ├── monstera.svg
+    │       └── ... (PLANT_TYPES)
     │
-    └── premium/        → Versiones de pago (paid)
-        ├── rooms/      → Fondos de rooms premium
-        ├── pots/       → Macetas premium
-        └── plants/     → Plantas premium
+    └── premium/            → Versiones de pago (paid) [POR CREAR]
+        ├── default/       → Tema por defecto (colores solids)
+        ├── modern/       → Tema moderno
+        ├── rustic/       → Tema rústico
+        ├── minimal/      → Tema minimalista
+        ├── zen/         → Tema zen/japonesa
+        ├── tropical/     → Tema tropical
+        └── cottage/     → Tema casa de campo
+
+        // Cada tema premium tiene subcarpetas:
+        // premium/{tema}/rooms/*.svg
+        // premium/{tema}/pots/*.svg
+        // premium/{tema}/plants/*.svg
 ```
+
+> **Nota**: La estructura premium es **por temática**, no por tipo de asset. Esto permite que el usuario compre un "tema completo" para un room.
 
 ### Helper de Skins
 
@@ -353,7 +382,7 @@ src/components/garden/
 - [ ] 3. Mapear locations a room keys (Otros → Bodega)
 - [ ] 4. Renderizar RoomCard por cada location con plantas
 - [ ] 5. Filtrar plantas por location en tiempo real
-- [ ] 6. Mostrar PlantBadge según plant.plantType
+- [ ] 6. Mostrar PlantBadge según plant.Type
 - [ ] 7. Click en Room → Modal con lista de plantas
 - [ ] 8. Click en planta → Tooltip + link a /plants
 - [ ] 9. Grid responsive (1-4 columnas)
@@ -420,19 +449,394 @@ Total potencial por usuario completo: 14 rooms × $2 = $28
 
 ---
 
-## 13. PLAN DE DESARROLLO
+## 13. PLAN DE DESARROLLO (HIper-seccionado)
 
-### Fases del Proyecto
+### Enfoque: "Primero lo básico, sin-canvas"
 
-El desarrollo está dividido en 4 fases para entregar valor incrementally:
+El desarrollo sigue el principio: **primero UI textual/básica, después canvases visuales**. Cada sub-paso entrega algo usable.
 
-| Fase | Meta | Entregable |
-|------|------|------------|
-| **Fase 1** | Core funcional | Ver plantas por room sin skins |
-| **Fase 1.5** | Interacción básica | Click en room → modal, click en planta → detalles |
-| **Fase 2** | UI mejorada | Room cards con diseño, empty states |
-| **Fase 3** | Skins básica | cambio de skin por room (gratis) |
-| **Fase 4** | Monetización | Compra de skins premium |
+| Etapa | Enfoque | Entregable |
+|------|---------|----------|
+| **Etapa A** | UI textual/sin canvas | Grid de rooms con texto (count, labels) |
+| **Etapa B** | Backgrounds | Room cards con SVG de fondo |
+| **Etapa C** | Plant icons | Plantas visuales en rooms |
+| **Etapa D** | Skins estándar | Cambio de tema por room (gratis) |
+| **Etapa E** | Skins premium | Compra de temas pagos |
+
+---
+
+### ETAPA A: UI Textual (Sin Canvas)
+
+**Objetivo**: Grid de rooms funcional showing only texto. No SVGs yet.
+
+#### A1: Helper de datos — Agrupar plantas por location
+
+```typescript
+// helpers/garden.ts
+export const getPlantsByLocation = (plants: Plant[]) =>
+  plants.reduce((acc, plant) => {
+    if (!plant.deleted_at) {
+      const room = plant.location === 'Otros' ? 'Bodega' : plant.location;
+      (acc[room] ??= []).push(plant);
+    }
+    return acc;
+  }, {} as Record<string, Plant[]>);
+```
+
+- **Por qué primero?**: Lógica pura. No hay UI, no puede romper nada.
+- **Output**: `{ "Sala": [plant1, plant2], "Baño": [], ... }`
+
+#### A2: GardenPage — Grid de rooms textual
+
+```tsx
+// src/components/garden/GardenPage.tsx
+import { PLANT_LOCATIONS } from '@/data/catalog';
+import { useStore } from '@nanostores/react';
+import { $store } from '@/store/plantStore';
+import { getPlantsByLocation } from '@/helpers/garden';
+
+export default function GardenPage() {
+  const storeData = useStore($store);
+  const plantsByLocation = useMemo(
+    () => getPlantsByLocation(storeData.plants || []),
+    [storeData.plants]
+  );
+
+  return (
+    <div className="garden-page">
+      <h1>Mi Jardín</h1>
+      <div className="garden-grid">
+        {PLANT_LOCATIONS.map(loc => {
+          const location = loc.value === 'Otros' ? 'Bodega' : loc.value;
+          const label = loc.value === 'Otros' ? 'Bodega' : loc.label;
+          const count = plantsByLocation[location]?.length || 0;
+
+          return (
+            <div key={location} className="room-card">
+              <h3>{label}</h3>
+              <p>{count} planta{count !== 1 ? 's' : ''}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+```
+
+- **Dependencias**: Solo store + catalog + helper (A1)
+- **Regla**: loc.value === 'Otros' → 'Bodega'
+
+#### A3: CSS mínimo
+
+```css
+.garden-page {
+  padding: 1rem;
+}
+.garden-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+.room-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.room-card h3 {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+.room-card p {
+  font-size: 0.75rem;
+  color: var(--text-gray);
+}
+```
+
+#### A4: Routing — Conectar /garden
+
+```tsx
+// src/app/(pages)/garden/page.tsx
+import GardenPage from '@/components/garden/GardenPage';
+
+export default function Page() {
+  return <GardenPage />;
+}
+```
+
+**Entregable Etapa A**: ✅ Grid de rooms mostrando count de plantas por room (texto only).
+
+---
+
+### ETAPA B: Backgrounds (SVG Rooms)
+
+**Objetivo**: Cada room card muestra su SVG de fondo (template).
+
+#### B1: RoomCard con background SVG
+
+```tsx
+// src/components/garden/RoomCard.tsx
+interface RoomCardProps {
+  location: string;
+  label: string;
+  plantCount: number;
+}
+
+export function RoomCard({ location, label, plantCount }: RoomCardProps) {
+  // Mapeo: "Otros" → "Bodega" para el SVG
+  const svgLocation = location === 'Otros' ? 'Bodega' : location;
+
+  return (
+    <div className="room-card" data-location={location}>
+      <img
+        src={`/virtualGarden/standard/rooms/${svgLocation}.svg`}
+        alt={label}
+        className="room-bg"
+      />
+      <div className="room-overlay">
+        <span className="room-label">{label}</span>
+        <span className="room-count">{plantCount}</span>
+      </div>
+    </div>
+  );
+}
+```
+
+#### B2: CSS para backgrounds
+
+```css
+.room-card {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+.room-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.room-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-size: 0.75rem;
+}
+```
+
+**Entregable Etapa B**: ✅ Room cards con SVG de fondo visual.
+
+---
+
+### ETAPA C: Plant Icons en Rooms
+
+**Objetivo**: Mostrar mini icons de plantas dentro de cada room.
+
+#### C1: PlantMiniIcon component
+
+```tsx
+// src/components/garden/PlantMiniIcon.tsx
+interface PlantMiniIconProps {
+  type: string;  // "Monstera", "Cactus", etc.
+}
+
+export function PlantMiniIcon({ type }: PlantMiniIconProps) {
+  // Mapeo: "Planta" → "generic", "CUSTOM" → "CUSTOM"
+  const filename = type === 'Planta' ? 'generic' : type;
+  const src = `/virtualGarden/standard/plants/${filename}.svg`;
+
+  return (
+    <img
+      src={src}
+      alt={type}
+      width={24}
+      height={24}
+      className="plant-icon"
+      onError={(e) => {
+        // Fallback to generic
+        (e.target as HTMLImageElement).src = '/virtualGarden/standard/plants/generic.svg';
+      }}
+    />
+  );
+}
+```
+
+#### C2: RoomCard con plant icons
+
+```tsx
+// Actualizar RoomCard para incluir plantas
+export function RoomCard({ location, label, plants }: RoomCardProps) {
+  return (
+    <div className="room-card">
+      {/* Background SVG */}
+      <img src={`/virtualGarden/standard/rooms/${location}.svg`} />
+
+      {/* Plant icons (max 4) */}
+      <div className="room-plants">
+        {plants.slice(0, 4).map(plant => (
+          <PlantMiniIcon key={plant.id} type={plant.plantType} />
+        ))}
+        {plants.length > 4 && <span>+{plants.length - 4}</span>}
+      </div>
+
+      {/* Footer */}
+      <div className="room-footer">
+        <span>{label}</span>
+        <span>{plants.length}</span>
+      </div>
+    </div>
+  );
+}
+```
+
+#### C3: CSS para plants
+
+```css
+.room-plants {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: center;
+  max-width: 80%;
+}
+.plant-icon {
+  width: 28px;
+  height: 28px;
+}
+```
+
+**Entregable Etapa C**: ✅ Plant icons visibles en cada room.
+
+---
+
+### ETAPA D: Skins Estándar (Gratis)
+
+**Objetivo**: Cambio de tema entre default/modern/minimal (todos gratis).
+
+#### D1: Garden store para skins
+
+```typescript
+// src/store/gardenStore.ts
+import { map } from 'nanostores';
+
+export const $roomSkins = map<Record<string, string>>({});
+
+// Default: todos los rooms usan 'default'
+export const DEFAULT_SKINS: Record<string, string> = {
+  default: 'default',
+};
+```
+
+#### D2: Skin helper
+
+```typescript
+// helpers/gardenSkins.ts
+export const SKIN_OPTIONS = [
+  { id: 'default', name: 'Básico', price: 0 },
+  { id: 'modern', name: 'Moderno', price: 0 },
+];
+
+export function getRoomSkin(roomKey: string): string {
+  return $roomSkins.get()[roomKey] || 'default';
+}
+```
+
+#### D3: UI skin selector (placeholder)
+
+```tsx
+// Por ahora solo console log o alert
+// Fase completa viene después
+const handleSkinChange = (roomKey: string, skinId: string) => {
+  $roomSkins.setKey(roomKey, skinId);
+  alert(`Skin ${skinId} aplicado a ${roomKey}`);
+};
+```
+
+**Entregable Etapa D**: ✅ Estructura lista para skins (sin UI aún).
+
+---
+
+### ETAPA E: Premium Skins
+
+**Objetivo**: Compra de temas premium.
+
+#### E1: Catálogo premium
+
+```typescript
+export const PREMIUM_SKINS = [
+  { id: 'rustic', name: 'Rústico', price: 1 },
+  { id: 'zen', name: 'Zen', price: 2 },
+  { id: 'tropical', name: 'Tropical', price: 2 },
+  { id: 'cottage', name: 'Cottage', price: 2 },
+];
+```
+
+#### E2: Check purchase
+
+```typescript
+function hasPurchasedSkin(user: User, skinId: string): boolean {
+  return user.unlocked_skins?.includes(skinId) || false;
+}
+```
+
+#### E3: UI compra (placeholder)
+
+```tsx
+const handleBuySkin = async (skinId: string) => {
+  // Stripe checkout placeholder
+  alert(`Comprar skin ${skinId}`);
+};
+```
+
+**Entregable Etapa E**: ✅ Estructura para premium (checkout placeholder).
+
+---
+
+### RESUMEN: Orden de Desarrollo
+
+| # | Sub-paso | Qué | Dependencias | Dificult |
+|-----|--------|-------------|----------|---------|
+| **A1** | getPlantsByLocation() | None | Baja |
+| **A2** | GardenPage grid | A1 | Baja |
+| **A3** | CSS básico | A2 | Baja |
+| **A4** | /garden route | A2 | Baja |
+| **B1** | RoomCard + bg | A4 | Baja |
+| **B2** | CSS bg | B1 | Baja |
+| **C1** | PlantMiniIcon | B2 | Media |
+| **C2** | RoomCard + plants | C1 | Media |
+| **C3** | CSS plants | C2 | Baja |
+| **D1** | $roomSkins store | C3 | Media |
+| **D2** | Skin helpers | D1 | Baja |
+| **D3** | Skin selector | D2 | Media |
+| **E1** | Premium catalog | D3 | Baja |
+| **E2** | Purchase check | E1 | Media |
+| **E3** | Checkout UI | E2 | Alta |
+
+---
+
+### Entregables por Etapa
+
+| Etapa | Entregable | Tiempo |
+|------|----------|-------|
+| **A** | Grid textual (counts) | 30 min |
+| **B** | Room cards con bg SVG | 15 min |
+| **C** | Plant icons visibles | 30 min |
+| **D** | Skin estructura | 15 min |
+| **E** | Premium estructura | 15 min |
+
+**Total estimado**: ~1.5 horas para MVP completo (A+B+C).
 
 ---
 
