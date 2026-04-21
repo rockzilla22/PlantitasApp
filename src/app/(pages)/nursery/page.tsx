@@ -58,7 +58,7 @@ export default function NurseryPage() {
       </div>
 
       {/* FILTROS: Estilo Nursery Pro con botones tipo "badge" y estado activo resaltado */}
-      <div className="flex registros-center gap-3 flex-wrap mb-6">
+      <div className="flex items-center gap-3 flex-wrap mb-6">
         <div className="sort-group flex bg-[var(--black-soft)] p-1 rounded-xl gap-1">
           <button
             className={`px-3 py-1.5 text-[0.7rem] font-bold rounded-lg transition-all ${filter === "TODOS" ? "bg-[var(--white)] text-[var(--primary)] shadow-sm" : "text-[var(--text-brown)] hover:text-[var(--primary)]"}`}
@@ -127,19 +127,19 @@ export default function NurseryPage() {
                 {/* HEADER: Estilo Nursery Pro */}
                 <div className="grid grid-cols-[1fr_auto] gap-3 registros-start mb-4">
                   <div>
-                    <h3 className="text-[var(--primary)] mb-4 flex registros-center gap-3 text-lg font-bold">
+                    <h3 className="text-[var(--primary)] mb-4 flex items-center gap-3 text-lg font-bold">
                       <Image src="/icons/environment/methods/layering.svg" alt="" width={24} height={24} /> {prop.name}
                     </h3>
-                    <p className="m-0 inline-flex registros-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
                       <Image src={getMethodIcon(prop.method)} alt="" width={16} height={16} className="shrink-0 object-contain" />
                       <span>{prop.method}</span>
                     </p>
                   </div>
                   <div className="flex flex-col registros-end gap-1.5 shrink-0">
-                    <span className={`badge ${badgeClass} !text-[0.7rem] !px-2 flex registros-center gap-1 mb-4`}>
+                    <span className={`badge ${badgeClass} !text-[0.7rem] !px-2 flex items-center gap-1 mb-4`}>
                       <Image src={iconSrc} alt="" width={12} height={12} /> {prop.status}
                     </span>
-                    <p className="m-0 inline-flex registros-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
+                    <p className="m-0 inline-flex items-center gap-2 whitespace-nowrap text-[0.8rem] font-bold uppercase tracking-widest text-[var(--text-brown)]">
                       <Image src="/icons/common/calendar.svg" alt="" width={10} height={10} /> {formatDate(prop.startDate)}
                     </p>
                   </div>
@@ -153,7 +153,7 @@ export default function NurseryPage() {
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex registros-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-brown)]">
+                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] mt-auto text-[var(--text-brown)]">
                   <div className="flex gap-2">
                     {prop.status === "Activo" ? (
                       <>

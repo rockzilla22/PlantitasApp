@@ -82,10 +82,10 @@ export function cn(...inputs: ClassValue[]) {
 
 ```typescript
 // ❌ Static classes - unnecessary wrapper
-<div className={cn("flex registros-center gap-2")} />
+<div className={cn("flex items-center gap-2")} />
 
 // ✅ Just use className directly
-<div className="flex registros-center gap-2" />
+<div className="flex items-center gap-2" />
 ```
 
 ## Style Constants for Charts/Libraries
@@ -122,9 +122,9 @@ const CHART_COLORS = {
 ### Flexbox
 
 ```typescript
-<div className="flex registros-center justify-between gap-4" />
+<div className="flex items-center justify-between gap-4" />
 <div className="flex flex-col gap-2" />
-<div className="inline-flex registros-center" />
+<div className="inline-flex items-center" />
 ```
 
 ### Grid

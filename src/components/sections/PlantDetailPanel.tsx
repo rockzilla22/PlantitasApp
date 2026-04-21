@@ -61,7 +61,7 @@ export function PlantDetailPanel() {
 
   if (!plant) {
     return (
-      <aside id="plant-detail-panel" className="detail-panel" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
+      <aside id="plant-detail-panel" className="detail-panel" style={isWideLayout && resizerWidth > 0 ? { width: `${resizerWidth}px` } : undefined}>
         <div className="empty-state">
           <p>Seleccioná una planta para ver su detalle profesional</p>
         </div>
@@ -119,11 +119,11 @@ export function PlantDetailPanel() {
   const formatDate = (dateStr: string) => dateStr.split("-").reverse().join("/");
 
   return (
-    <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout ? { width: `${resizerWidth}px` } : undefined}>
+    <aside id="plant-detail-panel" className="detail-panel active" style={isWideLayout && resizerWidth > 0 ? { width: `${resizerWidth}px` } : undefined}>
       <div className="flex flex-col gap-6 p-6">
         {/* --- Name and Buttons --- */}
-        <div className="text-[var(--primary)] text-xl font-bold flex registros-center justify-between">
-          <div className="flex registros-center gap-2">
+        <div className="text-[var(--primary)] text-xl font-bold flex items-center justify-between">
+          <div className="flex items-center gap-2">
             <Image src={plantImg} alt={plant.type} width={24} height={24} className="object-contain shrink-0" />
             <h3 className="m-0 text-[var(--text-brown)] text-lg font-bold"> {plant.name}</h3>
           </div>
@@ -177,7 +177,7 @@ export function PlantDetailPanel() {
 
         {/* --- Registro --- */}
         <div className="p-4" style={{ background: "var(--bg-faint)", borderRadius: "var(--radius)" }}>
-          <div className="flex registros-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-4">
             <Image src="/icons/common/notes2.svg" width={24} height={24} alt="" className="object-contain shrink-0" />
             <h3 className="text-[var(--text-brown)] text-lg font-bold m-0">Nuevo Registro</h3>
           </div>
@@ -225,7 +225,7 @@ export function PlantDetailPanel() {
               className="h-[52px] px-4 rounded-2xl border border-[var(--border-light)] bg-[var(--input-bg)] outline-none focus:border-[var(--primary)] transition-all"
             />
             <button
-              className="btn-primary mx-auto flex w-full max-w-[10rem] registros-center justify-center py-4 text-center font-bold rounded-2xl"
+              className="btn-primary mx-auto flex w-full max-w-[10rem] items-center justify-center py-4 text-center font-bold rounded-2xl"
               onClick={handleAddLog}
             >
               Guardar Acción
@@ -236,7 +236,7 @@ export function PlantDetailPanel() {
         {/* --- Historial de Logs --- */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <div className="flex registros-center gap-2">
+            <div className="flex items-center gap-2">
               <Image src="/icons/common/notes2.svg" width={24} height={24} alt="" className="object-contain shrink-0" />
               <h3 className="m-0 text-[var(--text-brown)] text-lg font-bold">Historial</h3>
             </div>
@@ -336,8 +336,8 @@ export function PlantDetailPanel() {
                     ) : (
                       <>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <div className="flex registros-center gap-2">
-                            <div className="w-5 h-5 flex registros-center justify-center shrink-0">
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 flex items-center justify-center shrink-0">
                               <Image src={actionImg} alt={log.actionType} width={18} height={18} className="object-contain" />
                             </div>
                             <strong className="text-[var(--primary)]">{log.actionType}</strong>

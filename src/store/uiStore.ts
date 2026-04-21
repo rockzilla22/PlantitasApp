@@ -1,7 +1,7 @@
 import { atom } from "nanostores";
 
 // Estado para el resizer del panel de detalles
-export const $resizerWidth = atom<number>(400); // Ancho inicial por defecto
+export const $resizerWidth = atom<number>(0); // Se sincroniza desde el contenedor en desktop
 export const $isResizing = atom<boolean>(false);
 
 // Estado para la búsqueda global

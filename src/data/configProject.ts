@@ -207,7 +207,7 @@ const configProject: ConfigProject = {
       nursery: {
         label: "Propagación",
         description: "Seguimiento de esquejes y semillas. Vincula propagaciones con sus plantas madre y controla su evolución.",
-        icon: "/icons/environment/plants/flower2.svg",
+        icon: "/icons/environment/plants/seed.svg",
         href: "/nursery",
       },
       inventory: {
@@ -234,12 +234,7 @@ const configProject: ConfigProject = {
         icon: "/icons/common/notes.svg",
         href: "/notes",
       },
-      garden: {
-        label: "Jardín",
-        description: "Visualiza y gestiona tu jardín completo.",
-        icon: "/icons/environment/location/home.svg",
-        href: "/garden",
-      },
+
     },
     EN: {
       plants: {

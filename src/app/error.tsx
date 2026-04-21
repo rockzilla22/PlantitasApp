@@ -15,7 +15,7 @@ export default function Error({ error, reset }: Props) {
 
   return (
     <main
-      className="min-h-[70vh] flex registros-center justify-center"
+      className="min-h-[70vh] flex items-center justify-center"
       style={{ backgroundColor: "var(--background)", color: "var(--text)" }}
     >
       <div className="max-w-3xl text-center px-4">

@@ -57,11 +57,11 @@ export function CustomSelect({
     <div className={`relative w-full ${className}`} ref={containerRef}>
       <input type="hidden" name={name} value={selected} />
       <div
-        className="flex registros-center gap-3 p-3 bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all h-[52px]"
+        className="flex items-center gap-3 p-3 bg-[var(--bg-faint)] border border-[var(--border-light)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all h-[52px]"
         onClick={() => setIsOpen(!isOpen)}
       >
         {selectedOption?.img && (
-          <div className="w-8 h-8 flex registros-center justify-center shrink-0">
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
             {selected === "CUSTOM" ? (
               <Image src="/icons/common/stars.svg" alt="" width={32} height={32} className="object-contain" />
             ) : (
@@ -96,11 +96,11 @@ export function CustomSelect({
               filteredOptions.map((option) => (
                 <div
                   key={option.value}
-                  className={`flex registros-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
+                  className={`flex items-center gap-3 p-3 hover:bg-[var(--primary)]/10 cursor-pointer transition-colors ${selected === option.value ? "bg-[var(--primary)]/5" : ""}`}
                   onClick={() => handleSelect(option.value)}
                 >
                   {option.img && (
-                    <div className="w-7 h-7 flex registros-center justify-center shrink-0">
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
                       {option.value === "CUSTOM" ? (
                         <Image src="/icons/common/stars.svg" alt="" width={32} height={32} className="object-contain" />
                       ) : (

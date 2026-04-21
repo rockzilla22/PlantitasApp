@@ -38,7 +38,7 @@ export default function NotesPage() {
                 {/* HEADER: Estilo Nursery */}
                 <div className="grid grid-cols-[1fr_auto] gap-3 registros-start mb-4">
                   <div>
-                    <h3 className="text-[var(--primary)] flex registros-center gap-3 text-lg font-bold">
+                    <h3 className="text-[var(--primary)] flex items-center gap-3 text-lg font-bold">
                       <Image src="/icons/common/notes.svg" alt="" width={24} height={24} /> Nota Global
                     </h3>
                   </div>
@@ -55,7 +55,7 @@ export default function NotesPage() {
                 </div>
 
                 {/* FOOTER: Acciones */}
-                <div className="flex registros-center justify-between pt-4 border-t border-[var(--border-light)] text-[var(--text-muted)]">
+                <div className="flex items-center justify-between pt-4 border-t border-[var(--border-light)] text-[var(--text-muted)]">
                   <span className="text-[0.6rem] opacity-40 tracking-tighter uppercase"></span>
                   <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
                     <button

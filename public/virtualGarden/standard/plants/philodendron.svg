@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Philodendron heart leaves -->
+  <path d="M16 6 Q8 10 12 16 Q14 18 16 16 Q18 18 20 16 Q24 10 16 6" fill="#2e7d32"/>
+  <path d="M16 16 Q12 18 14 24 Q16 26 16 22" fill="#388e3c"/>
+  <path d="M16 16 Q20 18 18 24 Q16 26 16 22" fill="#388e3c"/>
+  <path d="M16 22 L16 26" stroke="#5d4037" stroke-width="2"/>
+  <path d="M10 26 L12 30 L20 30 L22 26 Z" fill="#8d6e63"/>
+</svg>

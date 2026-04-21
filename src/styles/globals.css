@@ -548,8 +548,8 @@
     }
 
     .plants-main-area {
-      flex: 1;
-      min-width: 200px;
+      flex: 1 1 0%; /* Permite que crezca y se achique correctamente */
+      min-width: 0;
       padding-right: 0.5rem;
       align-self: flex-start;
     }
@@ -560,7 +560,7 @@
 
     .resizer {
       display: block;
-      width: 8px;
+      width: 12px; /* Un poco más ancho para que sea más fácil de agarrar */
       cursor: col-resize;
       background: transparent;
       transition: background 0.2s;
@@ -595,14 +595,15 @@
       position: static;
       display: block;
       animation: none;
-      width: 50%;
-      min-width: 0; /* Remove rigid constraints */
-      max-width: none;
+      width: 40%; /* 60/40 ratio initial */
+      min-width: 200px;
+      max-width: 80%;
       height: auto;
       margin-top: 0;
       border-radius: var(--radius);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       padding: 1.5rem;
+      flex-shrink: 0; /* Evita que el flexbox lo aplaste */
     }
 
     .detail-panel.active {

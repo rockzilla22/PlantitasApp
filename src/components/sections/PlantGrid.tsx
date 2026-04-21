@@ -44,8 +44,8 @@ export function PlantGrid({ plants }: PlantGridProps) {
               {/* ROW 1: HEADER (Identidad) */}
               <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 registros-start min-w-0">
                 <div className="flex flex-col gap-y-2 min-w-0">
-                  <h3 className="text-[var(--primary)] mb-2 flex registros-center gap-3 text-lg font-bold">
-                    <div className="flex registros-center justify-center shrink-0">
+                  <h3 className="text-[var(--primary)] mb-2 flex items-center gap-3 text-lg font-bold">
+                    <div className="flex items-center justify-center shrink-0">
                       {plant.icon && !plant.icon.startsWith("/") ? (
                         <span className="text-2xl">{plant.icon}</span>
                       ) : (
@@ -54,7 +54,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
                     </div>
                     <span className="truncate">{plant.name}</span>
                   </h3>
-                  <div className="flex registros-center gap-1">
+                  <div className="flex items-center gap-1">
                     <Image src="/icons/common/map.svg" alt="map" width={14} height={14} className="inline" />
                     <small className="text-xs text-[var(--text-brown)] uppercase tracking-widest truncate block">{plant.location}</small>
                   </div>
@@ -73,7 +73,7 @@ export function PlantGrid({ plants }: PlantGridProps) {
 
               {/* ROW 2: BODY (Info Técnica) */}
               <div className="pt-1">
-                <div className="flex justify-between registros-center rounded-2xl px-5">
+                <div className="flex justify-between items-center rounded-2xl px-5">
                   <div className="flex flex-col gap-y-2">
                     <span className="text-[0.8rem] font-bold text-[var(--text-brown)] block mb-1">Último Riego</span>
                   </div>
@@ -87,11 +87,11 @@ export function PlantGrid({ plants }: PlantGridProps) {
               </div>
 
               {/* ROW 3: FOOTER (Acciones) */}
-              <div className="flex registros-center justify-between mt-auto text-[var(--footer-bg)]">
+              <div className="flex items-center justify-between mt-auto text-[var(--footer-bg)]">
                 <div className="flex flex-col gap-y-2">
                   <span className="text-[0.85rem] italic">Perfil Completo</span>
                 </div>
-                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex registros-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
+                <button className="text-xl group-hover:translate-x-2 transition-transform bg-[var(--bg-faint)] w-10 h-10 flex items-center justify-center rounded-full shadow-sm border border-[var(--border-light)]">
                   <span
                     aria-hidden="true"
                     className="inline-block h-[14px] w-[14px] bg-[var(--primary)] [mask-image:url('/icons/common/arrow_rigth.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] [-webkit-mask-image:url('/icons/common/arrow_rigth.svg')] [-webkit-mask-position:center] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:contain]"

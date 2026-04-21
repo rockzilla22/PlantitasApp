@@ -112,7 +112,7 @@ export function ImportSelectionModal({ incomingData, mode }: { incomingData: any
               aria-disabled={blocked}
               onClick={() => !blocked && handleToggle(item.id)}
               onKeyDown={(e) => (e.key === " " || e.key === "Enter") && !blocked && handleToggle(item.id)}
-              className={`flex registros-center gap-3 p-3 rounded-xl border transition-all select-none ${
+              className={`flex items-center gap-3 p-3 rounded-xl border transition-all select-none ${
                 blocked ? "cursor-not-allowed opacity-40" : "cursor-pointer"
               } ${checked ? "bg-[var(--primary-light)]/10 border-[var(--primary)]" : "bg-[var(--white)] border-[var(--border-light)]"}`}
             >

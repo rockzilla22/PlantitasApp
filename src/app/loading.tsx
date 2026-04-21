@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="flex min-h-[60vh] registros-center justify-center flex-col gap-4">
+    <div className="flex min-h-[60vh] items-center justify-center flex-col gap-4">
       <div className="animate-bounce">
         <img src="/icons/environment/plants/generic.svg" width={48} height={48} alt="" className="object-contain" />
       </div>
