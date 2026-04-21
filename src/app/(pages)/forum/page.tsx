@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "@nanostores/react";
-import { $posts, $forumLoading, $userVotes, loadPosts, loadUserVotes } from "@/store/forumStore";
+import { $posts, $forumLoading, $userVotes, loadPosts, loadUserVotes, deletePost } from "@/store/forumStore";
 import { $user } from "@/store/authStore";
 import { Post, PostType, POST_TYPE_LABELS } from "@/core/forum/domain/Forum";
 import { PostCard } from "@/components/forum/PostCard";
 import { PostDetail } from "@/components/forum/PostDetail";
 import { NewPostForm } from "@/components/forum/NewPostForm";
 import Image from "next/image";
+import { openModal } from "@/store/modalStore";
+import { getPlanLevel } from "@/libs/syncService";
 
 type Tab = "all" | PostType;
 type SortMode = "recent" | "top" | "unanswered";
@@ -38,6 +40,7 @@ export default function ForumPage() {
   const [search, setSearch] = useState("");
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [showNewPost, setShowNewPost] = useState(false);
+  const [postToEdit, setPostToEdit] = useState<Post | null>(null);
 
   useEffect(() => {
     loadPosts();
@@ -50,7 +53,7 @@ export default function ForumPage() {
       return;
     }
 
-    if (showNewPost && user) {
+    if ((showNewPost || postToEdit) && user) {
       if (!dialog.open) {
         dialog.showModal();
       }
@@ -60,7 +63,7 @@ export default function ForumPage() {
     if (dialog.open) {
       dialog.close();
     }
-  }, [showNewPost, user]);
+  }, [showNewPost, postToEdit, user]);
 
   useEffect(() => {
     const dialog = composeDialogRef.current;
@@ -68,13 +71,36 @@ export default function ForumPage() {
       return;
     }
 
-    const handleDialogClose = () => setShowNewPost(false);
+    const handleDialogClose = () => {
+      setShowNewPost(false);
+      setPostToEdit(null);
+    };
     dialog.addEventListener("close", handleDialogClose);
 
     return () => dialog.removeEventListener("close", handleDialogClose);
   }, []);
 
   const authorName = user?.user_metadata?.custom_name ?? user?.user_metadata?.full_name ?? user?.email ?? "Anónimo";
+  const planLevel = getPlanLevel(user);
+  const isMaster = planLevel.toUpperCase() === "MASTER";
+
+  const handleModerate = (postId: string, isAuthor: boolean = false) => {
+    openModal("confirm", {
+      title: isAuthor ? "¿Eliminar tu post?" : "Moderar Post",
+      message: isAuthor
+        ? "Esta acción borrará tu publicación de forma permanente."
+        : "¿Deseas eliminar este post por incumplimiento de las normas de la comunidad?",
+      confirmText: "Eliminar Post",
+      onConfirm: async () => {
+        const ok = await deletePost(postId);
+        if (ok && selectedPost?.id === postId) setSelectedPost(null);
+      },
+    });
+  };
+
+  const handleEdit = (post: Post) => {
+    setPostToEdit(post);
+  };
 
   const filtered = useMemo(() => {
     let result = [...posts];
@@ -93,7 +119,16 @@ export default function ForumPage() {
   if (selectedPost) {
     return (
       <div className="forum-page">
-        <PostDetail post={selectedPost} currentUserId={user?.id} currentUserName={authorName} onBack={() => setSelectedPost(null)} />
+        <PostDetail
+          post={selectedPost}
+          currentUserId={user?.id}
+          currentUserName={authorName}
+          onBack={() => setSelectedPost(null)}
+          isMaster={isMaster}
+          onModerate={() => handleModerate(selectedPost.id)}
+          onEdit={() => handleEdit(selectedPost)}
+          onDelete={() => handleModerate(selectedPost.id, true)}
+        />
         <style jsx>{`
           ${forumStyles}
         `}</style>
@@ -111,7 +146,7 @@ export default function ForumPage() {
         </div>
         {user ? (
           <button className="btn-primary h-10 px-6 text-xs uppercase tracking-widest" onClick={() => setShowNewPost((v) => !v)}>
-            {showNewPost ? "✕ Cancelar" : "+ Nuevo post"}
+            {showNewPost || postToEdit ? "Cancelar" : "Nuevo post"}
           </button>
         ) : (
           <span className="forum-guest-hint">Iniciá sesión para participar</span>
@@ -122,10 +157,14 @@ export default function ForumPage() {
         <dialog
           ref={composeDialogRef}
           className="forum-compose-modal"
-          onCancel={() => setShowNewPost(false)}
+          onCancel={() => {
+            setShowNewPost(false);
+            setPostToEdit(null);
+          }}
           onClick={(event) => {
             if (event.target === event.currentTarget) {
               setShowNewPost(false);
+              setPostToEdit(null);
             }
           }}
         >
@@ -136,8 +175,10 @@ export default function ForumPage() {
               <NewPostForm
                 authorId={user.id}
                 authorName={authorName}
+                postToEdit={postToEdit}
                 onClose={() => {
                   setShowNewPost(false);
+                  setPostToEdit(null);
                   loadPosts();
                 }}
               />
@@ -198,16 +239,25 @@ export default function ForumPage() {
       {loading ? (
         <div className="forum-state">
           <span className="forum-state__icon animate-bounce">🌿</span>
-          <p className="font-bold">Cultivando posts…</p>
+          <p className="font-bold">Cultivando publicaciones...</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="forum-state forum-state--empty">
           <p className="italic">{search ? "No hay brotes que coincidan con tu búsqueda." : "Todavía no hay semillas plantadas aquí."}</p>
         </div>
       ) : (
-        <div className="forum-feed">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6 w-full px-1">
           {filtered.map((p) => (
-            <PostCard key={p.id} post={p} onClick={() => setSelectedPost(p)} />
+            <PostCard
+              key={p.id}
+              post={p}
+              onClick={() => setSelectedPost(p)}
+              currentUserId={user?.id}
+              isMaster={isMaster}
+              onModerate={() => handleModerate(p.id)}
+              onEdit={() => handleEdit(p)}
+              onDelete={() => handleModerate(p.id, true)}
+            />
           ))}
         </div>
       )}
@@ -502,103 +552,6 @@ const forumStyles = `
 
   .forum-state__icon { font-size: 3.5rem; }
   .forum-state p { font-size: 1rem; margin: 0; }
-
-  /* PostCard Styles — unificado con card de la app */
-  :global(.forum-post-card) {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-top: 5px solid var(--type-accent, var(--primary));
-    border-radius: 2.5rem;
-    padding: 1.75rem 2rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-  }
-
-  :global(.forum-post-card:hover),
-  :global(.forum-post-card:focus-visible) {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    background: var(--white);
-    border-color: var(--primary-light);
-  }
-
-  :global(.forum-post-card__meta) {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  :global(.forum-post-card__type) {
-    font-size: 0.65rem;
-    font-weight: 900;
-    background: color-mix(in srgb, var(--type-accent, var(--primary)) 10%, transparent);
-    color: var(--type-accent, var(--primary));
-    padding: 0.25rem 0.75rem;
-    border-radius: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border: 1px solid color-mix(in srgb, var(--type-accent, var(--primary)) 20%, transparent);
-  }
-
-  :global(.forum-post-card__author) {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--primary);
-    opacity: 0.8;
-  }
-
-  :global(.forum-post-card__time) {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-gray);
-    opacity: 0.6;
-    margin-left: auto;
-  }
-
-  :global(.forum-post-card__title) {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-brown);
-    margin: 0 0 0.75rem;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-
-  :global(.forum-post-card__preview) {
-    font-size: 0.95rem;
-    color: var(--text-gray);
-    margin: 0 0 1.25rem;
-    line-height: 1.6;
-    opacity: 0.9;
-  }
-
-  :global(.forum-tag) {
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--primary);
-    background: var(--bg-faint);
-    padding: 0.25rem 0.65rem;
-    border-radius: 2rem;
-    border: 1px solid var(--border);
-    letter-spacing: 0.02em;
-  }
-
-  :global(.forum-post-card__stats) {
-    display: flex;
-    gap: 1.25rem;
-    font-size: 0.85rem;
-    color: var(--text-gray);
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-light);
-    font-weight: 700;
-  }
-
-  :global(.forum-score.positive) { color: var(--success); }
-  :global(.forum-score.negative) { color: var(--danger); }
 
   /* PostDetail Styles */
   :global(.forum-detail__post) {

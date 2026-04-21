@@ -7,7 +7,6 @@ export const $posts = atom<Post[]>([]);
 export const $replies = map<Record<string, Reply[]>>({});
 export const $forumFilter = atom<PostType | "all">("all");
 export const $forumSearch = atom<string>("");
-export const $forumTags = atom<string[]>([]);
 export const $forumLoading = atom<boolean>(false);
 export const $userVotes = map<Record<string, -1 | 1>>({});
 
@@ -56,7 +55,6 @@ export async function createPost(payload: {
   title: string;
   content: string;
   type: PostType;
-  tags: string[];
 }): Promise<boolean> {
   const sb = supabaseBrowser();
   const { error } = await sb.from("posts").insert(payload);
@@ -128,4 +126,22 @@ export async function acceptReply(replyId: string, postId: string) {
   await sb.from("replies").update({ is_accepted: false }).eq("post_id", postId);
   await sb.from("replies").update({ is_accepted: true }).eq("id", replyId);
   await loadReplies(postId);
+}
+
+// Update post
+export async function updatePost(postId: string, payload: Partial<Post>): Promise<boolean> {
+  const sb = supabaseBrowser();
+  const { error } = await sb.from("posts").update(payload).eq("id", postId);
+  if (!error) await loadPosts();
+  return !error;
+}
+
+// Delete post (Moderation)
+export async function deletePost(postId: string): Promise<boolean> {
+  const sb = supabaseBrowser();
+  const { error } = await sb.from("posts").delete().eq("id", postId);
+  if (!error) {
+    $posts.set($posts.get().filter((p) => p.id !== postId));
+  }
+  return !error;
 }

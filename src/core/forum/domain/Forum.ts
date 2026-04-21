@@ -7,7 +7,6 @@ export interface Post {
   title: string | null;
   content: string;
   type: PostType;
-  tags: string[];
   plant_ref: number | null;
   upvotes: number;
   downvotes: number;
@@ -44,9 +43,3 @@ export const POST_TYPE_EMOJI: Record<PostType, string> = {
   experience: "📖",
   discussion: "💬",
 };
-
-export const FORUM_TAGS = [
-  "Riego", "Sustrato", "Plagas", "Fertilizante", "Trasplante",
-  "Poda", "Propagación", "Luz", "Monstera", "Cactus", "Orquídea",
-  "Suculenta", "Pothos", "Begonia", "Helecho",
-];
