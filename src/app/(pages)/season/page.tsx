@@ -102,9 +102,17 @@ export default function SeasonPage() {
                     <span className="shrink-0" title={t.type}>
                       <Image src={getTaskIcon(t.type)} alt={t.type} width={24} height={24} />
                     </span>
-                    <p className="m-0 text-[0.95rem] font-semibold text-[var(--text-brown)] truncate leading-tight" title={t.desc}>
-                      {t.desc}
-                    </p>
+                    <div className="flex flex-col min-w-0">
+                      <p className="m-0 text-[0.95rem] font-semibold text-[var(--text-brown)] truncate leading-tight" title={t.desc}>
+                        {t.desc}
+                      </p>
+                      {t.date && (
+                        <span className="text-[0.65rem] text-[var(--primary)] font-bold uppercase tracking-wider mt-1 flex items-center gap-1">
+                          <Image src="/icons/common/calendar.svg" alt="" width={10} height={10} className="opacity-70" />
+                          {t.date.split("-").reverse().join("/")}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Acciones */}
@@ -112,7 +120,11 @@ export default function SeasonPage() {
                     <button
                       className="p-2 transition-transform hover:text-[var(--primary)] hover:bg-[var(--input-bg)] rounded-xl"
                       title="Agendar"
-                      onClick={() => openModal("calendar", { title: `${t.type}: Plan de ${s.name}`, desc: t.desc })}
+                      onClick={() => openModal("calendar", { 
+                        title: `${t.type}: Plan de ${s.name}`, 
+                        desc: t.desc,
+                        date: t.date
+                      })}
                     >
                       <Image src="/icons/common/calendar.svg" alt="Agendar" width={22} height={22} />
                     </button>

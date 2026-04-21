@@ -1,5 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150">
   <rect width="200" height="150" fill="#efebe9" rx="8"/>
   <rect x="4" y="4" width="192" height="142" fill="none" stroke="#bcaaa4" stroke-width="2" rx="6"/>
-  <text x="100" y="80" text-anchor="middle" fill="#5d4037" font-family="system-ui" font-size="14" font-weight="600">Entrada</text>
 </svg>

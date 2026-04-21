@@ -39,8 +39,18 @@ export function getPlantGardenIcon(type: string, tier = "standard"): string {
   return `/virtualGarden/${tier}/plants/${filename}.svg`;
 }
 
-export function getRoomSvg(roomKey: string, tier = "standard"): string {
-  return `/virtualGarden/${tier}/rooms/${roomKey}.svg`;
+export function getRoomSvg(roomKey: string, skinId = "standard"): string {
+  // "standard" skin uses standard/ folder; premium skins use their own subfolder
+  const folder = skinId === "standard" ? "standard" : `premium/${skinId}`;
+  return `/virtualGarden/${folder}/rooms/${roomKey}.svg`;
+}
+
+export function getDaysSinceWatered(lastWateredDate?: string | null): number | null {
+  if (!lastWateredDate) return null;
+  const last = new Date(lastWateredDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.floor((today.getTime() - last.getTime()) / 86_400_000);
 }
 
 export function getPlantsByRoom(plants: Plant[]): Record<string, Plant[]> {

@@ -12,6 +12,7 @@ export const SeasonTaskSchema = z.object({
   season: SeasonSchema,
   type: SeasonTaskTypeSchema,
   desc: z.string().min(1, "La descripción es obligatoria"),
+  date: z.string().optional(),
 });
 
 export type SeasonTask = z.infer<typeof SeasonTaskSchema>;

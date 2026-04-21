@@ -328,11 +328,12 @@ export function Modals() {
     const data = {
       type: fd.get("st-type") as any,
       desc: fd.get("st-desc") as string,
+      date: fd.get("st-date") as string,
     };
     if (type === "edit-season-task") {
       updateSeasonTask(props.season, props.index, data);
     } else {
-      addSeasonTask(props?.season || "Primavera", data.type, data.desc);
+      addSeasonTask(props?.season || "Primavera", data.type, data.desc, data.date);
     }
     handleClose();
   };
@@ -387,7 +388,7 @@ export function Modals() {
       >
         {/* --- MODAL DE AGREGAR/EDITAR PLANTA --- */}
         {(type === "add-plant" || type === "edit-plant") && (
-          <form method="dialog" onSubmit={handlePlantSubmit}>
+          <form method="dialog" noValidate onSubmit={handlePlantSubmit}>
             <h3 className="flex items-center gap-2">
               {type === "edit-plant" ? (
                 <>
@@ -509,7 +510,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR PROPAGACIÓN --- */}
         {(type === "add-prop" || type === "edit-prop") && (
-          <form method="dialog" onSubmit={handlePropSubmit}>
+          <form method="dialog" noValidate onSubmit={handlePropSubmit}>
             <h3>{type === "edit-prop" ? "Editar Propagación" : "Nueva Propagación"}</h3>
             <div className="form-group">
               <label>Planta Madre (Opcional)</label>
@@ -581,7 +582,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR DESEO --- */}
         {(type === "add-wish" || type === "edit-wish") && (
-          <form method="dialog" onSubmit={handleWishSubmit}>
+          <form method="dialog" noValidate onSubmit={handleWishSubmit}>
             <h3>{type === "edit-wish" ? "Editar Deseo" : "Nuevo Deseo"}</h3>
             <div className="form-group">
               <label>¿Qué deseamos?*</label>
@@ -620,7 +621,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR PLAN DE TEMPORADA --- */}
         {(type === "add-season-task" || type === "edit-season-task") && (
-          <form method="dialog" onSubmit={handleSeasonTaskSubmit}>
+          <form method="dialog" noValidate onSubmit={handleSeasonTaskSubmit}>
             <h3>{type === "edit-season-task" ? "Editar Plan de Temporada" : "Planear Acción"}</h3>
             <div className="form-group">
               <label>Tipo de Tarea</label>
@@ -636,6 +637,15 @@ export function Modals() {
                 defaultValue={props?.desc || ""}
               ></textarea>
             </div>
+            <div className="form-group">
+              <label>Fecha Estimada</label>
+              <input
+                type="date"
+                name="st-date"
+                className="p-2 text-sm sm:text-base"
+                defaultValue={props?.date || ""}
+              />
+            </div>
             <div className="modal-actions flex flex-col-reverse sm:flex-row gap-2 sm:gap-4 mt-6">
               <button type="button" className="btn-text w-full sm:w-auto py-2" onClick={handleClose}>
                 Cancelar
@@ -649,7 +659,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR NOTA GLOBAL --- */}
         {(type === "add-note" || type === "edit-note") && (
-          <form method="dialog" onSubmit={handleNoteSubmit}>
+          <form method="dialog" noValidate onSubmit={handleNoteSubmit}>
             <h3>{type === "edit-note" ? "Editar Nota Global" : "Nueva Nota Global"}</h3>
             <div className="form-group">
               <label>Contenido de la nota*</label>
@@ -675,7 +685,7 @@ export function Modals() {
 
         {/* --- MODAL DE AGREGAR/EDITAR INSUMO --- */}
         {(type === "add-item" || type === "edit-item") && (
-          <form method="dialog" onSubmit={handleItemsubmit}>
+          <form method="dialog" noValidate onSubmit={handleItemsubmit}>
             <h3>{type === "edit-item" ? "Editar Insumo" : "Nuevo Insumo"}</h3>
             <div className="form-group">
               <label>Categoría</label>
@@ -836,8 +846,54 @@ export function Modals() {
           <ImportSelectionModal incomingData={props.data} mode={props.mode} />
         )}
 
+        {type === "room-plants" && (
+          <div className="room-plants-modal">
+            <div className="room-plants-modal__header">
+              <h3>{props?.label}</h3>
+              <button type="button" className="btn-text" onClick={handleClose} aria-label="Cerrar">✕</button>
+            </div>
+            {(!props?.plants || props.plants.length === 0) ? (
+              <p className="room-plants-modal__empty">Sin plantas en este cuarto.</p>
+            ) : (
+              <ul className="room-plants-modal__list">
+                {props.plants.map((p: any) => {
+                  const days = p.lastWateredDate
+                    ? Math.floor((Date.now() - new Date(p.lastWateredDate).getTime()) / 86_400_000)
+                    : null;
+                  return (
+                    <li key={p.id} className="room-plants-modal__item">
+                      <Image
+                        src={p.icon || "/icons/environment/plants/generic.svg"}
+                        alt={p.name}
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
+                      <div className="room-plants-modal__info">
+                        <span className="room-plants-modal__name">{p.name}</span>
+                        <span className="room-plants-modal__watered">
+                          {days === null ? "Sin registros de riego" : days === 0 ? "Regada hoy" : `Hace ${days} días`}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            <div className="modal-actions" style={{ justifyContent: "center", marginTop: "1rem" }}>
+              <a
+                href={`/plants?location=${encodeURIComponent(props?.label ?? "")}`}
+                className="btn-primary"
+                onClick={handleClose}
+              >
+                Ver en Mis Plantas →
+              </a>
+            </div>
+          </div>
+        )}
+
         {type === "calendar" && (
-          <form method="dialog" onSubmit={handleCalendarSubmit}>
+          <form method="dialog" noValidate onSubmit={handleCalendarSubmit}>
             <h3>
               <img src="/icons/common/calendar.svg" width={18} height={18} alt="" className="object-contain inline mr-2" />
               Recordatorio Google
