@@ -240,6 +240,12 @@ const configProject: ConfigProject = {
         icon: "/icons/environment/location/home.svg",
         href: "/garden",
       },
+      forum: {
+        label: "Foro",
+        description: "El espacio los Plant Lover pueden compartir experiencias, consejos y fotos de sus plantas.",
+        icon: "/icons/common/sand_timer.svg",
+        href: "/forum",
+      }
     },
     EN: {
       plants: {
