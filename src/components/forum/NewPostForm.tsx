@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PostType, POST_TYPE_LABELS, FORUM_TAGS, Post } from "@/core/forum/domain/Forum";
+import { PostType, POST_TYPE_LABELS, Post } from "@/core/forum/domain/Forum";
 import { createPost, updatePost } from "@/store/forumStore";
 import Image from "next/image";
 
