@@ -1,6 +1,8 @@
-# 🌿 PlantitasApp
+# 🌿 Plantacora
 
-**PlantitasApp** es una app web para amantes de las plantas. Registrá tu colección, llevá el historial de cuidados, gestioná propagaciones, inventario de insumos y mucho más — sin fricción, desde cualquier dispositivo.
+**El diario de cuidados que todo Plant Lover necesita.**
+
+Sabemos que cada hoja nueva cuenta una historia. Plantacora te ayuda a recordar cuándo fue el último riego, cómo va creciendo ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfrutá de tus plantas sin el estrés de olvidar cuándo tocaba regar o fertilizar. Creá un espacio digital para tu colección, seguí el progreso de tus propagaciones y mantén tus insumos a la mano. Tu única preocupación será verlas crecer.
 
 Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JSON cuando quieras. Si querés respaldo automático en la nube, existen los planes Premium y Pro.
 
@@ -10,14 +12,14 @@ Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JS
 
 ### Sin cuenta — Plan Gratuito 🌱
 
-Puedes usar PlantitasApp al 100% sin registrarte. No hay límite de plantas ni funciones bloqueadas.
+Puedes usar Plantacora al 100% sin registrarte. Todas las funciones están disponibles.
 
 - Todo se guarda en `localStorage` del navegador
 - Exportá tus datos como `.json` cuando quieras (botón **Exportar** en el header)
 - Importá un JSON anterior para restaurar o migrar datos entre dispositivos
 - Si el botón muestra **⚠ Cambios pendientes**, es hora de hacer una copia
 
-> Los datos son tuyos. PlantitasApp no envía nada a ningún servidor si no tienes una cuenta activa.
+> Los datos son tuyos. Plantacora no envía nada a ningún servidor si no tienes una cuenta activa.
 
 ### Con cuenta — Planes de Pago
 
@@ -41,6 +43,8 @@ Al iniciar sesión con una cuenta, según tu plan podrás acceder a diferentes n
 
 ## Funcionalidades
 
+Simplificando el cuidado de tus plantas. Un espacio organizado para acompañarte en cada riego, brote y cambio de estación.
+
 ### 🌱 Mis Plantas
 
 Registrá cada planta con nombre, tipo, ícono, ubicación, luz y tipo de maceta. Cada planta tiene su **historial de logs**:
@@ -49,7 +53,7 @@ Registrá cada planta con nombre, tipo, ícono, ubicación, luz y tipo de maceta
 - La fecha del último riego se actualiza automáticamente
 - Panel de detalle lateral en desktop, bottom sheet en mobile
 
-### 🧪 Propagación (Vivero)
+### 🧪 Propagación
 
 Seguimiento completo del ciclo de vida de tus esquejes y semillas:
 
@@ -57,14 +61,7 @@ Seguimiento completo del ciclo de vida de tus esquejes y semillas:
 - Métodos: agua, sustrato, musgo, etc.
 - Estados: Activo → Trasplantada / Fracaso
 
-### 📅 Planeación Anual
-
-Organizá tareas de cuidado por estación (Primavera, Verano, Otoño, Invierno):
-
-- Tipos: Riego, Fertilización, Poda, Siembra, Limpieza, Tratamiento, etc.
-- Ordenable por tipo o descripción
-
-### 📦 Inventario de Insumos
+### 📦 Inventario
 
 Control de stock para lo que usás en tu jardín:
 
@@ -72,13 +69,40 @@ Control de stock para lo que usás en tu jardín:
 - Ajuste de cantidad con botones `+` / `−`
 - Al registrar un log de mantenimiento, el inventario valida el stock disponible
 
-### ✨ wishlist
+### 📅 Planeación
 
-Tu Lista de Deseos de plantas, artículos y más. Prioridad Alta / Media / Baja con notas.
+Organizá tareas de cuidado por estación (Primavera, Verano, Otoño, Invierno):
 
-### 📝 Notas Globales
+- Tipos: Riego, Fertilización, Poda, Siembra, Limpieza, Tratamiento, etc.
+- Ordenable por tipo o descripción
 
-Notas libres sin estructura, para apuntes rápidos, observaciones o ideas.
+### 🌿 Lista de Deseos
+
+Tu Lista de Deseos botánicos organizada por prioridad para que no se te escape ninguna:
+
+- Prioridad Alta / Media / Baja con notas
+- Seguimiento de plantas o artículos que querés conseguir
+
+### 📝 Notas
+
+Espacio libre para tus observaciones rápidas, ideas o recordatorios de tu jardín:
+
+- Notas globales sin estructura
+- Apuntes rápidos que no encajan en otras secciones
+
+### 🏡 Jardín
+
+El espacio donde tu esfuerzo florece y tu colección cobra vida:
+
+- Vista general de tu colección completa
+- Visualización de todas tus plantas en un solo lugar
+
+### 💬 Foro
+
+El espacio donde los Plant Lover pueden compartir experiencias, consejos y fotos de sus plantas:
+
+- Comunidad de amantes de las plantas
+- Compartir conocimientos y experiencias
 
 ### 🔍 Buscador Global
 

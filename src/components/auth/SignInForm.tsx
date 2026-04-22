@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/libs/db";
 import { translateError } from "@/libs/utils";
+import configProject from "@/data/configProject";
 
 type Props = {
   redirectTo?: string;
@@ -84,9 +86,11 @@ export function SignInForm({ redirectTo = "/" }: Props) {
       </Link>
 
       <div className="signin-header">
-        <span className="signin-logo"><img src="/icons/environment/plants/generic.svg" width={32} height={32} alt="PlantitasApp" className="object-contain" /></span>
-        <h2>PlantitasApp</h2>
-        <p>Tu jardín personal, en cualquier dispositivo</p>
+        <span className="signin-logo">
+          <Image src={configProject.logo} width={32} height={32} alt={configProject.appName} className="object-contain" />
+        </span>
+        <h2>{configProject.appName}</h2>
+        <p>{configProject.appDescription}</p>
       </div>
 
       <div className="signin-oauth">

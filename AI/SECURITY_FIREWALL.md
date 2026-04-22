@@ -43,7 +43,7 @@ La IA es una herramienta de ejecución, no de decisión arquitectónica final. E
 | **Frontera RSC/Client** | Prohibido `"use client"` innecesario. | Validar que el componente requiera hooks o eventos. |
 | **Refactorización** | Prohibido el "Breaking Change" silencioso. | Correr tests unitarios pre-existentes. |
 | **Commits** | Solo `Conventional Commits`. | NO AI attribution ("Co-authored-by"). |
-| **Arquitectura** | Prohibido mezclar capas (Business en UI). | Chequeo de `AI/ARCHITECTURE_BLUEPRINT_NEXT.md`. |
+| **Arquitectura** | Prohibido mezclar capas (Business en UI). | Chequeo de `AI/ARCHITECTURE_BLUEPRINT.md`. |
 | **Post-Cambio** | NUNCA construir (build) tras cambios. | Verificar código y docs antes de afirmar algo. |
 
 ---

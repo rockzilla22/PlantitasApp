@@ -40,6 +40,7 @@ export interface ConfigProject {
   twitter: string;
 
   // Imagenes
+  logo: string;
   images: {
     ogDefault: string;
     twitterCard: string;
@@ -113,21 +114,59 @@ export interface ConfigProject {
       [key: string]: { label: string; color: string; bgColor: string };
     };
   };
+
+  // Sistema de Referidos
+  referrals: {
+    rewards: {
+      signup: {
+        referrerSlots: number;
+        referredSlots: number;
+        requiredPlants: number;
+      };
+      proPurchase: {
+        referrerSlots: number;
+        referredSlots: number;
+        requiresNoPremium: boolean;
+      };
+      premiumPurchase: {
+        referrerDays: number;
+        referredDays: number;
+        requiresNoPro: boolean;
+      };
+    };
+    limits: {
+      maxReferralSlots: number;
+      codeExpirationDays: number;
+      maxActiveReferrals: number;
+    };
+    antiFraud: {
+      blockSameEmail: boolean;
+      blockSameDevice: boolean;
+      blockSameIP: boolean;
+      blockSamePaymentMethod: boolean;
+    };
+    ui: {
+      headline: string;
+      subhead: string;
+      benefits: string[];
+    };
+  };
 }
 
 const configProject: ConfigProject = {
   // ======================================================
   // PROYECTO (metadata / web)
   // ======================================================
-  appName: "PlantitasApp",
-  tabname: "PlantitasApp - Gestión Botánica",
-  appDescription: "Gestión botánica profesional con sincronización en la nube, integridad referencial y reportes avanzados.",
-  ogTitle: "PlantitasApp",
-  ogDescription: "Tu laboratorio botánico profesional en la nube.",
+  appName: "Plantacora App",
+  tabname: "Plantacora App - Gestión Botánica",
+  appDescription: "El diario de cuidados que todo Plant Lover necesita.",
+  ogTitle: "Plantacora App - Tu Diario Botánico Digital",
+  ogDescription: "El diario de cuidados que todo Plant Lover necesita. Sabemos que cada hoja nueva cuenta una historia. Plantacora te ayuda a recordar cuándo fue el último riego, cómo va creciendo ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfrutá de tus plantas sin el estrés de olvidar cuándo tocaba regar o fertilizar. Creá un espacio digital para tu colección, seguí el progreso de tus propagaciones y mantén tus insumos a la mano. Tu única preocupación será verlas crecer.",
   domainName: "plantitas-app.vercel.app/",
   siteUrl: "https://plantitas-app.vercel.app/",
-  copyright_es: `© ${new Date().getFullYear()} — PlantitasApp — Todos los derechos reservados.`,
-  copyright_en: `© ${new Date().getFullYear()} — PlantitasApp — All rights reserved.`,
+  copyright_es: `© ${new Date().getFullYear()} — Plantacora — Todos los derechos reservados.`,
+  copyright_en: `© ${new Date().getFullYear()} — Plantacora — All rights reserved.`,
+  logo: "/PageCover/PlantacoraLogo.webp",
 
   // ======================================================
   // METADATOS / SEO
@@ -145,37 +184,37 @@ const configProject: ConfigProject = {
 
   // Rutas hacia imagenes base
   images: {
-    ogDefault: "/PageCover/cover.webp",
-    twitterCard: "/PageCover/cover.webp",
-    favicon: "/PageCover/favicon.svg",
-    icon16: "/PageCover/favicon.svg",
-    icon32: "/PageCover/favicon.svg",
-    icon192: "/PageCover/favicon.svg",
-    icon512: "/PageCover/favicon.svg",
-    appleTouch: "/PageCover/favicon.svg",
-    safariMask: "/PageCover/favicon.svg",
+    ogDefault: "/PageCover/PlantacoraCover.webp",
+    twitterCard: "/PageCover/PlantacoraCover.webp",
+    favicon: "/PageCover/PlantacoraLogo.webp",
+    icon16: "/PageCover/PlantacoraLogo.webp",
+    icon32: "/PageCover/PlantacoraLogo.webp",
+    icon192: "/PageCover/PlantacoraLogo.webp",
+    icon512: "/PageCover/PlantacoraLogo.webp",
+    appleTouch: "/PageCover/PlantacoraLogo.webp",
+    safariMask: "/PageCover/PlantacoraLogo.webp",
   },
 
   // ======================================================
   // SOPORTE / CONTACTO (publico)
   // ======================================================
   support: {
-    email: "hola@plantitasapp.com",
+    email: "hola@Plantacora.com",
   },
 
   // ======================================================
   // RESEND (client-side references)
   // ======================================================
   resend: {
-    fromAdmin: "admin@plantitasapp.com",
-    fromNoReply: "noreply@plantitasapp.com",
+    fromAdmin: "admin@Plantacora.com",
+    fromNoReply: "noreply@Plantacora.com",
   },
 
   // ======================================================
   // REDES SOCIALES (para SocialDock / JSON-LD)
   // ======================================================
   socials: {
-    github: "https://github.com/JFEspanolito/PlantitasApp",
+    github: "https://github.com/JFEspanolito/Plantacora",
     linkedin: "https://linkedin.com/in/jfespanolito",
     twitter: "https://twitter.com/jfespanolito",
     instagram: "https://instagram.com/jfespanolito",
@@ -375,6 +414,59 @@ const configProject: ConfigProject = {
       media: { label: "Media", color: "#2563eb", bgColor: "#eff6ff" },
       alta: { label: "Alta", color: "#d97706", bgColor: "#fffbeb" },
       critica: { label: "Crítica", color: "#e11d48", bgColor: "#fff1f2" },
+    },
+  },
+
+  // ======================================================
+  // SISTEMA DE REFERIDOS (refer-a-friend)
+  // ======================================================
+  referrals: {
+    // Recompensas por hito completado
+    rewards: {
+      // Hito 1: Registro completado + X plantas creadas
+      signup: {
+        referrerSlots: 1,
+        referredSlots: 1,
+        requiredPlants: 5, // plantas necesarias para validar aceptación
+      },
+      // Hito 2: Primera compra Pro (solo si NO tiene Premium)
+      proPurchase: {
+        referrerSlots: 5,
+        referredSlots: 5,
+        requiresNoPremium: true, // solo otorga si el referido no tiene Premium activo
+      },
+      // Hito 3: Primera compra Premium (solo si NO tiene Pro)
+      premiumPurchase: {
+        referrerDays: 7,
+        referredDays: 7,
+        requiresNoPro: true, // solo otorga si el referido no tiene Pro comprado
+      },
+    },
+
+    // Límites del sistema
+    limits: {
+      maxReferralSlots: 100, // slots máximos ganados por referral (separado de Pro purchased)
+      codeExpirationDays: 7, // días de vigencia del código de invitación
+      maxActiveReferrals: 10, // máximo de referidos activos simultáneos
+    },
+
+    // Validaciones anti-fraude
+    antiFraud: {
+      blockSameEmail: true, // impide auto-referido por email
+      blockSameDevice: true, // mismo fingerprint de dispositivo
+      blockSameIP: true, // misma IP de registro
+      blockSamePaymentMethod: true, // mismo método de pago en checkout
+    },
+
+    // textos de la UI
+    ui: {
+      headline: "Invitar Amigos",
+      subhead: "Gana slots y días Premium por cada amigo que se una",
+      benefits: [
+        "¡Gana +1 slot cuando tu amigo se registre!",
+        "Si compran Pro: +5 slots para ambos",
+        "Si compran Premium: +7 días extra para ambos",
+      ],
     },
   },
 };

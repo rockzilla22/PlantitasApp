@@ -64,4 +64,4 @@ Dividido por categorías (Sustratos, Fertilizantes, etc.):
 - **Pro / Premium / Master**: Exportación ilimitada y completa.
 
 ---
-*Ultima actualización: 19 de Abril, 2026. Basado en la arquitectura de PlantitasApp V5.*
+*Ultima actualización: 19 de Abril, 2026. Basado en la arquitectura de Plantacora V5.*

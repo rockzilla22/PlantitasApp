@@ -1,4 +1,4 @@
-# AI/ARCHITECTURE_BLUEPRINT_NEXT_SUPABASE.md: PROTOCOLO OMEGA (PLANTITASAPP)
+# AI/ARCHITECTURE_BLUEPRINT_SUPABASE.md: PROTOCOLO OMEGA (Plantacora)
 
 ## 1. FILOSOFÍA DE LA ARMADURA
 Next.js en este hangar no es un framework de frontend; es una plataforma de ingeniería full-stack. La regla de oro es la **Separación de Preocupaciones (SoC)** y la **Eficiencia de Datos**.

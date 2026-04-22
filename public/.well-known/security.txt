@@ -1,4 +1,4 @@
-Contact: mailto:hola@plantitasapp.com
+Contact: mailto:hola@Plantacora.com
 Expires: 2027-04-19T00:00:00.000Z
 Preferred-Languages: es, en
 Canonical: https://plantitas-app.vercel.app/.well-known/security.txt

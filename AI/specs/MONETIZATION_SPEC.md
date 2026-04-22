@@ -1,4 +1,4 @@
-# AI/specs/MONETIZATION_SPEC.md: Sistema de Monetización PlantitasApp
+# AI/specs/MONETIZATION_SPEC.md: Sistema de Monetización Plantacora
 
 ## 1. MODELO DE NEGOCIO
 

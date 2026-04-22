@@ -3,6 +3,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { AppData } from "@/store/plantStore";
+import configProject from "@/data/configProject";
 
 /**
  * Servicio de Generación de Reportes PDF (Data-Only)
@@ -14,7 +15,7 @@ export const generateFullReport = (data: AppData, userName: string) => {
 
   // --- Título del Reporte ---
   doc.setFontSize(18);
-  doc.text("Reporte de Gestión Botánica - PlantitasApp", 14, 20);
+  doc.text(`Reporte de Gestión Botánica - ${configProject.appName}`, 14, 20);
   doc.setFontSize(10);
   doc.text(`Usuario: ${userName} | Fecha: ${now}`, 14, 28);
 
@@ -123,5 +124,5 @@ export const generateFullReport = (data: AppData, userName: string) => {
   });
 
   // --- Descarga ---
-  doc.save(`Reporte_PlantitasApp_${new Date().toISOString().split("T")[0]}.pdf`);
+  doc.save(`Reporte_Plantacora_${new Date().toISOString().split("T")[0]}.pdf`);
 };
