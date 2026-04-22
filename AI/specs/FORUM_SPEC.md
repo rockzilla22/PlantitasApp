@@ -14,7 +14,7 @@
 - **Votos**: Upvote/downvote en posts y respuestas
 - **Access**: All can read, only login users can send post.
 
-File: E:\Archivos\Documents\devcode\5.Pruebas\PlantitasApp\src\app\(pages)\forum
+File: E:\Archivos\Documents\devcode\5.Pruebas\Plantacora\src\app\(pages)\forum
 ---
 
 ## 2. DATA MODEL

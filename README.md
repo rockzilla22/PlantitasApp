@@ -1,8 +1,8 @@
-# 🌿 PlantitasApp
+# 🌿 Plantacora
 
 **El diario de cuidados que todo Plant Lover necesita.**
 
-Sabemos que cada hoja nueva cuenta una historia. PlantitasApp te ayuda a recordar cuándo fue el último riego, cómo va creciendo ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfrutá de tus plantas sin el estrés de olvidar cuándo tocaba regar o fertilizar. Creá un espacio digital para tu colección, seguí el progreso de tus propagaciones y mantén tus insumos a la mano. Tu única preocupación será verlas crecer.
+Sabemos que cada hoja nueva cuenta una historia. Plantacora te ayuda a recordar cuándo fue el último riego, cómo va creciendo ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfrutá de tus plantas sin el estrés de olvidar cuándo tocaba regar o fertilizar. Creá un espacio digital para tu colección, seguí el progreso de tus propagaciones y mantén tus insumos a la mano. Tu única preocupación será verlas crecer.
 
 Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JSON cuando quieras. Si querés respaldo automático en la nube, existen los planes Premium y Pro.
 
@@ -12,14 +12,14 @@ Funciona **sin cuenta**: tus datos viven en el navegador y los exportás como JS
 
 ### Sin cuenta — Plan Gratuito 🌱
 
-Puedes usar PlantitasApp al 100% sin registrarte. Todas las funciones están disponibles.
+Puedes usar Plantacora al 100% sin registrarte. Todas las funciones están disponibles.
 
 - Todo se guarda en `localStorage` del navegador
 - Exportá tus datos como `.json` cuando quieras (botón **Exportar** en el header)
 - Importá un JSON anterior para restaurar o migrar datos entre dispositivos
 - Si el botón muestra **⚠ Cambios pendientes**, es hora de hacer una copia
 
-> Los datos son tuyos. PlantitasApp no envía nada a ningún servidor si no tienes una cuenta activa.
+> Los datos son tuyos. Plantacora no envía nada a ningún servidor si no tienes una cuenta activa.
 
 ### Con cuenta — Planes de Pago
 

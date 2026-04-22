@@ -1,8 +1,8 @@
-# AI/specs/FEATURES_INDEX.md: PROTOCOLO OMEGA (PLANTITASAPP V5)
+# AI/specs/FEATURES_INDEX.md: PROTOCOLO OMEGA (Plantacora V5)
 
 ## 1. VISIÓN DEL SISTEMA (The "Big Picture")
 
-* **Nombre del Proyecto:** `PlantitasApp_v5_Omega`
+* **Nombre del Proyecto:** `Plantacora_v5_Omega`
 * **Objetivo Primario:** Gestión botánica profesional con sincronización en la nube, integridad referencial y reportes avanzados.
 * **Stack Tecnológico:** `Next.js 15+ (App Router) + Tailwind v4 + Nano Stores + Supabase (Postgres) + Zod + jsPDF`.
 * **Estado de Infraestructura:** `MIGRATION / DEVELOPMENT`.
@@ -24,7 +24,7 @@ Protocolo de navegación para agentes. Prohibido el desvío de esta estructura:
 ## 3. ROADMAP ESTRATÉGICO (Feature Tracking)
 
 Existe una versión preview funcional como localhost y json storage en
-    ./PlantitasApp Original
+    ./Plantacora Original
 Estos archivos son la base para todas las Features ya que esto funciona perfectamente.
 
 | ID | Feature | Prioridad | Estado | Ubicación Principal |

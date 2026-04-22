@@ -1,4 +1,4 @@
-# NOTIFY_SPEC.md — Sistema de Notificaciones PlantitasApp
+# NOTIFY_SPEC.md — Sistema de Notificaciones Plantacora
 
 ## Estado Actual
 

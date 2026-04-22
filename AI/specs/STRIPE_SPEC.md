@@ -1,8 +1,8 @@
-# AI/specs/STRIPE_SPEC.md: Configuración de Stripe para PlantitasApp
+# AI/specs/STRIPE_SPEC.md: Configuración de Stripe para Plantacora
 
 ## 1. RESUMEN
 
-Este documento detalla la estrategia de precios, estructura de productos y configuración técnica de Stripe para soportar el modelo de monetización de PlantitasApp.
+Este documento detalla la estrategia de precios, estructura de productos y configuración técnica de Stripe para soportar el modelo de monetización de Plantacora.
 
 > **Nota**: Los valores aquí definidos están centralizados en `src/data/configProject.ts`. Cualquier cambio de precios debe hacerse ahí para mantener consistencia entre el código y Stripe Dashboard.
 
@@ -22,12 +22,14 @@ Este documento detalla la estrategia de precios, estructura de productos y confi
 
 | Escenario | Ingreso | Costo Stripe | Costo Supabase | Margen Neto |
 |-----------|---------|--------------|----------------|-------------|
-| 1 Pro ($5) | $5.00 | -$0.45 | -$25.00 | **-$20.45** |
-| 5 Pro ($5 c/u) | $25.00 | -$2.25 | -$25.00 | **-$2.25** |
-| 9 Pro ($5 c/u) | $45.00 | -$4.05 | -$25.00 | **+$15.95** |
-| 1 Premium/mes | $3.00 | -$0.39 | -$25.00 | **-$21.61** |
-| 9 Premium/mes | $27.00 | -$3.51 | -$25.00 | **-$1.51** |
-| 10 Premium/mes | $30.00 | -$3.90 | -$25.00 | **+$1.10** |
+| 1 Pro ($2.50) | $2.50 | -$0.38 | -$25.00 | **-$22.88** |
+| 10 Pro ($2.50 c/u) | $25.00 | -$3.30 | -$25.00 | **-$3.30** |
+| 11 Pro ($2.50 c/u) | $27.50 | -$3.59 | -$25.00 | **-$1.09** |
+| 12 Pro ($2.50 c/u) | $30.00 | -$3.90 | -$25.00 | **+$0.10** ✅ |
+| 1 Premium/mes | $4.00 | -$0.42 | -$25.00 | **-$21.42** |
+| 6 Premium/mes | $24.00 | -$3.12 | -$25.00 | **-$4.12** |
+| 7 Premium/mes | $28.00 | -$3.54 | -$25.00 | **-$0.54** |
+| **8 Premium/mes** | $32.00 | -$3.96 | -$25.00 | **+$3.04** ✅ |
 
 ### 2.3 Modelo de Sostenibilidad
 
@@ -35,10 +37,10 @@ Este documento detalla la estrategia de precios, estructura de productos y confi
 ┌─────────────────────────────────────────────────────────────┐
 │  META REALISTA (Fase Inicial)                              │
 ├─────────────────────────────────────────────────────────────┤
-│  10 usuarios Premium × $27/mes = $270/mes bruto            │
-│  - Stripe ($35) = $235/mes                                 │
-│  - Supabase Basic ($25) = $210/mes neto                    │
-│  = $2,520/año de revenue                                   │
+│  8 usuarios Premium × $32/mes = $256/mes bruto             │
+│  - Stripe ($34) = $222/mes                                 │
+│  - Supabase Basic ($25) = $197/mes neto                    │
+│  = $2,364/año de revenue                                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -55,25 +57,73 @@ Este documento detalla la estrategia de precios, estructura de productos y confi
 
 | Product ID | Nombre | Modo | Precio USD | Slots | Costo/unit | Margen |
 |------------|--------|------|------------|-------|------------|--------|
-| `pro_5` | Pro 5 Slots | payment | $3.00 | +5 | $0.39 | $2.61 |
+| `pro_5` | Pro 5 Slots | payment | $2.50 | +5 | $0.38 | $2.12 |
 | `pro_10` | Pro 10 Slots | payment | $5.00 | +10 | $0.45 | $4.55 |
-| `pro_20` | Pro 20 Slots | payment | $8.00 | +20 | $0.53 | $7.47 |
-| `pro_50` | Pro 50 Slots | payment | $15.00 | +50 | $0.75 | $14.25 |
+| `pro_15` | Pro 15 Slots | payment | $7.50 | +15 | $0.53 | $6.97 |
 
-> **Estrategia**: El pack de 10 slots tiene el **mejor ratio precio/valor** ($0.50/slot). El de 5 es el entry-point más barato.
+> **Estrategia**: El pack de 10 slots tiene el **mejor ratio precio/valor** ($0.50/slot). El de 5 es el entry-point más barato ($0.50/slot).
 
 ### 3.2 Productos de Suscripción (Recurrente)
 
 | Product ID | Nombre | Modo | Precio | periodicity | Descuento vs Monthly |
 |------------|--------|------|--------|-------------|---------------------|
-| `premium_monthly` | Premium Monthly | subscription | $3.00 | month | — |
-| `premium_yearly` | Premium Yearly | subscription | $30.00 | year | **10% OFF** ($2.50/mes) |
+| `premium_monthly` | Premium Monthly | subscription | $4.00 | month | — |
+| `premium_yearly` | Premium Yearly | subscription | $43.20 | year | **10% OFF** ($3.60/mes) |
 
 ### 3.3 Comparativa de Descuento
 
 | Mensual (12 meses) | Anual | Ahorro | Precio real/mes |
 |--------------------|-------|--------|-----------------|
-| $3 × 12 = $36 | $30 | $6 (16.7%) | $2.50 |
+| $4 × 12 = $48 | $43.20 | $4.80 (10%) | $3.60 |
+
+---
+
+### 3.4 Skins (Micro-transacciones)
+
+#### 3.4.1 Room Skins (Más visibles, más valor)
+
+| Product ID | Nombre | Modo | Precio USD | Costo/unit | Margen |
+|------------|--------|------|------------|------------|--------|
+| `skin_room_rustic` | Skin Rústico (Room) | payment | $0.50 | $0.31 | $0.19 |
+| `skin_room_minimal` | Skin Minimal (Room) | payment | $0.50 | $0.31 | $0.19 |
+| `skin_room_zen` | Skin Zen (Room) | payment | $1.00 | $0.33 | $0.67 |
+| `skin_room_tropical` | Skin Tropical (Room) | payment | $1.00 | $0.33 | $0.67 |
+| `skin_room_cottage` | Skin Cottage (Room) | payment | $1.00 | $0.33 | $0.67 |
+
+> **Estrategia**: Los room skins son el producto más accesible ($0.50-1). Bajo margen por unidad pero alto volumen potencial. El usuario puede comprar skins para múltiples rooms.
+
+#### 3.4.2 Plant Skins (Pequeñas, "hyper pequeñas")
+
+| Product ID | Nombre | Modo | Precio USD | Costo/unit | Margen |
+|------------|--------|------|------------|------------|--------|
+| `skin_plant_pot_1` | Maceta Vintage | payment | $0.25 | $0.30 | **-$0.05** ⚠️ |
+| `skin_plant_pot_2` | Maceta Cerámica | payment | $0.25 | $0.30 | **-$0.05** ⚠️ |
+| `skin_plant_pot_3` | Maceta Diseño | payment | $0.50 | $0.32 | $0.18 |
+
+> **Nota**: Las plant skins de $0.25 tienen margen negativo ($0.30 costo Stripe). **Estrategia**: Vender en bundle de 3+ para cubrir costos, o aumentar a $0.50 mínimo.
+
+#### 3.4.3 Bundle Skins (Mejor valor)
+
+| Product ID | Nombre | Modo | Precio USD | Incluir | Margen |
+|------------|--------|------|------------|---------|--------|
+| `skin_room_pack_3` | 3 Room Skins | payment | $2.00 | 3 rooms (任选) | $1.00 |
+| `skin_plant_pack_5` | 5 Plant Skins | payment | $1.50 | 5 macetas | $0.70 |
+| `skin_full_pack` | Skins Pack Completo | payment | $5.00 | 3 rooms + 5 plants | $3.80 |
+
+#### 3.4.4 Resumen de Margen (Skins)
+
+| Escenario | Ingreso | Costo Stripe | Margen Neto |
+|-----------|---------|--------------|-------------|
+| 1 Room Skin ($0.50) | $0.50 | -$0.31 | **$0.19** |
+| 10 Room Skins ($0.50) | $5.00 | -$0.45 | **$4.55** |
+| 1 Plant Skin ($0.50) | $0.50 | -$0.32 | **$0.18** |
+| 1 Plant Skin ($0.25) | $0.25 | -$0.30 | **-$0.05** ⚠️ |
+| 1 Full Pack ($5.00) | $5.00 | -$0.45 | **$4.55** |
+
+> **Nota importante**: Los skins son **micro-transacciones de bajo margen**. Su propósito no es cubrir costos fijos, sino:
+> 1. Revenue adicional de usuarios activos (impulse buy)
+> 2. Personalización que aumenta engagement
+> 3. No dependen del break-even de Premium
 
 ---
 
@@ -81,6 +131,125 @@ Este documento detalla la estrategia de precios, estructura de productos y confi
 
 ### 4.1 Crear en Stripe Dashboard
 
+```
+Stripe Dashboard → Products → + Add Product
+
+────────────────────────────────────────
+PRODUCTO 1: Pro 5 Slots
+────────────────────────────────────────
+Name: Pro 5 Slots
+Description: +5 slots permanentes para tu jardín botánico
+Pricing: One-time price → $2.50 USD
+Metadata:
+  productType: pro
+  slots: 5
+────────────────────────────────────────
+
+PRODUCTO 2: Pro 10 Slots
+────────────────────────────────────────
+Name: Pro 10 Slots  
+Description: +10 slots permanentes - Mejor valor
+Pricing: One-time price → $5.00 USD
+Metadata:
+  productType: pro
+  slots: 10
+────────────────────────────────────────
+
+PRODUCTO 3: Pro 15 Slots
+────────────────────────────────────────
+Name: Pro 15 Slots
+Description: +15 slots permanentes - Mejor valor
+Pricing: One-time price → $7.50 USD
+Metadata:
+  productType: pro
+  slots: 15
+────────────────────────────────────────
+
+PRODUCTO 4: Room Skin - Rústico
+────────────────────────────────────────
+Name: Room Skin - Rústico
+Description: Skin decorativo para una habitación
+Pricing: One-time price → $0.50 USD
+Metadata:
+  productType: skin_room
+  skinId: rustic
+────────────────────────────────────────
+
+PRODUCTO 5: Room Skin - Minimal
+────────────────────────────────────────
+Name: Room Skin - Minimal
+Description: Skin decorativo para una habitación
+Pricing: One-time price → $0.50 USD
+Metadata:
+  productType: skin_room
+  skinId: minimal
+────────────────────────────────────────
+
+PRODUCTO 6: Room Skin - Zen
+────────────────────────────────────────
+Name: Room Skin - Zen
+Description: Skin decorativo para una habitación
+Pricing: One-time price → $1.00 USD
+Metadata:
+  productType: skin_room
+  skinId: zen
+────────────────────────────────────────
+
+PRODUCTO 7: Room Skin - Tropical
+────────────────────────────────────────
+Name: Room Skin - Tropical
+Description: Skin decorativo para una habitación
+Pricing: One-time price → $1.00 USD
+Metadata:
+  productType: skin_room
+  skinId: tropical
+────────────────────────────────────────
+
+PRODUCTO 8: Room Skin - Cottage
+────────────────────────────────────────
+Name: Room Skin - Cottage
+Description: Skin decorativo para una habitación
+Pricing: One-time price → $1.00 USD
+Metadata:
+  productType: skin_room
+  skinId: cottage
+────────────────────────────────────────
+
+PRODUCTO 9: Plant Skin Pack (3 Macetas)
+────────────────────────────────────────
+Name: Plant Skin Pack
+Description: 3 skins de macetas para tus plantas
+Pricing: One-time price → $1.50 USD
+Metadata:
+  productType: skin_plant_pack
+  skins: 3
+────────────────────────────────────────
+
+PRODUCTO 10: Premium Mensual
+────────────────────────────────────────────────────────────────
+Name: Premium - Monthly
+Description: Ilimitado + Cloud Sync - Facturado mensual
+Pricing: 
+  - Price: $4.00 USD
+  - Billing: Recurring
+  - Interval: Monthly
+Metadata:
+  productType: premium
+  billing: monthly
+────────────────────────────────────────────────────────────────
+
+PRODUCTO 11: Premium Anual
+────────────────────────────────────────────────────────────────
+Name: Premium - Yearly
+Description: Ilimitado + Cloud Sync - 10% dto
+Pricing:
+  - Price: $43.20 USD
+  - Billing: Recurring
+  - Interval: Yearly
+Metadata:
+  productType: premium
+  billing: yearly
+  discount: 10
 ```
 Stripe Dashboard → Products → + Add Product
 
@@ -108,24 +277,24 @@ Metadata:
 ... (repetir para pro_20, pro_50)
 
 PRODUCTO 5: Premium Mensual
-─────────────────────────────────────────
+─────────────────────────────────────────────────────────────────
 Name: Premium - Monthly
 Description: Ilimitado + Cloud Sync - Facturado mensual
 Pricing: 
-  - Price: $3.00 USD
+  - Price: $4.00 USD
   - Billing: Recurring
   - Interval: Monthly
 Metadata:
   productType: premium
   billing: monthly
-─────────────────────────────────────────
+─────────────────────────────────────────────────────────────────
 
 PRODUCTO 6: Premium Anual
-─────────────────────────────────────────
+─────────────────────────────────────────────────────────────────
 Name: Premium - Yearly
 Description: Ilimitado + Cloud Sync - 10% dto
 Pricing:
-  - Price: $30.00 USD
+  - Price: $43.20 USD
   - Billing: Recurring
   - Interval: Yearly
 Metadata:
@@ -184,7 +353,7 @@ const checkoutPremium = await stripe.checkout.sessions.create({
 // En todo checkout session
 metadata: {
   userId: string;           // ID de Supabase Auth
-  productType: string;      // pro_5 | pro_10 | pro_20 | pro_50 | premium_monthly | premium_yearly
+  productType: string;      // pro_5 | pro_10 | pro_15 | skin_room | skin_plant_pack | premium_monthly | premium_yearly
   source: 'web' | 'mobile'; // Para tracking analytics
 }
 
@@ -194,6 +363,14 @@ metadata: {
   productType: 'premium_monthly' | 'premium_yearly';
   originalPrice: number;
   discount: number;         // 0 o 10
+}
+
+// En skin purchase
+metadata: {
+  userId: string;
+  productType: 'skin_room' | 'skin_plant_pack';
+  skinId: string;           // rustic | minimal | zen | tropical | cottage
+  roomKey?: string;         // Para room skins: living, kitchen, etc.
 }
 ```
 
@@ -241,7 +418,7 @@ export async function POST(request: Request) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      const { userId, productType } = session.metadata!;
+      const { userId, productType, skinId, roomKey } = session.metadata!;
       
       if (productType.startsWith('pro_')) {
         const slots = parseInt(productType.split('_')[1]);
@@ -249,6 +426,12 @@ export async function POST(request: Request) {
       } else if (productType.startsWith('premium_')) {
         const duration = productType === 'premium_yearly' ? '1 year' : '1 month';
         await activatePremium(userId, duration);
+      } else if (productType === 'skin_room') {
+        // Desbloquear skin de room
+        await unlockRoomSkin(userId, skinId!, roomKey!);
+      } else if (productType === 'skin_plant_pack') {
+        // Desbloquear pack de skins de plantas
+        await unlockPlantSkinPack(userId, 3);
       }
       break;
     }
@@ -354,16 +537,29 @@ Los valores de productos están en `src/data/configProject.ts`:
 monetization: {
   // Productos Pro (one-time)
   proProducts: [
-    { id: 'pro_5', name: 'Pro 5 Slots', price: 3, slots: 5, stripePriceId: 'price_xxx' },
-    { id: 'pro_10', name: 'Pro 10 Slots', price: 5, slots: 10, stripePriceId: 'price_xxx' },
-    { id: 'pro_20', name: 'Pro 20 Slots', price: 8, slots: 20, stripePriceId: 'price_xxx' },
-    { id: 'pro_50', name: 'Pro 50 Slots', price: 15, slots: 50, stripePriceId: 'price_xxx' },
+    { id: 'pro_5', name: 'Pro 5 Slots', price: 2.50, slots: 5, stripePriceId: 'price_xxx' },
+    { id: 'pro_10', name: 'Pro 10 Slots', price: 5.00, slots: 10, stripePriceId: 'price_xxx' },
+    { id: 'pro_15', name: 'Pro 15 Slots', price: 7.50, slots: 15, stripePriceId: 'price_xxx' },
   ],
   
   // Productos Premium (subscription)
   premiumProducts: [
-    { id: 'premium_monthly', name: 'Premium Monthly', price: 3, period: 'month', stripePriceId: 'price_xxx' },
-    { id: 'premium_yearly', name: 'Premium Yearly', price: 30, period: 'year', discount: 10, stripePriceId: 'price_xxx' },
+    { id: 'premium_monthly', name: 'Premium Monthly', price: 4, period: 'month', stripePriceId: 'price_xxx' },
+    { id: 'premium_yearly', name: 'Premium Yearly', price: 43.20, period: 'year', discount: 10, stripePriceId: 'price_xxx' },
+  ],
+
+  // Room Skins (one-time)
+  roomSkins: [
+    { id: 'rustic', name: 'Rustico', price: 0.50, stripePriceId: 'price_xxx' },
+    { id: 'minimal', name: 'Minimal', price: 0.50, stripePriceId: 'price_xxx' },
+    { id: 'zen', name: 'Zen', price: 1.00, stripePriceId: 'price_xxx' },
+    { id: 'tropical', name: 'Tropical', price: 1.00, stripePriceId: 'price_xxx' },
+    { id: 'cottage', name: 'Cottage', price: 1.00, stripePriceId: 'price_xxx' },
+  ],
+
+  // Plant Skins (one-time)
+  plantSkinPacks: [
+    { id: 'skin_plant_pack_3', name: 'Plant Skin Pack (3)', price: 1.50, count: 3, stripePriceId: 'price_xxx' },
   ],
   
   // Costos

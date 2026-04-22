@@ -1,4 +1,5 @@
 import Link from "next/link";
+import configProject from "@/data/configProject";
 
 export default function PrivacyPage() {
   return (
@@ -15,7 +16,7 @@ export default function PrivacyPage() {
         <section className="privacy-section">
           <h2>1. Gestión de Identidad</h2>
           <p>
-            PlantitasApp utiliza <strong>Google OAuth 2.0</strong> y <strong>Supabase Auth</strong> como proveedores de identidad. Al
+            {configProject.appName} utiliza <strong>Google OAuth 2.0</strong> y <strong>Supabase Auth</strong> como proveedores de identidad. Al
             iniciar sesión, solo recibimos y almacenamos los metadatos básicos proporcionados por Google (nombre, correo electrónico y foto
             de perfil) para crear tu perfil de usuario único y garantizar una experiencia personalizada.
           </p>
@@ -63,7 +64,7 @@ export default function PrivacyPage() {
 
         <footer className="privacy-footer">
           <p>
-            Al utilizar PlantitasApp, aceptas estos términos. <br />
+            Al utilizar {configProject.appName}, aceptas estos términos. <br />
             Cultivando privacidad, bit a bit.
           </p>
         </footer>

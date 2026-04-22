@@ -14,6 +14,7 @@ import { getPlanLevel, getEffectiveMaxSlots } from "@/libs/syncService";
 import configProject from "@/data/configProject";
 import Link from "next/link";
 import Image from "next/image";
+import { transform } from "zod";
 
 export function Header() {
   const pathname = usePathname();
@@ -214,13 +215,13 @@ export function Header() {
               style={{ fontSize: "clamp(1rem, 2vw, 1.4rem)" }}
             >
               <Image
-                src="/icons/environment/plants/flower2.svg"
-                alt="Greenhouse"
-                width={28}
-                height={28}
-                className="shrink-0 object-contain"
+                src={configProject.logo}
+                alt={configProject.appName}
+                width={80}
+                height={80}
+                className="shrink-0 rounded-full object-contain bg-white/30"
               />
-              <span className="block leading-none">PlantitasApp</span>
+              <span className="block leading-none">{configProject.appName}</span>
             </h1>
           </Link>
         </div>
@@ -486,7 +487,7 @@ export function Header() {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
               >
                 <div className="w-9 h-9 rounded-full bg-[var(--input-bg)] text-[var(--primary)] font-bold text-sm flex items-center justify-center border-2 border-[var(--text-white)]/30 shadow-md">
-                  <Image src="/icons/environment/animals/turtle.svg" alt="Turtle" width={24} height={24} className="object-contain" />
+                  <Image src={configProject.logo} alt="Turtle" width={50} height={50} className="rounded-full border border-white p-0.5" style={{ transform: "scaleX(-1)" }} />
                 </div>
                 <span className="hidden md:block uppercase text-[0.7rem] tracking-wide text-[var(--text-white)] font-bold">Perfil</span>
                 <span

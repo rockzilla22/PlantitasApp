@@ -1,10 +1,10 @@
-# AI/specs/CAP.md: LÍMITES DE PLANES (CAPS) - PLANTITASAPP V5
+# AI/specs/CAP.md: LÍMITES DE PLANES (CAPS) - Plantacora V5
 
-Este documento especifica los límites de capacidad (caps) y las políticas de retención para cada nivel de plan en PlantitasApp.
+Este documento especifica los límites de capacidad (caps) y las políticas de retención para cada nivel de plan en Plantacora.
 
 ## 1. VISIÓN GENERAL
 
-Los caps en PlantitasApp limitan el número total de elementos que un usuario puede tener almacenados. Estos límites se aplican a la **suma de todos los elementos** (incluyendo los que están en la papelera) en las siguientes categorías:
+Los caps en Plantacora limitan el número total de elementos que un usuario puede tener almacenados. Estos límites se aplican a la **suma de todos los elementos** (incluyendo los que están en la papelera) en las siguientes categorías:
 
 - **Plantas** (`src/core/plant/domain/Plant.ts`)
 - **Propagaciones** (`src/core/nursery/domain/Propagation.ts`) 

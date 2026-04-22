@@ -1,7 +1,6 @@
-"use client";
-
 import { PricingSection } from "@/components/sections/PricingSection";
 import { FeatureSection } from "@/components/sections/FeaturesSection";
+import configProject from "@/data/configProject";
 import Image from "next/image";
 
 export default function LandingPage() {
@@ -19,10 +18,10 @@ export default function LandingPage() {
             que todo Plant Lover necesita.
           </h1>
           <p className="text-[var(--text-brown)]">
-            Sabemos que cada hoja nueva cuenta una historia. PlantitasApp te ayuda a recordar cuándo fue el último riego, cómo va creciendo
-            ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfruta de tus plantas sin el estrés de olvidar cuándo tocaba regar
-            o fertilizar. Crea un espacio digital para tu colección, sigue el progreso de tus propagaciones y mantén tus insumos a la mano.
-            Tu única preocupación será verlas crecer.
+            Sabemos que cada hoja nueva cuenta una historia. {configProject.appName} te ayuda a recordar cuándo fue el último riego, cómo va
+            creciendo ese nuevo esqueje y qué cuidados necesita tu colección hoy. Disfruta de tus plantas sin el estrés de olvidar cuándo
+            tocaba regar o fertilizar. Crea un espacio digital para tu colección, sigue el progreso de tus propagaciones y mantén tus
+            insumos a la mano. Tu única preocupación será verlas crecer.
           </p>
         </div>
         <div className="hero-visual">
@@ -101,7 +100,7 @@ export default function LandingPage() {
         </p>
       </section>
 
-      <style jsx>{`
+      <style>{`
         .landing-container {
           max-width: 1400px;
           margin: 0 auto;

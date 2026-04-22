@@ -1,4 +1,4 @@
-# AI/specs/REFERRAL_SPEC.md: Sistema de Referidos PlantitasApp
+# AI/specs/REFERRAL_SPEC.md: Sistema de Referidos Plantacora
 
 ## 1. RESUMEN EJECUTIVO
 
